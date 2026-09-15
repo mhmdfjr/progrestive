@@ -23,6 +23,7 @@ import {
   Heart,
 } from "lucide-react";
 import Marquee from "@/components/ui/marquee";
+import { LandingHeader as Nav } from "@/components/SiteHeader";
 
 function MarqueeStrip() {
   const items = [
@@ -33,54 +34,6 @@ function MarqueeStrip() {
     "STAY PURRPOSEFUL • ",
   ];
   return <Marquee items={items} />;
-}
-
-function Nav() {
-  return (
-    <header className="sticky top-0 z-50 border-b-2 border-border bg-secondary-background">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link
-          href="/"
-          className="font-heading text-xl font-black tracking-tight"
-        >
-          PURRPOSE<span className="text-hustle">.</span>
-        </Link>
-        <nav className="hidden items-center gap-6 font-heading font-bold md:flex">
-          <Link href="#about" className="hover:underline underline-offset-4">
-            About
-          </Link>
-          <Link href="#how" className="hover:underline underline-offset-4">
-            How it works
-          </Link>
-          <Link
-            href="/leaderboard"
-            className="hover:underline underline-offset-4"
-          >
-            Leaderboard
-          </Link>
-        </nav>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="neutral"
-            size="sm"
-            asChild
-            className="hidden sm:inline-flex"
-          >
-            <Link href="#about">Pelajari</Link>
-          </Button>
-          <Button
-            asChild
-            size="sm"
-            className="bg-accent text-black hover:translate-x-boxShadowX hover:translate-y-boxShadowY"
-          >
-            <Link href="/login">
-              Login <ArrowRight className="size-4" />
-            </Link>
-          </Button>
-        </div>
-      </div>
-    </header>
-  );
 }
 
 function Hero() {
@@ -121,20 +74,20 @@ function Hero() {
             <div className="flex flex-wrap gap-3">
               <Button
                 asChild
+                variant="neutral"
+                size="lg"
+                className="text-base font-bold"
+              >
+                <Link href="#about">Learn the concept</Link>
+              </Button>
+              <Button
+                asChild
                 size="lg"
                 className="bg-accent text-black border-border text-base font-black"
               >
                 <Link href="/login">
                   Start Now <ArrowRight className="size-4" />
                 </Link>
-              </Button>
-              <Button
-                asChild
-                variant="neutral"
-                size="lg"
-                className="text-base font-bold"
-              >
-                <Link href="#about">Learn the concept</Link>
               </Button>
             </div>
 
@@ -184,12 +137,12 @@ function Hero() {
                     <div className="h-full w-[68%] bg-hustle" />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Today's total: 3.5h • Score 7.1
+                    Todays total: 3.5h • Score 7.1
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="absolute -bottom-6 -right-2 z-20 w-[88%] border-humble bg-secondary-background p-0 shadow-shadow rotate-[1.2deg] md:-right-4">
+              <Card className="absolute -bottom-6 right-2 z-20 w-[88%] border-humble bg-secondary-background p-0 shadow-shadow rotate-[1.2deg] md:-right-4">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-humble">
@@ -384,11 +337,10 @@ function HowItWorks() {
       <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <h2 className="font-heading text-3xl font-black md:text-4xl">
-            Start Purrpose with{" "}
+            Start with{" "}
             <span className="border-2 border-border bg-info px-2 text-white shadow-shadow">
               Only 3 Steps.
             </span>
-            ``
           </h2>
           <p className="max-w-md text-sm text-foreground/70">
             Conventional flow (clear navigation, standard hierarchy),
@@ -487,7 +439,7 @@ function FinalCTA() {
                     className="bg-info text-white border-black font-black"
                   >
                     <Link href="/login">
-                      Login / Register <ArrowRight className="size-4" />
+                      Login now <ArrowRight className="size-4" />
                     </Link>
                   </Button>
                   <Button
@@ -550,9 +502,6 @@ function Footer() {
             </Link>
             <Link href="/login" className="hover:underline">
               Login
-            </Link>
-            <Link href="/home" className="hover:underline">
-              App
             </Link>
           </div>
         </div>
