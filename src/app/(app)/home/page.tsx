@@ -34,7 +34,6 @@ import {
   BarChart3,
   Clock3,
   Trophy,
-  Sparkles,
   AlertTriangle,
   CheckCircle2,
   Inbox,
@@ -80,6 +79,7 @@ export default function HomePage() {
     .reduce((s, t) => s + (t.score || 0), 0);
   const totalDuration = tasks.reduce((s, t) => s + t.durationHours, 0);
   const pendingCount = tasks.filter((t) => t.status === "pending").length;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const completedCount = tasks.filter((t) => t.status === "completed").length;
   const durationPct = Math.min((totalDuration / 24) * 100, 100);
   const isOverCap = totalDuration > 24;
@@ -160,7 +160,7 @@ export default function HomePage() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="neutral"
-                    className="gap-2 bg-white font-bold"
+                    className="gap-2 bg-white font-bold dark:text-black"
                   >
                     <CalendarIcon className="size-4" strokeWidth={2.5} />
                     {format(selectedDateObj, "d MMM yyyy")}
@@ -175,6 +175,7 @@ export default function HomePage() {
                     selected={selectedDateObj}
                     onSelect={(d) => {
                       if (d) {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         const iso = d.toISOString().slice(0, 10);
                         // keep local date handling: convert via todayStr logic? use iso directly but adjust for TZ
                         const localIso = new Date(
@@ -260,12 +261,12 @@ export default function HomePage() {
                 />
                 <p className="mt-1 text-xs font-bold flex items-center gap-1">
                   {isOverCap ? (
-                    <span className="text-red-600 flex items-center gap-1">
+                    <span className="text-red-600 dark:text-red-400 flex items-center gap-1">
                       <AlertTriangle className="size-3" strokeWidth={2.5} />{" "}
                       Over 24h cap!
                     </span>
                   ) : isNearCap ? (
-                    <span className="text-amber-700 flex items-center gap-1">
+                    <span className="text-amber-700 dark:text-amber-400 flex items-center gap-1">
                       <AlertTriangle className="size-3" strokeWidth={2.5} />{" "}
                       Almost 24h cap, slow down!
                     </span>
@@ -282,12 +283,12 @@ export default function HomePage() {
 
           {/* Balance hint */}
           <div className="flex flex-wrap gap-2 text-xs font-black">
-            <span className="border-2 border-border bg-accent py-1 px-1 shadow-sm flex items-center gap-1">
+            <span className="border-2 border-border bg-accent py-1 px-1 shadow-sm flex items-center gap-1 dark:text-black">
               <BarChart3 className="size-3" strokeWidth={2.5} /> Balance: Hustle{" "}
               {totalHustleScore.toFixed(1)} vs Humble{" "}
               {totalHumbleScore.toFixed(1)}
             </span>
-            <span className="border-2 border-border bg-white py-1 px-1 shadow-sm flex items-center gap-1">
+            <span className="border-2 border-border bg-white py-1 px-1 shadow-sm flex items-center gap-1 dark:text-black">
               <Trophy className="size-3" strokeWidth={2.5} /> {tasks.length}{" "}
               Tasks Today
             </span>
@@ -338,7 +339,7 @@ export default function HomePage() {
                 {/* HUSTLE CARD */}
                 <CarouselItem className="pl-4 basis-full md:basis-1/2">
                   <Card className="h-full border-2 shadow-shadow bg-secondary-background flex flex-col">
-                    <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border bg-white">
+                    <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border">
                       <div className="flex items-center gap-2">
                         <div className="flex size-8 items-center justify-center border-2 border-border bg-hustle">
                           <Briefcase
@@ -363,17 +364,17 @@ export default function HomePage() {
                     </CardHeader>
                     <CardContent className="space-y-3 flex-1 pt-4">
                       {hustle.length === 0 ? (
-                        <div className="text-center py-8 border-2 border-dashed border-border bg-(--neo-gray-100)">
+                        <div className="text-center py-8 border-2 border-dashed border-border bg-(--neo-gray-100) dark:bg-white/10">
                           <Inbox
                             className="mx-auto size-8 text-foreground/40"
                             strokeWidth={2}
                           />
                           <p className="mt-2 text-sm font-black">
-                            U don't have any Hustle today
+                            U don&apos;t have any Hustle today
                           </p>
                           <p className="mx-auto mt-1 max-w-65 text-xs leading-relaxed text-foreground/60">
-                            Let's add some Hustle: work, study, or side project
-                            to earn points and stay productive.
+                            Let&apos;s add some Hustle: work, study, or side
+                            project to earn points and stay productive.
                           </p>
                           <Button
                             size="sm"
@@ -403,7 +404,7 @@ export default function HomePage() {
                 {/* HUMBLE CARD */}
                 <CarouselItem className="pl-4 basis-full md:basis-1/2">
                   <Card className="h-full border-2 shadow-shadow bg-secondary-background flex flex-col">
-                    <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border bg-white">
+                    <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border">
                       <div className="flex items-center gap-2">
                         <div className="flex size-8 items-center justify-center border-2 border-border bg-humble">
                           <BedDouble
@@ -428,13 +429,13 @@ export default function HomePage() {
                     </CardHeader>
                     <CardContent className="space-y-3 flex-1 pt-4">
                       {humble.length === 0 ? (
-                        <div className="text-center py-8 border-2 border-dashed border-border bg-(--neo-gray-100)">
+                        <div className="text-center py-8 border-2 border-dashed border-border bg-(--neo-gray-100) dark:bg-white/10">
                           <Inbox
                             className="mx-auto size-8 text-foreground/40"
                             strokeWidth={2}
                           />
                           <p className="mt-2 text-sm font-black">
-                            U don't have any Humble today
+                            U don&apos;t have any Humble today
                           </p>
                           <p className="mx-auto mt-1 max-w-65 text-xs leading-relaxed text-foreground/60">
                             Add some rest time: sleep, take a walk, or do some
@@ -443,7 +444,7 @@ export default function HomePage() {
                           <Button
                             size="sm"
                             variant="neutral"
-                            className="mt-4 bg-white font-black"
+                            className="mt-4 bg-humble font-black dark:text-black"
                             onClick={() => handleAdd("humble")}
                           >
                             <Plus className="size-3.5" strokeWidth={2.5} /> Add

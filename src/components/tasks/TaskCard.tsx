@@ -86,12 +86,12 @@ export function TaskCard({
               >
                 {task.category}
               </Badge>
-              <span className="inline-flex items-center gap-1 border-2 border-border bg-white px-1.5 py-0.5 text-xs font-bold">
+              <span className="inline-flex items-center gap-1 border-2 border-border bg-white px-1.5 py-0.5 text-xs font-bold dark:text-black">
                 <Clock3 className="size-3" strokeWidth={2.5} />{" "}
                 {task.durationHours}h
               </span>
               {task.score !== null && (
-                <span className="inline-flex items-center gap-1 border-2 border-border bg-accent px-1.5 py-0.5 text-xs font-black">
+                <span className="inline-flex items-center gap-1 border-2 border-border bg-accent px-1.5 py-0.5 text-xs font-black dark:text-black">
                   <Award className="size-3" strokeWidth={2.5} /> {task.score}
                 </span>
               )}
@@ -106,7 +106,7 @@ export function TaskCard({
               {isMissed && (
                 <Badge
                   variant="neutral"
-                  className="text-xs font-black bg-(--neo-gray-100) gap-1"
+                  className="text-xs font-black bg-(--neo-gray-100) gap-1 dark:text-black"
                   title="Don't have time yet, doesn't reduce score"
                 >
                   <CircleAlert className="size-3" strokeWidth={2.5} /> Don't
@@ -141,7 +141,7 @@ export function TaskCard({
             <Button
               variant="neutral"
               size="sm"
-              className="h-8 flex-1 bg-white font-bold text-xs gap-1.5"
+              className="h-8 flex-1 bg-white font-bold text-xs gap-1.5 dark:text-black"
               onClick={() => onEdit(task)}
             >
               <Pencil className="size-3.5" strokeWidth={2.5} /> Edit
@@ -149,7 +149,7 @@ export function TaskCard({
             <Button
               variant="neutral"
               size="sm"
-              className="h-8 flex-1 bg-white font-bold text-xs gap-1.5 hover:bg-black hover:text-white"
+              className="h-8 flex-1 bg-white font-bold text-xs gap-1.5 hover:bg-black hover:text-white dark:text-black dark:hover:text-white"
               onClick={() => onDelete(task.id)}
             >
               <Trash2 className="size-3.5" strokeWidth={2.5} /> Delete

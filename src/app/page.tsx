@@ -102,7 +102,7 @@ function Hero() {
               </span>
               <span className="flex items-center gap-1">
                 <span className="size-2 bg-accent border border-border" />{" "}
-                Kota-level rank
+                City-level rank
               </span>
             </div>
           </div>
@@ -123,20 +123,20 @@ function Hero() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between border-2 border-border bg-(--neo-gray-100) p-2">
+                  <div className="flex items-center justify-between border-2 border-border bg-(--neo-gray-100) text-black p-2">
                     <span className="font-bold">Deep work - 2h</span>
                     <span className="flex items-center gap-1 text-xs font-black">
                       <Check className="size-3" strokeWidth={2.5} /> DONE
                     </span>
                   </div>
-                  <div className="flex items-center justify-between border-2 border-border bg-white p-2">
+                  <div className="flex items-center justify-between border-2 border-border bg-white text-black p-2">
                     <span className="font-bold">Learn Next.js - 1.5h</span>
                     <span className="text-xs">Lv 3 •••○○</span>
                   </div>
                   <div className="h-2 border-2 border-border bg-white">
                     <div className="h-full w-[68%] bg-hustle" />
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-foreground/60">
                     Todays total: 3.5h • Score 7.1
                   </p>
                 </CardContent>
@@ -154,27 +154,27 @@ function Hero() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between border-2 border-border bg-white p-2">
+                  <div className="flex items-center justify-between border-2 border-border bg-white text-black p-2">
                     <span className="font-bold">Chill walk - 1h</span>
                     <span className="flex items-center gap-1 text-xs font-black">
                       <Check className="size-3" strokeWidth={2.5} /> DONE
                     </span>
                   </div>
-                  <div className="flex items-center justify-between border-2 border-border bg-(--neo-gray-100) p-2 opacity-80">
+                  <div className="flex items-center justify-between border-2 border-border bg-(--neo-gray-100) text-black p-2 opacity-80">
                     <span className="font-bold">Journaling - 0.5h</span>
                     <span className="text-xs">Lv 2 ••○○○</span>
                   </div>
                   <div className="h-2 border-2 border-border bg-white">
                     <div className="h-full w-[52%] bg-humble" />
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-foreground/60">
                     Balance recovery : Score 83/100
                   </p>
                 </CardContent>
               </Card>
 
               {/* floating accent */}
-              <div className="absolute -top-4 -left-2 z-30 hidden border-2 border-border bg-accent px-3 py-2 font-heading text-xs font-black shadow-shadow md:block">
+              <div className="absolute -top-4 -left-2 z-30 hidden border-2 border-border bg-accent px-3 py-2 font-heading text-xs dark:text-black font-black shadow-shadow md:block">
                 BALANCE 83 • LEADERBOARD #3
               </div>
             </div>
@@ -197,7 +197,7 @@ function About() {
             </Badge>
             <h2 className="mt-3 font-heading text-3xl font-black leading-none md:text-4xl">
               Balance productivity without{" "}
-              <span className="bg-accent px-1 border-2 border-border">
+              <span className="bg-accent px-1 border-2 border-border dark:text-black">
                 guilt.
               </span>
             </h2>
@@ -260,7 +260,7 @@ function About() {
 
           <Card className="border-border bg-accent text-black">
             <CardHeader>
-              <div className="flex size-10 items-center justify-center border-2 border-border bg-secondary-background shadow-shadow">
+              <div className="flex size-10 items-center justify-center border-2 border-border bg-(--neo-gray-100) shadow-shadow">
                 <BarChart3 className="size-5" strokeWidth={2.5} />
               </div>
               <CardTitle className="text-xl">Balance Index</CardTitle>
@@ -381,7 +381,7 @@ function HowItWorks() {
                     </p>
                   </CardHeader>
                   <CardContent>
-                    <div className="border-2 border-border bg-white p-3 text-xs font-bold">
+                    <div className="border-2 border-border bg-white p-3 text-xs font-bold text-black">
                       <div className="flex items-center gap-2">
                         <Users className="size-4" strokeWidth={2.5} />
                         Group: Jakarta • Rank #3 • Score 42.1
@@ -421,7 +421,7 @@ function FinalCTA() {
   return (
     <section className="bg-background border-t-2 border-border">
       <div className="mx-auto max-w-6xl px-4 py-12">
-        <Card className="border-2 border-border bg-accent p-0 shadow-shadow">
+        <Card className="border-2 border-border bg-accent p-0 text-black shadow-shadow">
           <CardContent className="p-6 md:p-10">
             <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr] md:items-center">
               <div>
@@ -446,7 +446,7 @@ function FinalCTA() {
                     asChild
                     variant="neutral"
                     size="lg"
-                    className="font-bold bg-white"
+                    className="font-bold bg-white dark:text-black"
                   >
                     <Link href="#about">Learn more</Link>
                   </Button>
@@ -467,7 +467,7 @@ function FinalCTA() {
                   </div>
                   <div className="text-xs">Stay balanced!</div>
                 </div>
-                <div className="col-span-2 border-2 border-border bg-secondary-background p-3 shadow-shadow">
+                <div className="col-span-2 border-2 border-border bg-white p-3 text-black shadow-shadow">
                   <div className="flex items-center justify-between text-xs font-black">
                     <span>BALANCE</span>
                     <span>83/100</span>

@@ -133,30 +133,30 @@ export default function RegisterPage() {
             </span>
           </h1>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-foreground/70">
-            1 Hustle + 1 Humble per day is enough. Gamification approach, city's
-            leaderboard, dan weekly suggestions.
+            1 Hustle + 1 Humble per day is enough. Gamification approach,
+            city&apos;s leaderboard, dan weekly suggestions.
           </p>
         </div>
 
         <div className="grid gap-3 max-w-105">
-          <div className="border-2 border-border bg-white p-3 shadow-shadow flex items-center gap-3">
+          <div className="border-2 border-border bg-white p-3 shadow-shadow flex items-center gap-3 dark:text-black">
             <div className="flex size-8 items-center justify-center border-2 border-border bg-hustle">
               <Briefcase className="size-4 text-white" strokeWidth={2.5} />
             </div>
             <div className="text-sm">
               <div className="font-black">Measured Hustle</div>
-              <div className="text-xs text-foreground/60">
+              <div className="text-xs text-foreground/60 dark:text-black/60">
                 Level × duration, daily cap anti burnout
               </div>
             </div>
           </div>
-          <div className="border-2 border-border bg-white p-3 shadow-shadow flex items-center gap-3">
+          <div className="border-2 border-border bg-white p-3 shadow-shadow flex items-center gap-3 dark:text-black">
             <div className="flex size-8 items-center justify-center border-2 border-border bg-humble">
               <BedDouble className="size-4 text-black" strokeWidth={2.5} />
             </div>
             <div className="text-sm">
               <div className="font-black">Valuable Humble</div>
-              <div className="text-xs text-foreground/60">
+              <div className="text-xs text-foreground/60 dark:text-black/60">
                 Recovery is calculated, not ignored
               </div>
             </div>
@@ -173,7 +173,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="flex items-center gap-2 text-xs font-black">
-          <span className="flex items-center gap-1 border-2 border-border bg-white px-2 py-1 shadow-shadow">
+          <span className="flex items-center gap-1 border-2 border-border bg-white px-2 py-1 shadow-shadow dark:text-black">
             <Users className="size-3" strokeWidth={2.5} /> Automatic grup
           </span>
           <span className="flex items-center gap-1 border-2 border-border bg-black text-white px-2 py-1 shadow-shadow">
@@ -214,7 +214,7 @@ export default function RegisterPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="bg-white"
+                className="bg-white dark:text-black dark:placeholder:text-black/50"
               />
             </div>
 
@@ -227,7 +227,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-white"
+                className="bg-white dark:text-black dark:placeholder:text-black/50"
               />
             </div>
 
@@ -240,7 +240,7 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="bg-white"
+                className="bg-white dark:text-black dark:placeholder:text-black/50"
               />
               <p className="text-xs text-foreground/60">
                 User secure combination, can be changed at any time in Profile.
@@ -265,7 +265,7 @@ export default function RegisterPage() {
             <Button
               type="button"
               variant="neutral"
-              className="w-full bg-white font-bold"
+              className="w-full bg-white font-bold dark:text-black"
               onClick={handleGoogle}
               disabled={loading}
             >
@@ -296,7 +296,7 @@ export default function RegisterPage() {
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="font-black underline underline-offset-4 decoration-2"
+                className="font-black hover:underline underline-offset-4 decoration-2"
               >
                 Login here
               </Link>

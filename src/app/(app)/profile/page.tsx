@@ -202,7 +202,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <main className="mx-auto min-h-svh w-full bg-white">
+      <main className="mx-auto min-h-svh w-full bg-secondary-background">
         <div className="space-y-4">
           <Skeleton className="h-10 w-48 border-2 border-border" />
           <div className="grid gap-4 md:grid-cols-3">
@@ -248,7 +248,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="flex-1 mx-auto w-full bg-white">
+    <main className="flex-1 mx-auto w-full bg-secondary-background">
       <div className="mx-auto space-y-6 w-full max-w-6xl p-4 md:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -297,14 +297,14 @@ export default function ProfilePage() {
                     ) : (
                       <Badge
                         variant="neutral"
-                        className="bg-hustle border-black font-black text-xs md:text-sm"
+                        className="bg-hustle border-black font-black text-xs md:text-sm dark:text-black"
                       >
                         auto
                       </Badge>
                     )}
                     <Badge
                       variant="neutral"
-                      className="text-xs md:text-sm bg-accent border-black font-black gap-1"
+                      className="text-xs md:text-sm bg-accent border-black font-black gap-1 dark:text-black"
                     >
                       <Clock3 className="size-2 md:size-3" strokeWidth={2.5} />{" "}
                       UTC+
@@ -312,7 +312,7 @@ export default function ProfilePage() {
                     </Badge>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1.5 font-bold">
-                    <span className="text-xs md:text-sm border-2 border-border font-black bg-humble px-2 py-1 inline-flex items-center gap-1">
+                    <span className="text-xs md:text-sm border-2 border-border font-black bg-humble px-2 py-1 inline-flex items-center gap-1 dark:text-black">
                       <Globe className="size-2 md:size-3" strokeWidth={2.5} />{" "}
                       {profile?.timezone || timezone || "-"}
                     </span>
@@ -328,14 +328,14 @@ export default function ProfilePage() {
               <div className="my-4 h-0.5 bg-border" />
 
               <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="border-2 border-border bg-accent p-2 shadow-sm">
+                <div className="border-2 border-border bg-accent p-2 shadow-sm dark:text-black">
                   <Trophy className="mx-auto size-4" strokeWidth={2.5} />
                   <p className="font-black text-lg leading-none mt-1">
                     {goldCount}
                   </p>
                   <p className="text-xs font-black">Gold</p>
                 </div>
-                <div className="border-2 border-border bg-(--neo-gray-100) p-2 shadow-sm">
+                <div className="border-2 border-border bg-(--neo-gray-100) p-2 shadow-sm dark:text-black">
                   <Medal className="mx-auto size-4" strokeWidth={2.5} />
                   <p className="font-black text-lg leading-none mt-1">
                     {silverCount}
@@ -366,7 +366,7 @@ export default function ProfilePage() {
           </Card>
 
           <div className="space-y-4 cols-span-1 md:col-span-1">
-            <Card className="border-2 shadow-shadow bg-accent">
+            <Card className="border-2 shadow-shadow bg-accent dark:text-black">
               <CardHeader className="border-b-2 pb-2 border-border">
                 <CardTitle className="text-sm font-black flex items-center gap-1">
                   <Sparkles className="size-4" strokeWidth={2.5} /> QUICK STATS
@@ -387,7 +387,7 @@ export default function ProfilePage() {
                   <span>AI Suggestions</span>
                   <Badge
                     variant="neutral"
-                    className={`font-black border-black ${aiEnabled ? "bg-humble text-black" : "bg-(--neo-gray-100)"}`}
+                    className={`font-black border-black ${aiEnabled ? "bg-humble text-black" : "bg-(--neo-gray-100) dark:text-black"}`}
                   >
                     {aiEnabled ? "ON" : "OFF"}
                   </Badge>
@@ -421,7 +421,7 @@ export default function ProfilePage() {
 
         {/* Edit form */}
         <Card className="border-2 shadow-shadow bg-secondary-background">
-          <CardHeader className="border-b-2 pb-2 border-border bg-white">
+          <CardHeader className="border-b-2 pb-2 border-border">
             <CardTitle className="flex items-center gap-2">
               <Settings className="size-5" strokeWidth={2.5} /> Edit Profile
             </CardTitle>
@@ -452,7 +452,7 @@ export default function ProfilePage() {
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                     placeholder="Purrfect User"
-                    className="bg-white border-2 font-bold"
+                    className="bg-white border-2 font-bold dark:text-black dark:placeholder:text-black/50"
                   />
                 </div>
                 <div className="grid gap-2">
@@ -467,7 +467,7 @@ export default function ProfilePage() {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                     placeholder="Jakarta"
-                    className="bg-white border-2 font-bold"
+                    className="bg-white border-2 font-bold dark:text-black dark:placeholder:text-black/50"
                   />
                 </div>
               </div>
@@ -481,7 +481,7 @@ export default function ProfilePage() {
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
                   placeholder="Asia/Jakarta"
-                  className="bg-white border-2 font-bold"
+                  className="bg-white border-2 font-bold dark:text-black dark:placeholder:text-black/50"
                 />
                 <p className="text-xs font-bold text-foreground/60">
                   Auto-detected:{" "}
@@ -490,7 +490,7 @@ export default function ProfilePage() {
                 </p>
               </div>
 
-              <div className="flex items-center justify-between border-2 border-border bg-white p-3 shadow-sm">
+              <div className="flex items-center justify-between border-2 border-border bg-white p-3 shadow-sm dark:text-black">
                 <div className="flex items-center gap-3">
                   <div className="flex size-8 items-center justify-center border-2 border-border bg-accent">
                     <Sparkles className="size-4 text-black" strokeWidth={2.5} />
@@ -502,7 +502,7 @@ export default function ProfilePage() {
                     >
                       AI-enhanced weekly suggestions
                     </Label>
-                    <p className="text-xs font-bold text-foreground/60">
+                    <p className="text-xs font-bold text-foreground/60 dark:text-black/60">
                       Gemini free-tier, enable for AI suggestions in the weekly
                       report.
                     </p>
@@ -590,7 +590,7 @@ export default function ProfilePage() {
                       style={{ background: bg }}
                     >
                       <div
-                        className={`flex size-10 items-center justify-center border-2 border-border shadow-sm shrink-0 ${isGold ? "bg-black text-accent" : isSilver ? "bg-white" : "bg-white text-info"}`}
+                        className={`flex size-10 items-center justify-center border-2 border-border shadow-sm shrink-0 ${isGold ? "bg-black text-accent" : isSilver ? "bg-white text-black" : "bg-white text-info"}`}
                       >
                         <Icon className="size-5" strokeWidth={2.5} />
                       </div>

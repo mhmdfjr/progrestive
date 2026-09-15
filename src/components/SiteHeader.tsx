@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 export type SiteNavLink = {
@@ -72,6 +73,8 @@ export function SiteHeader({
         </nav>
 
         <div className="flex items-center gap-2">
+          {/* Switch dark/light — selalu terlihat, di kiri CTA */}
+          <ThemeToggle />
           {/* CTA desktop saja — di layar kecil hanya hamburger yang tampil */}
           <div className="hidden items-center gap-2 md:flex">
             {secondaryCta && (

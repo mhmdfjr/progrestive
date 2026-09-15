@@ -278,7 +278,7 @@ export default function ReportPage() {
 
   const renderList = (list: TaskDoc[]) =>
     list.length === 0 ? (
-      <div className="text-center py-6 border-2 border-dashed border-border bg-(--neo-gray-100)">
+      <div className="text-center py-6 border-2 border-dashed border-border bg-(--neo-gray-100) dark:bg-white/10">
         <Inbox className="mx-auto size-6 text-foreground" strokeWidth={2} />
         <p className="text-sm font-black mt-2">Belum ada task</p>
         <p className="text-xs text-foreground/60 mt-1">
@@ -290,7 +290,7 @@ export default function ReportPage() {
         {list.map((t) => (
           <div
             key={t.id}
-            className="flex items-center justify-between border-2 border-border p-2 bg-white text-sm shadow-sm"
+            className="flex items-center justify-between border-2 border-border p-2 bg-secondary-background text-sm shadow-sm dark:text-white"
           >
             <div className="min-w-0">
               <p
@@ -305,7 +305,7 @@ export default function ReportPage() {
             </div>
             <Badge
               variant="neutral"
-              className={`shrink-0 ml-2 font-black border-2 text-xs ${t.status === "completed" ? "bg-black text-white" : t.status === "missed" ? "bg-(--neo-gray-100)" : "bg-white"}`}
+              className={`shrink-0 ml-2 font-black border-2 text-xs ${t.status === "completed" ? "bg-accent text-black" : t.status === "missed" ? "bg-(--neo-gray-100) dark:text-black" : "bg-white dark:text-black"}`}
             >
               {t.status}
             </Badge>
@@ -315,7 +315,7 @@ export default function ReportPage() {
     );
 
   return (
-    <main className="flex-1 mx-auto w-full bg-white">
+    <main className="flex-1 mx-auto w-full bg-secondary-background">
       <div className="space-y-6 mx-auto w-full max-w-6xl p-4 md:p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -381,7 +381,7 @@ export default function ReportPage() {
                 </Popover>
                 <Button
                   variant="neutral"
-                  className="font-bold bg-accent"
+                  className="font-bold bg-accent dark:text-black"
                   onClick={() => setSelectedDate(todayStr())}
                 >
                   Today
@@ -510,9 +510,10 @@ export default function ReportPage() {
                     </CardHeader>
                     <CardContent className="w-full">
                       {dailyBarData.length === 0 ? (
-                        <div className="text-center py-2 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
-                          U don't have data for chart yet. Add Hustle/Humble
-                          tasks and mark them completed to see the chart.
+                        <div className="text-center py-2 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm dark:bg-white/10">
+                          U don&apos;t have data for chart yet. Add
+                          Hustle/Humble tasks and mark them completed to see the
+                          chart.
                         </div>
                       ) : (
                         <ChartContainer
@@ -529,7 +530,11 @@ export default function ReportPage() {
                               tickLine={false}
                               tickMargin={10}
                               // axisLine={false}
-                              // tick={{ fontSize: 11, fontWeight: 700 }}
+                              tick={{
+                                fontSize: 11,
+                                fontWeight: 700,
+                                fill: "var(--foreground)",
+                              }}
                               interval={0}
                               textAnchor="end"
                               height={30}
@@ -539,7 +544,7 @@ export default function ReportPage() {
                               content={
                                 <ChartTooltipContent
                                   hideLabel
-                                  className="bg-white"
+                                  className="bg-white dark:text-black"
                                   formatter={(value, _name, item) => {
                                     const p = (
                                       item as unknown as {
@@ -615,7 +620,7 @@ export default function ReportPage() {
                         Top 8 task for today{" "}
                         <TrendingUp className="size-4" strokeWidth={2.5} />
                       </div>
-                      <div className="text-muted-foreground leading-none font-bold text-xs">
+                      <div className="text-foreground/60 leading-none font-bold text-xs">
                         Score = level × duration • different colors per bar •
                         check tooltip for hustle/humble
                       </div>
@@ -634,7 +639,7 @@ export default function ReportPage() {
                     </CardHeader>
                     <CardContent className="">
                       {pieData.length === 0 ? (
-                        <div className="text-center py-4 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
+                        <div className="text-center py-4 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm dark:bg-white/10">
                           No scores available. Complete Hustle/Humble tasks to
                           see the distribution chart.
                         </div>
@@ -649,7 +654,7 @@ export default function ReportPage() {
                               content={
                                 <ChartTooltipContent
                                   hideLabel
-                                  className="bg-white"
+                                  className="bg-white dark:text-black"
                                 />
                               }
                             />
@@ -712,7 +717,7 @@ export default function ReportPage() {
                         {humbleScore.toFixed(1)}{" "}
                         <TrendingUp className="size-4" strokeWidth={2.5} />
                       </div>
-                      <div className="text-muted-foreground leading-none font-bold text-xs">
+                      <div className="text-foreground/60 leading-none font-bold text-xs">
                         {completedCount} completed • {pendingCount} pending{" "}
                         {missedCount > 0 ? `• ${missedCount} missed` : ""}
                       </div>
@@ -750,7 +755,11 @@ export default function ReportPage() {
                           tickLine={false}
                           axisLine={false}
                           tickMargin={8}
-                          tick={{ fontSize: 12, fontWeight: 700 }}
+                          tick={{
+                            fontSize: 12,
+                            fontWeight: 700,
+                            fill: "var(--foreground)",
+                          }}
                         />
                         <ChartTooltip
                           cursor={false}
@@ -829,11 +838,11 @@ export default function ReportPage() {
                   value={weekIdInput}
                   onChange={(e) => setWeekIdInput(e.target.value)}
                   placeholder="2026-W36"
-                  className="w-36 bg-accent border-2 font-bold shadow-shadow"
+                  className="w-36 bg-accent border-2 font-bold shadow-shadow dark:text-black dark:placeholder:text-black/50"
                 />
                 <Button
                   variant="neutral"
-                  className="bg-accent font-black"
+                  className="bg-accent font-black dark:text-black"
                   onClick={() => void loadWeekly()}
                 >
                   <RefreshCw className="size-3.5 mr-1" strokeWidth={2.5} /> Load
@@ -858,8 +867,8 @@ export default function ReportPage() {
                     </Badge>
                   </CardTitle>
                   <p className="text-xs font-bold text-foreground/60">
-                    U're not in a group leaderboard yet. Please complete your
-                    weekly report to see your rank and badges.
+                    U&apos;re not in a group leaderboard yet. Please complete
+                    your weekly report to see your rank and badges.
                   </p>
                 </CardHeader>
                 <CardContent className="text-center py-2">
@@ -869,7 +878,8 @@ export default function ReportPage() {
                       strokeWidth={2}
                     />
                     <p className="text-sm font-black mt-2">
-                      U don't have report for {weekIdInput} yet. Keep going!
+                      U don&apos;t have report for {weekIdInput} yet. Keep
+                      going!
                     </p>
                     <p className="text-xs font-bold text-foreground/60 mt-1 max-w-xl mx-auto">
                       Weekly report is formed on Monday 00:00 UTC. If this week
@@ -962,7 +972,7 @@ export default function ReportPage() {
                       />
                     </CardContent>
                   </Card>
-                  <Card className="border-2 shadow-shadow bg-white">
+                  <Card className="border-2 shadow-shadow bg-white dark:text-black">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-xs font-black tracking-widest">
                         META
@@ -972,7 +982,7 @@ export default function ReportPage() {
                       <p className="text-sm font-black border-2 border-border bg-accent px-2 py-1 inline-block shadow-sm">
                         {weekly.weekId}
                       </p>
-                      <p className="text-xs font-bold text-foreground/60 mt-2">
+                      <p className="text-xs font-bold text-foreground/60 dark:text-black/60 mt-2">
                         {weekly.startDate} to {weekly.endDate} (Mon-Sun UTC)
                       </p>
                       <div className="mt-3 flex gap-2 text-xs font-black">
@@ -1020,8 +1030,14 @@ export default function ReportPage() {
                           ]}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" tick={{ fontWeight: 700 }} />
-                          <YAxis />
+                          <XAxis
+                            dataKey="name"
+                            tick={{
+                              fontWeight: 700,
+                              fill: "var(--foreground)",
+                            }}
+                          />
+                          <YAxis tick={{ fill: "var(--foreground)" }} />
                           <ChartTooltip content={<ChartTooltipContent />} />
                           <Bar
                             dataKey="hustle"
@@ -1109,8 +1125,14 @@ export default function ReportPage() {
                       >
                         <AreaChart data={weeklyTrendData}>
                           <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="week" tick={{ fontWeight: 700 }} />
-                          <YAxis />
+                          <XAxis
+                            dataKey="week"
+                            tick={{
+                              fontWeight: 700,
+                              fill: "var(--foreground)",
+                            }}
+                          />
+                          <YAxis tick={{ fill: "var(--foreground)" }} />
                           <ChartTooltip content={<ChartTooltipContent />} />
                           <ChartLegend
                             content={<ChartLegendContent payload={undefined} />}
@@ -1137,7 +1159,7 @@ export default function ReportPage() {
                   </Card>
                 )}
 
-                <Card className="border-accent border-2 bg-(--neo-white) shadow-shadow">
+                <Card className="border-accent border-2 bg-(--neo-white) shadow-shadow dark:text-black">
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2 font-black">
                       Weekly Suggestion
@@ -1166,7 +1188,7 @@ export default function ReportPage() {
                       <Button
                         variant="neutral"
                         size="sm"
-                        className="bg-white font-black gap-1.5"
+                        className="bg-white font-black gap-1.5 dark:text-black"
                         disabled={regenLoading || weeklyLoading}
                         onClick={async () => {
                           if (!weekly) return;
@@ -1205,7 +1227,7 @@ export default function ReportPage() {
                             ? "Regenerate AI"
                             : "Generate AI Suggestion"}
                       </Button>
-                      <span className="text-xs font-bold text-foreground/60">
+                      <span className="text-xs font-bold text-foreground/60 dark:text-black/60">
                         Made by Gemini
                       </span>
                     </div>

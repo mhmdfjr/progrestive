@@ -40,7 +40,6 @@ import {
   Award,
   Crown,
   Search,
-  ArrowUpDown,
   Users,
   MapPin,
   BarChart3,
@@ -347,7 +346,8 @@ export default function LeaderboardPage() {
   const rankIcon = (rank: number) => {
     if (rank === 1)
       return <Trophy className="size-4 text-black" strokeWidth={2.5} />;
-    if (rank === 2) return <Medal className="size-4" strokeWidth={2.5} />;
+    if (rank === 2)
+      return <Medal className="size-4 text-black" strokeWidth={2.5} />;
     if (rank === 3)
       return <Award className="size-4 text-white" strokeWidth={2.5} />;
     return <span className="text-xs font-black">#{rank}</span>;
@@ -388,13 +388,13 @@ export default function LeaderboardPage() {
                 </Badge>
               </CardTitle>
               <p className="text-xs font-bold text-foreground/60">
-                U're not in a group leaderboard yet. Please complete your weekly
-                report to see your rank and badges.
+                U&apos;re not in a group leaderboard yet. Please complete your
+                weekly report to see your rank and badges.
               </p>
             </CardHeader>
             <CardContent className="text-center py-2">
               <div className="text-center py-10 border-2 border-dashed border-border">
-                <Inbox className="mx-auto size-8 text-black" strokeWidth={2} />
+                <Inbox className="mx-auto size-8" strokeWidth={2} />
                 <p className="text-sm font-black mt-2">
                   No leaderboard data available for this week.
                 </p>
@@ -432,14 +432,6 @@ export default function LeaderboardPage() {
               <MapPin className="size-3" strokeWidth={2.5} />{" "}
               {group?.locationName || groupId}
             </Badge>
-            {group?.locationLevel === "province" && (
-              <Badge
-                variant="neutral"
-                className="bg-(--neo-gray-100) border-black font-black text-xs"
-              >
-                fallback province
-              </Badge>
-            )}
             {isDemo && (
               <Badge className="bg-black text-white border-black font-black text-xs">
                 DEMO
@@ -448,7 +440,10 @@ export default function LeaderboardPage() {
             <Badge className="bg-info text-white border-black font-black text-xs">
               Week {cycleId}
             </Badge>
-            <Badge variant="neutral" className="bg-white border-2 font-black">
+            <Badge
+              variant="neutral"
+              className="bg-white border-2 font-black dark:text-black"
+            >
               <Users className="size-3 mr-1" strokeWidth={2.5} /> Group{" "}
               {entries.length}
             </Badge>
@@ -456,14 +451,14 @@ export default function LeaderboardPage() {
               variant="neutral"
               className="bg-black text-white border-black font-black"
             >
-              U're #{selfEntry?.rank ?? "-"}
+              U&apos;re #{selfEntry?.rank ?? "-"}
             </Badge>
           </div>
         </div>
 
         {/* Self highlight */}
         {selfEntry && (
-          <Card className="border-2 shadow-shadow bg-accent">
+          <Card className="border-2 shadow-shadow bg-accent dark:text-black">
             <CardContent className="px-4 py-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="w-full flex items-center justify-between">
                 <div className="flex gap-2 items-start">
@@ -515,7 +510,7 @@ export default function LeaderboardPage() {
         {podium.length >= 3 && (
           <div className="grid gap-4 grid-cols-2 md:grid-cols-3">
             {/* 2nd */}
-            <Card className="order-2 col-span-1 md:order-1 border-2 shadow-shadow bg-(--neo-gray-100) flex flex-col items-start px-4 pb-4 pt-0 gap-2 text-center">
+            <Card className="order-2 col-span-1 md:order-1 border-2 shadow-shadow bg-(--neo-gray-100) flex flex-col items-start px-4 pb-4 pt-0 gap-2 text-center dark:text-black">
               <div className="flex gap-2 items-center justify-center">
                 <div className="flex size-10 items-center justify-center border-2 border-border bg-white shadow-sm">
                   <Medal className="size-5" strokeWidth={2.5} />
@@ -527,12 +522,12 @@ export default function LeaderboardPage() {
               <div className="flex items-center gap-3">
                 <Avatar className="size-10 border-2 border-border rounded-none bg-white">
                   <AvatarImage src={podium[1]?.avatarUrl || undefined} />
-                  <AvatarFallback className="rounded-none font-black text-xl bg-white">
+                  <AvatarFallback className="rounded-none font-black text-xl bg-white text-black">
                     {(podium[1]?.displayName || "?").slice(0, 1).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col items-start">
-                  <p className="font-heading text-sm font-black text-lg leading-tight">
+                  <p className="font-heading font-black text-sm leading-tight">
                     {podium[1]?.displayName}
                   </p>
                   <p className="text-xs font-bold">{podium[1]?.city}</p>
@@ -556,7 +551,7 @@ export default function LeaderboardPage() {
             </Card>
 
             {/* 1st */}
-            <Card className="order-1 col-span-2 md:col-span-1 md:order-2 border-2 shadow-shadow bg-accent flex flex-col items-start px-4 pb-4 pt-0 gap-2 text-center scale-[1.02]">
+            <Card className="order-1 col-span-2 md:col-span-1 md:order-2 border-2 shadow-shadow bg-accent flex flex-col items-start px-4 pb-4 pt-0 gap-2 text-center scale-[1.02] dark:text-black">
               <div className="flex gap-2 items-center justify-center">
                 <div className="flex size-12 items-center justify-center border-2 border-border bg-black shadow-sm">
                   <Crown
@@ -571,7 +566,7 @@ export default function LeaderboardPage() {
               <div className="flex items-center gap-3">
                 <Avatar className="size-16 md:size-12 border-2 border-border rounded-none bg-white">
                   <AvatarImage src={podium[0]?.avatarUrl || undefined} />
-                  <AvatarFallback className="rounded-none font-black text-xl bg-white">
+                  <AvatarFallback className="rounded-none font-black text-xl bg-white text-black">
                     {(podium[0]?.displayName || "?").slice(0, 1).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -608,12 +603,12 @@ export default function LeaderboardPage() {
               <div className="flex items-center gap-3">
                 <Avatar className="size-10 border-2 border-border rounded-none bg-white">
                   <AvatarImage src={podium[2]?.avatarUrl || undefined} />
-                  <AvatarFallback className="rounded-none font-black text-xl bg-white">
+                  <AvatarFallback className="rounded-none font-black text-xl bg-white text-black">
                     {(podium[2]?.displayName || "?").slice(0, 1).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col items-start">
-                  <p className="font-heading text-sm font-black text-lg leading-tight">
+                  <p className="font-heading text-sm font-black leading-tight">
                     {podium[2]?.displayName}
                   </p>
                   <p className="text-xs font-bold">{podium[2]?.city}</p>
@@ -645,9 +640,9 @@ export default function LeaderboardPage() {
               Demo Mode - Competitors are Fake
             </AlertTitle>
             <AlertDescription className="font-bold text-xs">
-              U don't have a score for this week yet, the leaderboard is showing
-              10 PurrBot. Start creating tasks today, and next week you'll be
-              included in the real rankings with them!
+              U don&apos;t have a score for this week yet, the leaderboard is
+              showing 10 PurrBot. Start creating tasks today, and next week
+              you&apos;ll be included in the real rankings with them!
             </AlertDescription>
           </Alert>
         )}
@@ -662,7 +657,7 @@ export default function LeaderboardPage() {
 
         {/* Data table controls */}
         <Card className="border-2 shadow-shadow bg-secondary-background">
-          <CardHeader className="flex flex-col pb-2 sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-border bg-white">
+          <CardHeader className="flex flex-col pb-2 sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-border">
             <CardTitle className="flex items-center gap-2 text-base">
               <BarChart3 className="size-4" strokeWidth={2.5} /> Leaderboard
               Table
@@ -676,14 +671,14 @@ export default function LeaderboardPage() {
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <div className="relative flex-1 sm:w-64">
                 <Search
-                  className="absolute left-2 top-1/2 -translate-y-1/2 size-4"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 size-4 text-black dark:text-white"
                   strokeWidth={2.5}
                 />
                 <Input
                   placeholder="Find name or city..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-8 bg-white border-2 font-bold"
+                  className="pl-8 border-2 font-bold text-black dark:text-white"
                 />
               </div>
               <Select
@@ -706,7 +701,7 @@ export default function LeaderboardPage() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-(--neo-gray-100) border-b-2">
+                  <TableRow className="bg-(--neo-gray-100) dark:bg-(--neo-gray-100)/30 border-b-2">
                     <TableHead className="w-20 font-black">
                       <span className="flex items-center gap-1">
                         <Trophy className="size-3" strokeWidth={2.5} /> Rank
@@ -738,22 +733,19 @@ export default function LeaderboardPage() {
                   ) : (
                     paginated.map((e) => {
                       const isSelf = e.userId === user?.uid;
-                      const isTop3 = e.rank <= 3;
                       return (
                         <TableRow
                           key={e.userId}
                           className={
                             isSelf
-                              ? "bg-accent font-black border-l-4 border-l-black"
-                              : isTop3
-                                ? "bg-white"
-                                : "bg-white"
+                              ? "bg-accent font-black border-l-4 border-l-black dark:text-black"
+                              : "bg-secondary-background dark:text-white"
                           }
                         >
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <div
-                                className={`flex size-7 items-center justify-center border-2 border-border shadow-sm ${e.rank === 1 ? "bg-accent" : e.rank === 2 ? "bg-(--neo-gray-100)" : e.rank === 3 ? "bg-info text-white" : "bg-white"}`}
+                                className={`flex size-7 items-center text-black justify-center border-2 border-border shadow-sm ${e.rank === 1 ? "bg-accent" : e.rank === 2 ? "bg-(--neo-gray-100) text-black" : e.rank === 3 ? "bg-info text-white" : "bg-white"}`}
                               >
                                 {rankIcon(e.rank)}
                               </div>
@@ -773,7 +765,7 @@ export default function LeaderboardPage() {
                                 <p className="font-heading font-black text-sm leading-none truncate max-w-35">
                                   {e.displayName}
                                 </p>
-                                <p className="text-xs font-bold text-foreground/60 flex items-center gap-1">
+                                <p className="text-xs font-bold text-foreground-50 flex items-center gap-1">
                                   <MapPin
                                     className="size-3"
                                     strokeWidth={2.5}
@@ -792,9 +784,9 @@ export default function LeaderboardPage() {
                             {e.weeklyRawScore.toFixed(1)}
                           </TableCell>
                           <TableCell className="text-right hidden sm:table-cell">
-                            <span className="inline-flex items-center gap-1 border-2 border-border bg-white px-2 py-1 text-xs font-black">
+                            <span className="inline-flex items-center gap-1 border-2 border-border bg-white dark:text-black px-2 py-1 text-xs font-black">
                               {e.balanceIndex.toFixed(0)}{" "}
-                              <span className="text-foreground/50">
+                              <span className="text-foreground/50 dark:text-black/50">
                                 • {e.balanceWeight.toFixed(2)}x
                               </span>
                             </span>
@@ -804,7 +796,7 @@ export default function LeaderboardPage() {
                           </TableCell>
                           <TableCell className="text-right">
                             <span
-                              className={`inline-block border-2 border-border px-2 py-1 font-black shadow-sm ${e.rank === 1 ? "bg-accent text-black" : e.rank === 2 ? "bg-(--neo-gray-100)" : e.rank === 3 ? "bg-info text-white" : "bg-black text-white"}`}
+                              className={`inline-block border-2 border-border px-2 py-1 font-black shadow-sm ${e.rank === 1 ? "bg-accent text-black" : e.rank === 2 ? "bg-(--neo-gray-100) text-black" : e.rank === 3 ? "bg-info text-white" : "bg-black text-white"}`}
                             >
                               {e.leaderboardScore.toFixed(1)}
                             </span>
@@ -827,7 +819,7 @@ export default function LeaderboardPage() {
                 <Button
                   variant="neutral"
                   size="sm"
-                  className="bg-white font-black gap-1"
+                  className="bg-white font-black gap-1 dark:text-black"
                   disabled={page === 0}
                   onClick={() => setPage((p) => Math.max(0, p - 1))}
                 >
@@ -836,7 +828,7 @@ export default function LeaderboardPage() {
                 <Button
                   variant="neutral"
                   size="sm"
-                  className="bg-white font-black gap-1"
+                  className="bg-white font-black gap-1 dark:text-black"
                   disabled={page + 1 >= totalPages}
                   onClick={() =>
                     setPage((p) => Math.min(totalPages - 1, p + 1))

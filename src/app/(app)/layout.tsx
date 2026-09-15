@@ -52,8 +52,8 @@ export default async function AppLayout({
             >
               Profile
             </Link>
-            <UserMenu />
           </nav>
+          <UserMenu />
         </div>
       </header>
 

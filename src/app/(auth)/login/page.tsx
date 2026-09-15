@@ -143,7 +143,7 @@ export default function LoginPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-xs font-bold">
-              <div className="flex justify-between border-2 border-border bg-white p-2">
+              <div className="flex justify-between border-2 border-border bg-white p-2 dark:text-black">
                 Deep work - 2h{" "}
                 <span className="flex items-center gap-1">
                   <Check className="size-3" strokeWidth={2.5} /> DONE
@@ -162,7 +162,7 @@ export default function LoginPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-xs font-bold">
-              <div className="flex justify-between border-2 border-border bg-white p-2">
+              <div className="flex justify-between border-2 border-border bg-white p-2 dark:text-black">
                 Chill walk - 1h <span>LV 2 ••○○○</span>
               </div>
               <div className="h-2 border-2 border-border bg-white">
@@ -174,7 +174,7 @@ export default function LoginPage() {
         </div>
 
         <div className="flex gap-2 text-xs font-black">
-          <span className="border-2 border-border bg-white px-2 py-1 shadow-shadow flex items-center gap-1">
+          <span className="border-2 border-border bg-white px-2 py-1 shadow-shadow flex items-center gap-1 dark:text-black">
             <BarChart3 className="size-3" strokeWidth={2.5} /> Balance 83
           </span>
           <span className="border-2 border-border bg-black text-white px-2 py-1 shadow-shadow flex items-center gap-1">
@@ -217,7 +217,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-white"
+                className="bg-white dark:text-black dark:placeholder:text-black/50"
               />
             </div>
 
@@ -238,7 +238,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="bg-white"
+                className="bg-white dark:text-black dark:placeholder:text-black/50"
               />
             </div>
 
@@ -260,7 +260,7 @@ export default function LoginPage() {
             <Button
               type="button"
               variant="neutral"
-              className="w-full bg-white font-bold"
+              className="w-full bg-white font-bold dark:text-black"
               onClick={handleGoogle}
               disabled={loading}
             >
@@ -288,10 +288,10 @@ export default function LoginPage() {
 
           <div className="px-6">
             <div className="pt-4 text-center text-sm">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link
                 href="/register"
-                className="font-black underline underline-offset-4 decoration-2"
+                className="font-black hover:underline underline-offset-4 decoration-2"
               >
                 Register here
               </Link>
