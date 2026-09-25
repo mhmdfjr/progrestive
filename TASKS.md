@@ -384,3 +384,46 @@ _(kosong — isi di sini kalau ada keputusan yang belum ada di dokumen manapun d
 - Production split only alias, not actual Firebase project creation (requires user to run `firebase projects:create purrpose-prod` + `firebase use prod`), documented as next step.
 - Menubar `inset` warning is from shadcn template not used — ignored, not our code.
 - All milestones M0-M8 now marked done; app is production-ready pending `FIREBASE_SERVICE_ACCOUNT` + `GEMINI_API_KEY` + `IP2LOCATION_API_KEY` secrets set in Vercel & GCP and final `firebase deploy`.
+
+---
+
+## M9 — SEO + Custom Domain (S)
+
+**Goal**: `purrpose.mhmdfjr.com` live dengan fondasi SEO benar. Bahasa situs = Inggris (`lang="en"` dipertahankan, copy `"ur"` dipertahankan sebagai brand voice). Depends M8. Tidak menyentuh scoring/schema/formula.
+
+### 1. Metadata root + canonical + social (P1) — DONE 2026-09-24
+- [x] `src/app/layout.tsx`: `metadataBase https://purrpose.mhmdfjr.com`, title `{ default, template }`, description EN, keywords, authors/creator, `alternates.canonical "/"`, `openGraph` + `twitter` (image `/og-cover.png` 1200×630 — file menyusul di P6), `robots index/follow`, export `viewport` (`themeColor #FFDC58`), JSON-LD `WebSite` + `Organization` — diverifikasi via `next start` + `curl` (meta/OG/canonical/JSON-LD hadir)
+
+### 2. Crawl control (P2) — DONE 2026-09-24
+- [x] `src/app/robots.ts` (baru): allow `/`, disallow `/home /report /leaderboard /profile /login /register /api/`, sitemap absolut custom domain
+- [x] `src/app/sitemap.ts` (baru): hanya `/` (weekly, priority 1); rute ber-auth sengaja dikecualikan — diverifikasi `/robots.txt` + `/sitemap.xml` serve benar, muncul di route list build (23 routes)
+
+### 3. Noindex + judul tab (P3) — DONE 2026-09-24
+- [x] `src/app/(app)/layout.tsx` + `src/app/(auth)/layout.tsx`: `metadata robots { index: false, follow: false }` (semua page client-component, jadi Metadata API hanya bisa di level group layout)
+- [x] `document.title` via `useEffect` per halaman: Today / Weekly report / Leaderboard / Profile / Log in / Create account — UX-only (halaman noindex)
+
+### 4. Gambar & semantic (P4) — DONE 2026-09-24
+- [x] 3 `picsum.photos` di `src/app/page.tsx` → aset lokal `public/images/hustle-checklist.svg`, `balance-report.svg`, `leaderboard-badge.svg` (600×400, neobrutalist: hustle `#ff0052`, humble `#00c68d`, accent `#ffd400`)
+- [x] `src/components/ui/image-card.tsx`: prop `alt` deskriptif + `next/image` width/height + `loading="lazy"` (warning `no-img-element` hilang)
+- [x] OG cover neobrutalism kuning-hitam via `src/app/opengraph-image.tsx` (`ImageResponse` edge runtime, 1200×630 PNG) — metadata P1 disesuaikan: hapus URL `/og-cover.png` statis, pakai file-convention (auto `og:image` + `twitter:image` + dimensi). Diverifikasi: `200 image/png 28KB`, tag hadir di `<head>`
+
+### 5. Sapuan copy ID → EN (P5) — DONE 2026-09-24 (brand voice `"ur"` dipertahankan)
+- [x] `SiteHeader.tsx`: `"Pelajari"` → `"Learn more"`, aria-label hamburger → EN
+- [x] `(app)/home`: confirm/toast delete/complete → EN, fallback displayName `"Pejuang"` → `"Achiever"`, date locale `id` → `enUS`
+- [x] `(app)/report`: empty state → EN, date locale `id` → `enUS`
+- [x] `(app)/profile`: toast update/logout → EN, `"Minggu/Grup"` → `"Week/Group"`
+- [x] `src/lib/server/reportSuggestion.ts`: seluruh suggestion rule-based → EN (dengan voice `ur/u`)
+- [x] `src/app/api/admin/seed/route.ts`: judul seed task → EN (konsisten kalau seed dipakai demo)
+
+### 6. Go-live domain (P6) — DONE (kode) + manual tersisa
+- [x] `src/app/icon.svg` (neobrutalist P + aksen hustle/humble) → serve `/icon.svg`, direferensikan di metadata `icons`
+- [x] `public/manifest.webmanifest` (name/short_name/theme `#ffd400`, icon SVG) → direferensikan `manifest:` di metadata, serve 200
+- [ ] MANUAL SETELAH DEPLOY: submit `sitemap.xml` ke Search Console + minta indexing `/`; cek "Duplicate without user-selected canonical" hilang (custom vs `*.vercel.app`)
+
+**Verification P1–P3**: `npm run build` ✓ 23 routes; `type-check`/`lint` hanya error/warning pre-existing (`chart.tsx` recharts, `LayoutProps`, menubar `inset` — semua ada di HEAD, file tersentuh P1–P3 bersih).
+
+**Verification P4–P6**: `npm run build` ✓ 25 routes (+`/opengraph-image`, +`/icon.svg`); `curl` via `next start`: `og:image`/`twitter:image` → `/opengraph-image?...` 1200×630 `200 image/png 28KB`, `/icon.svg` 200, `/manifest.webmanifest` 200, 3 `<img>` landing ber-alt deskriptif + `600×400` + `lazy`; `type-check`/`lint` hanya pre-existing (`TaskCard` `no-unescaped-entities` juga ada di HEAD — file tidak tersentuh).
+
+## Notes / Deviations M9
+- Per-page title tidak bisa pakai `export const metadata` karena keenam page adalah `"use client"` — dipakai `document.title` effect + group-level noindex. Kalau suatu page kelak jadi server component, pindahkan ke Metadata API.
+- OG image URL dideklarasikan di metadata sebelum file ada (P6) — scraper hanya tidak menampilkan gambar sampai file live, tidak merusak validasi tag.

@@ -74,6 +74,9 @@ type GroupDoc = {
 const PAGE_SIZE = 10;
 
 export default function LeaderboardPage() {
+  React.useEffect(() => {
+    document.title = "Leaderboard - Purrpose";
+  }, []);
   const { user } = useAuth();
   const [cycleId, setCycleId] = React.useState<string | null>(null);
   const [groupId, setGroupId] = React.useState<string | null>(null);
@@ -144,7 +147,7 @@ export default function LeaderboardPage() {
       }
 
       if (!cId || !gId) {
-        // Fallback: show demo leaderboard (fake users) so new user sees full experience immediately
+        // Fallback: show demo leaderboard
         try {
           const cyclesCol = collection(db, "leaderboardCycles");
           const cyclesSnap = await getDocs(cyclesCol);
@@ -161,7 +164,7 @@ export default function LeaderboardPage() {
               );
               const groupsSnap = await getDocs(groupsCol);
               if (groupsSnap.empty) continue;
-              // Prefer group with most members (fake group Jakarta has 10)
+              // Prefer group with most members
               const groupDocs = groupsSnap.docs.sort(
                 (a, b) =>
                   (b.data() as { memberCount: number }).memberCount -
@@ -206,7 +209,6 @@ export default function LeaderboardPage() {
                 }
               }
               demoList.sort((a, b) => a.rank - b.rank);
-              // Add placeholder for current user at bottom if not already in list
               if (!demoList.some((e) => e.userId === user.uid)) {
                 const profSnap = await getDoc(doc(db, "users", user.uid));
                 const prof = profSnap.exists()

@@ -56,8 +56,8 @@ function randomTasksForWeek(startDate: string, endDate: string) {
     days.push(d.toISOString().slice(0, 10));
   }
   const tasks: Array<{ category: "hustle" | "humble"; title: string; level: number; durationHours: number; date: string; status: "completed" | "missed"; score: number | null }> = [];
-  const hustleTitles = ["Deep work", "Belajar Next.js", "Ngulik API", "Review PR", "Planning sprint"];
-  const humbleTitles = ["Jalan santai", "Journaling", "Tidur 8 jam", "Meditasi", "Ngopi slow"];
+  const hustleTitles = ["Deep work", "Learn Next.js", "Tinker with API", "Review PR", "Sprint planning"];
+  const humbleTitles = ["Easy walk", "Journaling", "Sleep 8 hours", "Meditation", "Slow coffee"];
   for (const day of days) {
     const perDay = randInt(1, 3);
     for (let i = 0; i < perDay; i++) {

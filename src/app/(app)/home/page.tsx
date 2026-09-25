@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { format, parseISO } from "date-fns";
-import { id as localeId } from "date-fns/locale";
+import { enUS as localeEn } from "date-fns/locale";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -53,11 +53,13 @@ function todayStr() {
 }
 
 function parseDateStr(s: string): Date {
-  // s is YYYY-MM-DD, parse as local noon to avoid TZ shift
   return parseISO(s + "T12:00:00");
 }
 
 export default function HomePage() {
+  React.useEffect(() => {
+    document.title = "Today - Purrpose";
+  }, []);
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = React.useState(todayStr());
   const { tasks, loading, error } = useTasks(selectedDate);
@@ -96,14 +98,14 @@ export default function HomePage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Hapus task ini?")) return;
+    if (!confirm("Delete this task?")) return;
     try {
       const del = getDeleteTaskCallable();
       await del({ taskId: id });
-      toast.success("Task dihapus", { description: "Task berhasil dihapus." });
+      toast.success("Task deleted", { description: "Task deleted successfully." });
     } catch (e: unknown) {
       const msg = (e as { message?: string }).message || "Delete failed";
-      toast.error("Gagal hapus", { description: msg });
+      toast.error("Delete failed", { description: msg });
     }
   };
 
@@ -112,12 +114,12 @@ export default function HomePage() {
     try {
       const complete = getCompleteTaskCallable();
       await complete({ taskId: id });
-      toast.success("Mantap! +poin", {
-        description: "Task ditandai selesai, skor masuk!",
+      toast.success("Nice! +points", {
+        description: "Task marked done, score is in!",
       });
     } catch (e: unknown) {
       const msg = (e as { message?: string }).message || "Complete failed";
-      toast.error("Gagal", { description: msg });
+      toast.error("Failed", { description: msg });
     } finally {
       setCompletingId(null);
     }
@@ -128,7 +130,7 @@ export default function HomePage() {
     [selectedDate],
   );
   const displayName =
-    user?.displayName || user?.email?.split("@")[0] || "Pejuang";
+    user?.displayName || user?.email?.split("@")[0] || "Achiever";
   const avatarLetter = displayName.slice(0, 1).toUpperCase();
 
   return (
@@ -149,7 +151,7 @@ export default function HomePage() {
                 </h1>
                 <p className="text-xs text-foreground/60 font-bold">
                   {format(selectedDateObj, "EEEE, d MMMM yyyy", {
-                    locale: localeId,
+                    locale: localeEn,
                   })}
                 </p>
               </div>
@@ -177,7 +179,6 @@ export default function HomePage() {
                       if (d) {
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         const iso = d.toISOString().slice(0, 10);
-                        // keep local date handling: convert via todayStr logic? use iso directly but adjust for TZ
                         const localIso = new Date(
                           d.getTime() - d.getTimezoneOffset() * 60000,
                         )

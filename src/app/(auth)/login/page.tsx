@@ -32,6 +32,9 @@ import {
 } from "lucide-react";
 
 export default function LoginPage() {
+  React.useEffect(() => {
+    document.title = "Log in — Purrpose";
+  }, []);
   const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -112,7 +115,6 @@ export default function LoginPage() {
 
   return (
     <div className="w-full max-w-6xl grid gap-6 md:grid-cols-[1.05fr_0.95fr] items-center">
-      {/* left: branding + neobrutalism collage */}
       <div className="hidden md:flex flex-col gap-6 pr-4">
         <Badge className="w-fit bg-accent text-black border-border font-black">
           <Sparkles className="mr-1 size-3" /> WELCOME BACK, BALANCE FIRST

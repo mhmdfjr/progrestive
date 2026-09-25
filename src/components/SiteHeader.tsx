@@ -35,7 +35,7 @@ export function SiteHeader({
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
 
-  // Tutup menu mobile setiap kali route / hash berubah
+  // Close the mobile menu whenever the route / hash changes
   React.useEffect(() => {
     setOpen(false);
   }, [pathname]);
@@ -100,7 +100,7 @@ export function SiteHeader({
             variant="neutral"
             size="icon"
             className="size-9 bg-accent md:hidden"
-            aria-label={open ? "Tutup menu navigasi" : "Buka menu navigasi"}
+            aria-label={open ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={open}
             aria-controls="site-mobile-menu"
             onClick={() => setOpen((v) => !v)}
@@ -183,7 +183,7 @@ export function LandingHeader() {
         { href: "#about", label: "About" },
         { href: "#how", label: "How it works" },
       ]}
-      secondaryCta={{ href: "#about", label: "Pelajari" }}
+      secondaryCta={{ href: "#about", label: "Learn more" }}
       primaryCta={{ href: "/login", label: "Login" }}
     />
   );

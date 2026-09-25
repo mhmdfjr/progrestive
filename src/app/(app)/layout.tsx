@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { UserMenu } from "@/components/UserMenu";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function AppLayout({
   children,
@@ -13,7 +18,6 @@ export default async function AppLayout({
     !!process.env.GOOGLE_APPLICATION_CREDENTIALS;
   const user = await getCurrentUser();
   if (!user) {
-    // Local dev without Admin credential: skip SSR redirect, let client AuthContext handle (avoids loop when sessionSkipped)
     if (process.env.NODE_ENV !== "production" && !hasAdminCred) {
       console.warn(
         "[AppLayout] skipping SSR redirect — no Admin credential for local dev (sessionSkipped)",

@@ -76,6 +76,9 @@ type BadgeDoc = {
 };
 
 export default function ProfilePage() {
+  React.useEffect(() => {
+    document.title = "Profile - Purrpose";
+  }, []);
   const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<ProfileDoc | null>(null);
   const [loading, setLoading] = useState(true);
@@ -168,8 +171,8 @@ export default function ProfilePage() {
         timezone: timezone.trim() || undefined,
         aiReportEnabled: aiEnabled,
       });
-      toast.success("Profile diperbarui!", {
-        description: "Perubahan tersimpan.",
+      toast.success("Profile updated!", {
+        description: "Changes saved.",
       });
       await load();
     } catch (e: unknown) {
@@ -177,7 +180,7 @@ export default function ProfilePage() {
       const anyErr = e as { message?: string };
       const final = anyErr.message || msg;
       setError(final);
-      toast.error("Gagal simpan", { description: final });
+      toast.error("Save failed", { description: final });
     } finally {
       setSaving(false);
     }
@@ -191,11 +194,11 @@ export default function ProfilePage() {
     try {
       await signOut();
 
-      toast.success("Logout berhasil");
+      toast.success("Logged out");
       router.replace("/login");
     } catch (error) {
       console.error("Logout failed:", error);
-      toast.error("Gagal melakukan logout");
+      toast.error("Logout failed");
       setIsLoggingOut(false);
     }
   };
@@ -603,7 +606,7 @@ export default function ProfilePage() {
                         <p
                           className={`text-xs font-bold ${b.tier === "bronze" ? "text-white/80" : "text-black/70"}`}
                         >
-                          Minggu {b.cycleId} • Grup {b.groupId.slice(0, 6)}
+                          Week {b.cycleId} • Group {b.groupId.slice(0, 6)}
                         </p>
                         {dateStr && (
                           <p

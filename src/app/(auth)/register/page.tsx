@@ -34,6 +34,9 @@ import {
 } from "lucide-react";
 
 export default function RegisterPage() {
+  React.useEffect(() => {
+    document.title = "Create account — Purrpose";
+  }, []);
   const router = useRouter();
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");

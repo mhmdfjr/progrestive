@@ -284,17 +284,20 @@ function About() {
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <ImageCard
-            imageUrl="https://picsum.photos/seed/purr1/600/400"
+            imageUrl="/images/hustle-checklist.svg"
+            alt="Hustle daily checklist with completed tasks and progress bar"
             caption="Daily checklist, 2 stacks of ur Hustle/Humble."
             className="w-full rotate-[0.4deg]"
           />
           <ImageCard
-            imageUrl="https://picsum.photos/seed/purr2/600/400"
+            imageUrl="/images/balance-report.svg"
+            alt="Weekly balance gauge showing hustle versus humble score"
             caption="Weekly gauge balance + rule-based / AI enhanced advice."
             className="w-full rotate-[-0.6deg]"
           />
           <ImageCard
-            imageUrl="https://picsum.photos/seed/purr3/600/400"
+            imageUrl="/images/leaderboard-badge.svg"
+            alt="City leaderboard podium with gold badge for the top rank"
             caption="Leaderboard : ur city rank, badge Gold/Silver/Bronze."
             className="w-full rotate-[0.3deg]"
           />

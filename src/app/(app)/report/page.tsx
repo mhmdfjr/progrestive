@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { format, parseISO } from "date-fns";
-import { id as localeId } from "date-fns/locale";
+import { enUS as localeEn } from "date-fns/locale";
 import {
   Card,
   CardHeader,
@@ -127,6 +127,9 @@ function parseDateStr(s: string): Date {
 }
 
 export default function ReportPage() {
+  React.useEffect(() => {
+    document.title = "Weekly report - Purrpose";
+  }, []);
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = React.useState(todayStr());
   const [tasks, setTasks] = React.useState<TaskDoc[]>([]);
@@ -217,7 +220,7 @@ export default function ReportPage() {
     [selectedDate],
   );
 
-  // Chart data: daily tasks bar (per task) - 1 bar per task, distinct fill, tooltip shows hustle/humble
+  // Chart data: daily tasks bar
   const BAR_PALETTE = [
     "#FF0052",
     "#00C68D",
@@ -238,7 +241,6 @@ export default function ReportPage() {
   const dailyBarConfig = {
     score: { label: "Skor" },
   } satisfies Record<string, { label: string; color?: string }>;
-  // keep legacy palette for optional per-bar distinct colors
   void BAR_PALETTE;
 
   const levelData = [1, 2, 3, 4, 5].map((lvl) => ({
@@ -280,9 +282,9 @@ export default function ReportPage() {
     list.length === 0 ? (
       <div className="text-center py-6 border-2 border-dashed border-border bg-(--neo-gray-100) dark:bg-white/10">
         <Inbox className="mx-auto size-6 text-foreground" strokeWidth={2} />
-        <p className="text-sm font-black mt-2">Belum ada task</p>
+        <p className="text-sm font-black mt-2">No tasks yet</p>
         <p className="text-xs text-foreground/60 mt-1">
-          Tambahkan task Hustle atau Humble, mulai kecil tidak apa-apa.
+          Add a Hustle or Humble task — starting small is fine.
         </p>
       </div>
     ) : (
@@ -354,7 +356,7 @@ export default function ReportPage() {
                     <Button className="font-bold bg-accent gap-2">
                       <CalendarIcon className="size-4" strokeWidth={2.5} />{" "}
                       {format(selectedDateObj, "d MMM yyyy", {
-                        locale: localeId,
+                        locale: localeEn,
                       })}
                     </Button>
                   </PopoverTrigger>
