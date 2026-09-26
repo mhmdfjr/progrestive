@@ -1,36 +1,36 @@
-# Purrpose
+# 🐾 Purrpose
 
 > Track your hustle. Honor your humble. Balance is the ultimate productivity hack.
 
 **Try it live:** [purrpose.mhmdfjr.com](https://purrpose.mhmdfjr.com)
 
 Purrpose is a gamified productivity web app. It splits your daily tasks into two
-categories — **Hustle** (work, study, build) and **Humble** (rest, reflection,
-recharge) — and rewards you for keeping them in **balance**, not for grinding
+categories - **Hustle** (work, study, build) and **Humble** (rest, reflection,
+recharge) - and rewards you for keeping them in **balance**, not for grinding
 yourself into the ground. Unfinished tasks are never punished; they simply roll
 over with a friendly nudge.
 
 ---
 
-## Screenshots
+## 📸 Screenshots
 
-### Home — your daily Hustle & Humble boards
+### 🏠 Home: your daily Hustle & Humble boards
 
 ![Purrpose Home page showing daily Hustle and Humble task boards](public/images/screenshot-home.webp)
 
-### Report — scores, charts & weekly balance
+### 📊 Report: scores, charts & weekly balance
 
 ![Purrpose Report page with score cards, charts and task breakdown](public/images/screenshot-report.webp)
 
-### Leaderboard — city ranks & badges
+### 🏆 Leaderboard: city ranks & badges
 
 ![Purrpose Leaderboard page with city ranking table and Gold Silver Bronze podium](public/images/screenshot-leaderboard.webp)
 
 ---
 
-## For Users
+## 🙌 For Users
 
-### How it works — 3 steps
+### 🚀 How it works: 3 steps
 
 1. **Add a task, mark it done.** Pick a category (Hustle/Humble), a level
    1–5, and a duration. Done = score of `level × duration` added instantly.
@@ -40,36 +40,36 @@ over with a friendly nudge.
 3. **Climb the leaderboard.** Weekly city-based groups (~15 people). Top 3 earn
    collectible **Gold / Silver / Bronze** badges.
 
-### Key features
+### ✨ Key features
 
-- **Task management** — create, edit, complete, and delete daily tasks with
+- **Task management** - create, edit, complete, and delete daily tasks with
   level (1–5) and duration tracking
-- **Fair scoring** — points from intensity × duration, with anti-grind daily
+- **Fair scoring** - points from intensity × duration, with anti-grind daily
   caps (16h per task, 24h per day)
-- **Daily & weekly reports** — charts for task distribution, score breakdown,
+- **Daily & weekly reports** - charts for task distribution, score breakdown,
   and balance metrics
-- **AI suggestions** — personalized weekly tips, clearly labeled as reference
+- **AI suggestions** - personalized weekly tips, clearly labeled as reference
   (not medical advice)
-- **City leaderboards** — weighted scoring that factors in balance and
+- **City leaderboards** - weighted scoring that factors in balance and
   completion rate, not just raw points
-- **Dark mode, PWA-ready** — installable, works offline-first UI with theme
+- **Dark mode, PWA-ready** - installable, works offline-first UI with theme
   toggle
 
-### FAQ
+### ❓ FAQ
 
 - **Am I punished for unfinished tasks?** No. They are marked "have no time"
-  and excluded from scoring — Purrpose measures what you did, not what you
+  and excluded from scoring - Purrpose measures what you did, not what you
   didn't.
 - **Is my data private?** Your tasks are visible only to you. Leaderboards show
   only your display name, city, and score.
 - **Does it cost anything?** The app is free and
-  [open source (MIT)](LICENSE) — you can even self-host it (see below).
+  [open source (MIT)](LICENSE) - you can even self-host it (see below).
 
 ---
 
-## For Developers
+## 🛠️ For Developers
 
-### Tech stack
+### 🧱 Tech stack
 
 | Layer        | Technology                                        |
 | ------------ | ------------------------------------------------- |
@@ -80,30 +80,29 @@ over with a friendly nudge.
 | **Testing**  | Vitest, Firebase Rules Unit Testing               |
 | **Deploy**   | Vercel (frontend) + Firebase (backend)            |
 
-### Prerequisites
+## 🏁 Getting Started
+
+### 📋 Prerequisites
 
 - Node.js 20+
 - A Firebase project (enable Authentication, Firestore, Cloud Functions)
-- API keys: [ip2location.io](https://www.ip2location.io/) (free),
-  [Google Gemini](https://ai.google.dev/) (free tier)
+- API keys: [ip2location.io](https://www.ip2location.io/) (free), [Google Gemini](https://ai.google.dev/) (free tier)
 
-### Quick start
+### 📦 Installation
 
 ```bash
 git clone https://github.com/mhmdfjr/purrpose.git
 cd purrpose
 npm install
-cp .env.example .env.local   # then fill in the values below
-npm run dev                  # open http://localhost:3000
 ```
 
-Run with Firebase emulators (Auth, Firestore, Functions) instead of cloud:
+### 🔑 Environment Variables
+
+Copy `.env.example` to `.env.local` and fill in the values:
 
 ```bash
-npm run emulators:build
+cp .env.example .env.local
 ```
-
-### Environment variables
 
 | Variable                                   | Description                                 |
 | ------------------------------------------ | ------------------------------------------- |
@@ -120,66 +119,42 @@ npm run emulators:build
 
 See `.env.example` for the full list including optional App Check and emulator variables.
 
-### Scripts
+### 💻 Development
 
-| Command                  | What it does                                     |
-| ------------------------ | ------------------------------------------------ |
-| `npm run dev`            | Start the Next.js dev server                     |
-| `npm run build` / `start`| Production build / serve it                      |
-| `npm run lint`           | Run ESLint                                       |
-| `npm run type-check`     | Run `tsc --noEmit`                               |
-| `npm test`               | Run all Vitest suites                            |
-| `npm run test:unit`      | Unit tests only (excludes Firestore rules tests) |
-| `npm run test:rules`     | Firestore security rules tests only              |
-| `npm run emulators`      | Start Firebase emulators                         |
-| `npm run emulators:build`| Build functions, then start emulators            |
+Start the Next.js dev server:
 
-### Project structure
-
-```text
-src/app/          Next.js App Router — (auth), (app), public landing
-functions/        Cloud Functions — scoring, caps, weekly cycles, badges
-shared/           Types & constants shared by web + functions
-tests/            Vitest suites, incl. Firestore rules tests
-public/images/    Static assets & README screenshots
-PRD.md, ARCHITECTURE.md, DATABASE.md, API.md, DESIGN.md, ROADMAP.md, TASKS.md
+```bash
+npm run dev
 ```
 
-> **Architecture rule:** never write task score/status fields directly from the
-> client — all score mutations must go through callable functions (see
-> [API.md](API.md)). Don't change scoring formulas or Firestore schema without
-> updating the docs in the same commit.
+To run with Firebase emulators (Auth, Firestore, Functions):
 
-### Deployment
+```bash
+npm run emulators:build
+```
 
-- **Frontend (Vercel):** push to `main` for auto-deploys. Cron jobs for task
-  cutover and weekly cycles are configured in `vercel.json`.
-- **Backend (Firebase):**
+Open [http://localhost:3000](http://localhost:3000).
+
+## 🧪 Testing
+
+```bash
+npm test              # Run all tests
+npm run test:unit     # Unit tests only
+npm run test:rules    # Firestore security rules tests
+```
+
+## 🚢 Deployment
+
+### 🌐 Frontend (Vercel)
+
+Push to `main` for Vercel auto-deploys. Cron jobs for task cutover and weekly cycles are configured in `vercel.json`.
+
+### 🔥 Backend (Firebase)
 
 ```bash
 firebase deploy --only functions,firestore:rules,firestore:indexes
 ```
 
-### Documentation
+## 📄 License
 
-| Document                           | Description                            |
-| ---------------------------------- | -------------------------------------- |
-| [PRD.md](PRD.md)                   | Product Requirements Document          |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture & design decisions |
-| [DATABASE.md](DATABASE.md)         | Firestore schema & indexes             |
-| [API.md](API.md)                   | API contracts                          |
-| [DESIGN.md](DESIGN.md)             | UI/UX design system                    |
-| [ROADMAP.md](ROADMAP.md)           | Milestone roadmap                      |
-| [TASKS.md](TASKS.md)               | Task tracking                          |
-
-### Contributing
-
-1. Fork the repo and create a branch (`feat/...` or `fix/...`).
-2. Follow the docs above — especially the architecture rule on scoring.
-3. Run `npm run type-check`, `npm run lint`, and `npm test` before pushing.
-4. Open a pull request against `main` with a clear description and screenshots
-   for UI changes.
-
-### License
-
-[MIT](LICENSE) — free for personal and commercial use.
+[MIT](LICENSE)
