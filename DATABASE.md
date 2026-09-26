@@ -2,10 +2,22 @@
 
 ## 1. Design Principles
 
-- **Subcollection per user** untuk data yang scope-nya 1:1 ke satu user (task, weekly report, badge). Ini idiomatic Firestore pattern untuk owner-scoped data: security rules jadi sederhana (`request.auth.uid == userId` di path), dan tidak perlu composite index untuk filter `userId` karena sudah implisit dari path.
-- **Top-level collection** hanya untuk data yang secara natural cross-user (leaderboard cycle, karena satu grup berisi 14 user berbeda).
-- **`date` disimpan sebagai string ISO (`YYYY-MM-DD`)**, bukan Firestore `Timestamp`. Alasan: task terikat ke kalender tanggal di timezone user, bukan titik waktu presisi detik. Kalau pakai `Timestamp`, setiap query by "tanggal ini" perlu range query dengan konversi timezone yang rawan bug (bisa salah hari kalau timezone tidak dihandle konsisten). String `YYYY-MM-DD` membuat equality query dan range query jadi straightforward dan timezone-safe di level data.
-- **Field turunan (`utcResetHour`) disimpan langsung**, bukan dihitung ulang tiap kali job jalan. Dijelaskan di Section 3.
+- **Per-user subcollections** for data scoped 1:1 to a single user (tasks,
+  weekly reports, badges). This is the idiomatic Firestore pattern for
+  owner-scoped data: security rules stay simple (`request.auth.uid == userId`
+  in the path), and no composite index is needed to filter by `userId` since it
+  is already implicit in the path.
+- **Top-level collections** only for naturally cross-user data (leaderboard
+  cycles, since one group holds 14 different users).
+- **`date` is stored as an ISO string (`YYYY-MM-DD`)**, not a Firestore
+  `Timestamp`. Rationale: tasks belong to a calendar date in the user's
+  timezone, not a second-precise point in time. With `Timestamp`, every
+  "today" query would need a range query plus timezone conversion that is easy
+  to get wrong (off-by-one-day bugs when timezones are handled inconsistently).
+  A `YYYY-MM-DD` string makes equality and range queries straightforward and
+  timezone-safe at the data level.
+- **Derived fields (`utcResetHour`) are stored directly**, not recomputed on
+  every job run. Explained in Section 3.
 
 ## 2. Collections Overview
 
@@ -21,130 +33,168 @@ erDiagram
 
 ## 3. `users/{uid}`
 
-| Field | Type | Catatan |
+| Field | Type | Notes |
 |---|---|---|
 | `displayName` | string | |
-| `email` | string | dari Firebase Auth |
+| `email` | string | from Firebase Auth |
 | `avatarUrl` | string \| null | |
-| `city` | string | hasil resolve IP geolocation, atau manual override |
-| `cityManualOverride` | boolean | true kalau user pernah edit manual, dipakai supaya `weeklyCycleJob` tidak menimpa city yang sudah di-override dengan hasil IP geolocation baru |
-| `timezone` | string | IANA timezone string, misal `"Asia/Jakarta"`, auto-detect saat onboarding, editable di settings |
-| `utcResetHour` | number (0-23) | **derived field**, dihitung dari `timezone` saat create/update: jam UTC yang berkorespondensi dengan local midnight user. Disimpan langsung (bukan dihitung ulang tiap job run) supaya `taskCutoverJob` bisa query `where utcResetHour == currentHour` tanpa perlu load semua user dan hitung timezone satu-satu tiap jam |
-| `aiReportEnabled` | boolean | default `true`, per-user toggle untuk AI-enhanced suggestion |
-| `currentGroupId` | string \| null | denormalized dari `leaderboardCycles/{cycleId}/groups/{groupId}` cycle yang sedang berjalan, ditulis oleh `weeklyCycleJob` setelah fase matching selesai. Menghindari collection group query mahal saat user membuka halaman leaderboard — lihat `API.md` Section 9 |
+| `city` | string | IP geolocation result, or manual override |
+| `cityManualOverride` | boolean | true once the user has edited it manually; used so `weeklyCycleJob` never overwrites an overridden city with a fresh IP geolocation result |
+| `timezone` | string | IANA timezone string, e.g. `"Asia/Jakarta"`; auto-detected during onboarding, editable in settings |
+| `utcResetHour` | number (0-23) | **derived field**, computed from `timezone` on create/update: the UTC hour corresponding to the user's local midnight. Stored directly (not recomputed every job run) so `taskCutoverJob` can query `where utcResetHour == currentHour` without loading every user and computing timezones one by one, every hour |
+| `aiReportEnabled` | boolean | default `true`; per-user toggle for the AI-enhanced suggestion |
+| `currentGroupId` | string \| null | denormalized from the running cycle's `leaderboardCycles/{cycleId}/groups/{groupId}`, written by `weeklyCycleJob` after matching finishes. Avoids an expensive collection group query every time the user opens the leaderboard page — see `API.md` Section 9 |
 | `createdAt` | Timestamp | |
 | `updatedAt` | Timestamp | |
 
-**Catatan `utcResetHour`**: untuk timezone dengan offset non-integer-hour (misal India UTC+5:30), granularity hourly job berarti cutover-nya bisa meleset hingga 30 menit dari midnight sebenarnya. Ini konsisten dengan keputusan di `ARCHITECTURE.md` bahwa presisi ke menit tidak dibutuhkan untuk use case ini.
+**Note on `utcResetHour`**: for timezones with non-whole-hour offsets (e.g.
+India at UTC+5:30), hourly-job granularity means the cutover can land up to 30
+minutes off true midnight. This is consistent with the `ARCHITECTURE.md`
+decision that minute precision is unnecessary for this use case.
 
 ## 4. `users/{uid}/tasks/{taskId}`
 
-| Field | Type | Catatan |
+| Field | Type | Notes |
 |---|---|---|
 | `category` | `"hustle"` \| `"humble"` | |
 | `title` | string | |
-| `level` | number (1-5) | tekanan (hustle) atau relaksasi (humble) |
-| `durationHours` | number | desimal diperbolehkan |
-| `date` | string `YYYY-MM-DD` | lihat rationale Section 1 |
+| `level` | number (1-5) | pressure (hustle) or restoration (humble) |
+| `durationHours` | number | decimals allowed |
+| `date` | string `YYYY-MM-DD` | see rationale in Section 1 |
 | `status` | `"pending"` \| `"completed"` \| `"missed"` | |
-| `score` | number \| null | null selama `pending`, diisi Cloud Function saat `completed` |
+| `score` | number \| null | null while `pending`, filled by the Cloud Function on `completed` |
 | `createdAt` | Timestamp | |
 | `completedAt` | Timestamp \| null | |
-| `missedAt` | Timestamp \| null | diisi oleh `taskCutoverJob` |
+| `missedAt` | Timestamp \| null | filled by `taskCutoverJob` |
 
-**Semua write ke koleksi ini lewat Cloud Function** (`createTask`, `completeTask`, `taskCutoverJob`), bukan direct client write — sesuai keputusan di `ARCHITECTURE.md` Section 4.1. Security rules hanya mengizinkan `read` untuk owner, `write` ditolak seluruhnya dari client.
+**All writes to this collection go through Cloud Functions** (`createTask`,
+`completeTask`, `taskCutoverJob`), never direct client writes — per the
+`ARCHITECTURE.md` Section 4.1 decision. Security rules allow `read` for the
+owner only and reject all client `write`s.
 
-**Cap validation**: saat `createTask`/`updateTask` dipanggil, Cloud Function mengecek dua threshold dari Remote Config: `perTaskDurationCapHours` (flat, default 16 jam, terhadap `durationHours` task itu sendiri) dan `dailyDurationCapHours` (default 24 jam, terhadap total durasi seluruh task di tanggal yang sama). Untuk cap harian dipakai **Firestore aggregation query (`sum()`)**, bukan fetch semua dokumen lalu jumlahkan manual di kode — jauh lebih murah dari sisi read cost karena aggregation query tidak menghitung sebagai document read penuh. Detail kontrak error di `API.md` Section 2-3.
+**Cap validation**: when `createTask`/`updateTask` runs, the Cloud Function
+checks two Remote Config thresholds: `perTaskDurationCapHours` (flat, default
+16h, against the task's own `durationHours`) and `dailyDurationCapHours`
+(default 24h, against the total duration of all tasks on the same date). The
+daily cap uses a **Firestore aggregation query (`sum()`)**, not fetching every
+document and summing in code — far cheaper in read cost, since an aggregation
+query does not count as full document reads. Error contract details live in
+`API.md` Sections 2–3.
 
 ## 5. `users/{uid}/weeklyReports/{weekId}`
 
-`weekId` format ISO week: `"2026-W36"`.
+`weekId` uses the ISO week format: `"2026-W36"`.
 
-| Field | Type | Catatan |
+| Field | Type | Notes |
 |---|---|---|
-| `weekId` | string | redundant dengan document ID, disimpan juga sebagai field supaya bisa dipakai di collection group query kalau dibutuhkan nanti |
+| `weekId` | string | redundant with the document ID, also stored as a field so it stays usable in collection group queries if ever needed |
 | `startDate` / `endDate` | string `YYYY-MM-DD` | |
 | `hustleScore` / `humbleScore` / `totalScore` | number | |
-| `balanceIndex` | number (0-100) | formula di `PRD.md` Section 7.2 |
+| `balanceIndex` | number (0-100) | formula in `PRD.md` Section 7.2 |
 | `completedTasksCount` / `missedTasksCount` | number | |
 | `completionRate` | number (0-1) | |
-| `ruleBasedSuggestion` | string | selalu diisi |
-| `aiSuggestion` | string \| null | null kalau `aiReportEnabled == false` atau LLM call gagal |
+| `ruleBasedSuggestion` | string | always filled |
+| `aiSuggestion` | string \| null | null when `aiReportEnabled == false` or the LLM call fails |
 | `generatedAt` | Timestamp | |
 
-Ditulis oleh `weeklyCycleJob`, read-only dari sisi client.
+Written by `weeklyCycleJob`; read-only from the client side.
 
 ## 6. `leaderboardCycles/{cycleId}`
 
-`cycleId` sama dengan `weekId` (misal `"2026-W36"`) untuk konsistensi lintas koleksi.
+`cycleId` equals `weekId` (e.g. `"2026-W36"`) for consistency across
+collections.
 
-| Field | Type | Catatan |
+| Field | Type | Notes |
 |---|---|---|
 | `weekId` | string | |
 | `startDate` / `endDate` | string | |
-| `status` | `"matching"` \| `"scoring"` \| `"completed"` | tracking progress `weeklyCycleJob`, berguna untuk resume kalau job gagal di tengah jalan (lihat risk di `ARCHITECTURE.md` Section 12) |
+| `status` | `"matching"` \| `"scoring"` \| `"completed"` | tracks `weeklyCycleJob` progress; used for resuming if the job dies mid-run (see the risk in `ARCHITECTURE.md` Section 12) |
 | `createdAt` | Timestamp | |
 
 ### 6.1 `leaderboardCycles/{cycleId}/groups/{groupId}`
 
-| Field | Type | Catatan |
+| Field | Type | Notes |
 |---|---|---|
-| `locationLevel` | `"city"` \| `"province"` | hasil dari fallback matching (`PRD.md` Section 8.2) |
+| `locationLevel` | `"city"` \| `"province"` | result of fallback matching (`PRD.md` Section 8.2) |
 | `locationName` | string | |
 | `memberCount` | number | |
 | `status` | `"pending"` \| `"scored"` | |
 
 ### 6.2 `leaderboardCycles/{cycleId}/groups/{groupId}/entries/{uid}`
 
-| Field | Type | Catatan |
+| Field | Type | Notes |
 |---|---|---|
-| `userId` | string | redundan dari document ID, disimpan sebagai field supaya bisa di-query lewat **collection group query** (misal "cari semua entry milik user X sepanjang waktu" tanpa perlu tahu `cycleId`/`groupId`-nya) |
-| `displayName` | string | denormalisasi dari `users/{uid}` — supaya client bisa tampilkan nama tanpa baca dokumen user orang lain (rules `users` owner-only) |
-| `avatarUrl` | string \| null | denormalisasi dari `users/{uid}` |
-| `city` | string | denormalisasi dari `users/{uid}` |
-| `weeklyRawScore` | number | dari `weeklyReports` user bersangkutan di minggu yang sama |
+| `userId` | string | redundant with the document ID, stored as a field so it can be queried via **collection group query** (e.g. "find all entries of user X across all time" without knowing their `cycleId`/`groupId`) |
+| `displayName` | string | denormalized from `users/{uid}` — lets the client show names without reading other people's user documents (whose rules are owner-only) |
+| `avatarUrl` | string \| null | denormalized from `users/{uid}` |
+| `city` | string | denormalized from `users/{uid}` |
+| `weeklyRawScore` | number | from that user's `weeklyReports` of the same week |
 | `balanceIndex` | number | |
 | `completionRate` | number | |
-| `balanceWeight` | number | dihitung dari `balanceIndex` pakai konstanta Remote Config |
-| `completionWeight` | number | dihitung dari `completionRate` pakai konstanta Remote Config |
+| `balanceWeight` | number | computed from `balanceIndex` with the Remote Config constants |
+| `completionWeight` | number | computed from `completionRate` with the Remote Config constants |
 | `leaderboardScore` | number | `weeklyRawScore x balanceWeight x completionWeight` |
-| `rank` | number \| null | diisi setelah seluruh entry di grup selesai dihitung |
+| `rank` | number \| null | filled after every entry in the group is computed |
 
 ## 7. `users/{uid}/badges/{badgeId}`
 
-| Field | Type | Catatan |
+| Field | Type | Notes |
 |---|---|---|
 | `tier` | `"gold"` \| `"silver"` \| `"bronze"` | |
-| `cycleId` | string | referensi ke `leaderboardCycles` |
+| `cycleId` | string | reference to `leaderboardCycles` |
 | `groupId` | string | |
-| `locationName` | string | denormalized dari group, supaya profile page tidak perlu extra read untuk menampilkan "Gold — Jakarta, minggu ke-36" |
+| `locationName` | string | denormalized from the group, so the profile page needs no extra read to show "Gold — Jakarta, week 36" |
 | `awardedAt` | Timestamp | |
 
-## 8. Composite Indexes yang Dibutuhkan
+## 8. Required Composite Indexes
 
-| Collection (path) | Fields | Dipakai untuk |
+| Collection (path) | Fields | Used for |
 |---|---|---|
-| `users/{uid}/tasks` | `status ASC, date ASC` | `weeklyCycleJob` menghitung completed/missed task per minggu (filter status, range date) |
-| `users` (top-level) | `utcResetHour ASC` | `taskCutoverJob` mencari user yang local midnight-nya jatuh di jam UTC berjalan |
-| `entries` (collection group) | `userId ASC` | mencari riwayat leaderboard entry seorang user lintas cycle, dipakai di profile/badge history |
+| `users/{uid}/tasks` | `status ASC, date ASC` | `weeklyCycleJob` counting completed/missed tasks per week (status filter, date range) |
+| `users` (top-level) | `utcResetHour ASC` | `taskCutoverJob` finding users whose local midnight falls in the running UTC hour |
+| `entries` (collection group) | `userId ASC` | finding one user's leaderboard entry history across cycles, used in profile/badge history |
 
-Index lain (single-field equality seperti `date == X` di tasks) sudah otomatis ter-cover oleh default single-field index Firestore, tidak perlu didefinisikan manual.
+Other indexes (single-field equality like `date == X` on tasks) are already
+covered by Firestore's default single-field indexes — no need to define them
+manually.
 
 ## 9. Security Rules Summary
 
-Rules detail akan ditulis terpisah di `firestore.rules`, tapi prinsip yang harus dipegang saat implementasi:
+Full rules live separately in `firestore.rules`, but these are the principles
+to hold during implementation:
 
-- `users/{uid}`: **read** oleh owner. **Write ditolak dari client** (`allow write: if false`), seluruh update profile (termasuk `timezone`, yang butuh recompute `utcResetHour` secara konsisten) lewat callable function `updateProfile`. Ini menghindari kasus `timezone` berubah tapi `utcResetHour` tidak ikut ter-update kalau ditulis langsung dari client.
-- `users/{uid}/tasks/{taskId}`: **read-only dari client**, seluruh write ditolak (`allow write: if false`). Semua mutasi lewat callable Cloud Function pakai Admin SDK.
-- `users/{uid}/weeklyReports/{weekId}`: read-only dari client.
-- `users/{uid}/badges/{badgeId}`: read-only dari client.
-- `leaderboardCycles/**`: read **dibatasi ke member grup yang bersangkutan**, bukan seluruh authenticated user secara blanket. "Publik antar peserta dalam grup" (`PRD.md` Section 8) berarti sesama anggota grup yang sama bisa saling lihat, bukan user mana pun di seluruh aplikasi bisa query skor grup lain yang tidak diikutinya — kalau dibuka blanket, siapa pun bisa scan seluruh leaderboard nasional lintas grup, yang bukan tujuan fitur ini dan menambah luas permukaan data exposure tanpa manfaat produk yang jelas. Implementasi konkret (cek keanggotaan lewat field di dokumen `groups/{groupId}` atau dokumen `entries` itu sendiri) didetailkan saat menulis `firestore.rules` di M6/M7, bukan blocker untuk lanjut ke fase berikutnya. Write tetap ditolak seluruhnya dari client, terlepas dari keanggotaan grup.
+- `users/{uid}`: **read** by the owner. **Client writes rejected**
+  (`allow write: if false`); all profile updates (including `timezone`, which
+  needs `utcResetHour` recomputed consistently) go through the `updateProfile`
+  callable function. This avoids the case where `timezone` changes but
+  `utcResetHour` is left stale by a direct client write.
+- `users/{uid}/tasks/{taskId}`: **client read-only**, all writes rejected
+  (`allow write: if false`). Every mutation goes through a callable Cloud
+  Function with the Admin SDK.
+- `users/{uid}/weeklyReports/{weekId}`: client read-only.
+- `users/{uid}/badges/{badgeId}`: client read-only.
+- `leaderboardCycles/**`: reads **restricted to members of the relevant
+  group**, not blanket-open to every authenticated user. "Public among group
+  participants" (`PRD.md` Section 8) means members of the same group can see
+  each other — not that any user in the app can scan other groups' scores they
+  never joined. A blanket-open rule would let anyone scan the whole national
+  leaderboard across groups, which serves no product purpose and widens data
+  exposure for nothing. The concrete implementation (membership check via a
+  field on `groups/{groupId}` or on the `entries` documents themselves) is
+  detailed when writing `firestore.rules` in M6/M7, not a blocker for moving
+  to the next phase. Writes stay fully rejected from the client regardless of
+  group membership.
 
-## 10. Hal yang Sengaja Tidak Dibuat sebagai Collection Terpisah
+## 10. Deliberately Not Separate Collections
 
-- **Daily report**: tidak ada collection `dailyReports`. Daily report cukup dihasilkan dari query `users/{uid}/tasks where date == X` secara langsung saat halaman report dibuka — datanya sudah cukup kecil (task dalam satu hari) untuk tidak butuh precomputed cache.
-- **Remote Config values** (constants weighting, daily cap): bukan Firestore document, tetap di Firebase Remote Config sesuai `ARCHITECTURE.md` Section 4.3.
+- **Daily report**: no `dailyReports` collection. A daily report is produced by
+  querying `users/{uid}/tasks where date == X` directly when the report page
+  opens — one day's tasks are small enough to need no precomputed cache.
+- **Remote Config values** (weighting constants, daily cap): not Firestore
+  documents — they stay in Firebase Remote Config per `ARCHITECTURE.md`
+  Section 4.3.
 
 ## 11. Next Steps
 
-Lanjut ke `API.md` untuk mendefinisikan kontrak callable functions (`createTask`, `completeTask`) dan bentuk response yang dikonsumsi frontend.
+Continue to `API.md` to define the callable function contracts (`createTask`,
+`completeTask`) and the response shapes the frontend consumes.

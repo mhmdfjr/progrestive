@@ -1,132 +1,193 @@
 # Roadmap
 
-Milestone disusun berdasarkan dependency teknis (fondasi dulu, baru fitur yang bergantung padanya), bukan berdasarkan estimasi waktu — velocity tim belum diketahui, jadi setiap milestone diberi label **ukuran relatif** (S/M/L) untuk membantu prioritisasi, bukan komitmen tanggal.
+Milestones are ordered by technical dependency (foundations first, then the
+features that depend on them) — not by time estimates. Team velocity is still
+unknown, so each milestone carries a **relative size** label (S/M/L) to help
+prioritization, not a date commitment.
 
 ## M0 — Project Setup & Infrastructure (S)
 
-**Tujuan**: fondasi teknis siap sebelum fitur apa pun ditulis.
+**Goal**: technical foundations ready before any feature code is written.
 
-- Init Next.js App Router project, Tailwind, install neobrutalism.dev components lewat shadcn CLI.
-- Setup Firebase project **terpisah untuk dev dan production** (best practice, jangan develop langsung di project yang sama dengan production data).
-- Aktifkan Firebase Auth providers: email/password, Google, GitHub, X (`twitter.com` provider ID — verifikasi ulang sesuai catatan di `ARCHITECTURE.md` Section 5).
-- Setup Cloud Functions project (TypeScript) + Firebase Emulator Suite untuk local development.
-- Struktur folder sesuai `ARCHITECTURE.md` Section 11 (`/app`, `/functions`, `/shared`).
-- Terapkan design tokens dari `DESIGN.md` Section 2 ke `globals.css`.
-- CI/CD dasar: Vercel untuk frontend, Firebase CLI deploy untuk functions.
+- Init the Next.js App Router project, Tailwind, and install neobrutalism.dev
+  components via the shadcn CLI.
+- Set up **separate Firebase projects for dev and production** (best practice —
+  never develop directly in the same project as production data).
+- Enable Firebase Auth providers: email/password, Google, GitHub, X
+  (`twitter.com` provider ID — re-verify per the note in `ARCHITECTURE.md`
+  Section 5).
+- Set up the Cloud Functions project (TypeScript) + Firebase Emulator Suite for
+  local development.
+- Create the folder structure per `ARCHITECTURE.md` Section 11 (`src/app`,
+  `/functions`, `/shared`).
+- Apply the design tokens from `DESIGN.md` Section 2 to `globals.css`.
+- Basic CI/CD: Vercel for the frontend, Firebase CLI deploys for functions.
 
-**Exit criteria**: "Hello world" page ter-deploy ke Vercel, Cloud Function dummy bisa dipanggil dari emulator, login page tampil dengan styling neo brutalism dasar.
+**Exit criteria**: a "Hello world" page deployed to Vercel, a dummy Cloud
+Function callable from the emulator, and a login page rendering with basic neo
+brutalism styling.
 
 ## M1 — Authentication & Onboarding (M)
 
-**Tujuan**: user bisa register, login, dan profil awal ter-setup.
+**Goal**: users can register, log in, and get an initial profile set up.
 
-- Login/register page (email + 3 OAuth provider).
-- Session cookie verification di Server Component untuk auth guard (`ARCHITECTURE.md` Section 5).
-- Onboarding flow: buat dokumen `users/{uid}` saat first login, auto-detect timezone di client, kirim ke `updateProfile`.
-- Resolve city awal saat onboarding (bukan tunggu weekly cycle pertama) lewat panggilan ke ip2location.io dari Cloud Function, supaya profile user sudah punya `city` sebelum leaderboard cycle pertama jalan.
-- Implementasi `updateProfile` callable function (termasuk compute `utcResetHour`).
+- Login/register pages (email + 3 OAuth providers).
+- Session cookie verification in Server Components for the auth guard
+  (`ARCHITECTURE.md` Section 5).
+- Onboarding flow: create the `users/{uid}` document on first login,
+  auto-detect the timezone on the client, send it via `updateProfile`.
+- Resolve the initial city during onboarding (not waiting for the first weekly
+  cycle) through an ip2location.io call from a Cloud Function, so the user
+  profile already has a `city` before the first leaderboard cycle runs.
+- Implement the `updateProfile` callable function (including the `utcResetHour`
+  computation).
 
 **Depends on**: M0.
 
-**Exit criteria**: user baru bisa register lewat semua provider, profil ter-buat otomatis dengan `city` dan `timezone` terisi, bisa edit profil dari halaman Profile.
+**Exit criteria**: a new user can register through every provider, the profile
+is auto-created with `city` and `timezone` filled, and the profile is editable
+from the Profile page.
 
 ## M2 — Task Management Core (M)
 
-**Tujuan**: fitur inti Home page: create, edit, delete, complete task.
+**Goal**: the core Home page features: create, edit, delete, and complete
+tasks.
 
-- Firestore schema `users/{uid}/tasks` sesuai `DATABASE.md`.
-- Callable functions: `createTask`, `updateTask`, `deleteTask`, `completeTask`, termasuk validasi daily aggregate cap (aggregation query `sum()`).
-- Security rules: deny semua direct write ke `tasks`.
-- Home page UI: dua kolom Hustle/Humble, task card, dialog create/edit, checkbox complete (`DESIGN.md` Section 6.1).
-- Realtime listener untuk task list hari berjalan.
+- Firestore schema `users/{uid}/tasks` per `DATABASE.md`.
+- Callable functions: `createTask`, `updateTask`, `deleteTask`, `completeTask`,
+  including daily aggregate cap validation (aggregation `sum()` query).
+- Security rules: deny all direct writes to `tasks`.
+- Home page UI: two Hustle/Humble columns, task cards, create/edit dialog,
+  complete checkbox (`DESIGN.md` Section 6.1).
+- Realtime listener for the current day's task list.
 
-**Depends on**: M1 (butuh auth untuk scope task ke user).
+**Depends on**: M1 (auth is needed to scope tasks to a user).
 
-**Exit criteria**: user bisa membuat, mengedit, menghapus, dan menyelesaikan task; skor muncul benar sesuai formula `level x durasi`; input yang melanggar daily cap ditolak dengan pesan yang jelas.
+**Exit criteria**: users can create, edit, delete, and complete tasks; scores
+follow the `level x duration` formula; cap-violating input is rejected with a
+clear message.
 
 ## M3 — Task Lifecycle & Daily Report (S)
 
-**Tujuan**: task yang tidak diselesaikan bertransisi jadi `missed`, dan daily report bisa dilihat.
+**Goal**: unfinished tasks transition to `missed`, and the daily report is
+viewable.
 
-- `taskCutoverJob` scheduled function (hourly, filter `utcResetHour`).
-- Daily report page: query task hari tertentu, tampilkan status per task dan total skor per kategori.
-- UI state untuk task `missed` (`DESIGN.md` Section 6.1).
+- `taskCutoverJob` scheduled function (hourly, filtering on `utcResetHour`).
+- Daily report page: query a given day's tasks, show per-task status and total
+  score per category.
+- UI state for `missed` tasks (`DESIGN.md` Section 6.1).
 
 **Depends on**: M2.
 
-**Exit criteria**: task yang tidak di-complete sebelum hari berakhir otomatis jadi `missed` dalam waktu maksimal 1 jam setelah local midnight user; daily report menampilkan data yang akurat.
+**Exit criteria**: tasks not completed before day end automatically become
+`missed` within at most 1 hour after the user's local midnight; the daily
+report shows accurate data.
 
 ## M4 — Weekly Report (M)
 
-**Tujuan**: user bisa melihat weekly report dengan balance index dan saran rule-based.
+**Goal**: users see a weekly report with the balance index and rule-based
+suggestions.
 
-- Bagian pertama dari `weeklyCycleJob`: hitung `hustleScore`, `humbleScore`, `balanceIndex`, `completionRate` per user, tulis ke `users/{uid}/weeklyReports/{weekId}`.
-- Rule-based suggestion generator (threshold-based, sesuai `PRD.md` Section 7.2).
-- Setup Remote Config untuk `dailyDurationCapHours` dan konstanta lain yang relevan di tahap ini.
-- Weekly report UI: gauge balance index, breakdown skor, card suggestion (`DESIGN.md` Section 6.2).
+- First half of `weeklyCycleJob`: compute `hustleScore`, `humbleScore`,
+  `balanceIndex`, and `completionRate` per user, written to
+  `users/{uid}/weeklyReports/{weekId}`.
+- Rule-based suggestion generator (threshold-based, per `PRD.md` Section 7.2).
+- Set up Remote Config for `dailyDurationCapHours` and the other constants
+  relevant at this stage.
+- Weekly report UI: balance index gauge, score breakdown, suggestion card
+  (`DESIGN.md` Section 6.2).
 
-**Depends on**: M3 (butuh data `missed` yang akurat untuk `completionRate`).
+**Depends on**: M3 (accurate `missed` data is needed for `completionRate`).
 
-**Catatan**: ini baru **sebagian** dari `weeklyCycleJob` — bagian matching leaderboard menyusul di M6. Fungsi yang sama akan diperluas, bukan dibuat function baru.
+**Note**: this is only **part** of `weeklyCycleJob` — leaderboard matching
+follows in M6. The same function gets extended, not replaced with a new one.
 
-**Exit criteria**: setiap Senin, weekly report ter-generate otomatis untuk semua user dengan angka yang bisa diverifikasi manual dari task minggu tersebut.
+**Exit criteria**: every Monday, weekly reports auto-generate for all users
+with numbers manually verifiable against that week's tasks.
 
 ## M5 — AI-Enhanced Suggestion (S)
 
-**Tujuan**: opsi saran yang lebih personalized lewat LLM.
+**Goal**: optional, more personalized suggestions via LLM.
 
-- Service abstraction untuk LLM API call, dengan timeout dan fallback ke rule-based (`ARCHITECTURE.md` Section 4.4).
-- `regenerateWeeklySuggestion` callable function dengan cooldown per user.
-- Toggle `aiReportEnabled` di Profile settings, terhubung ke suggestion generation di `weeklyCycleJob`.
+- Service abstraction for the LLM API call, with timeout and rule-based
+  fallback (`ARCHITECTURE.md` Section 4.4).
+- `regenerateWeeklySuggestion` callable function with a per-user cooldown.
+- The `aiReportEnabled` toggle in Profile settings, wired into suggestion
+  generation in `weeklyCycleJob`.
 
 **Depends on**: M4.
 
-**Exit criteria**: user dengan `aiReportEnabled = true` mendapat saran tambahan dari AI di weekly report; kalau API gagal, report tetap tampil dengan rule-based suggestion tanpa error yang terlihat user.
+**Exit criteria**: users with `aiReportEnabled = true` get extra AI suggestions
+in the weekly report; when the API fails, the report still renders with the
+rule-based suggestion and no user-visible error.
 
 ## M6 — Leaderboard & Badges (L)
 
-**Tujuan**: fitur kompetitif mingguan lengkap dengan badge.
+**Goal**: the full weekly competition feature with badges.
 
-- Perluas `weeklyCycleJob`: matching city -> province fallback, hitung `leaderboardScore` (formula di `PRD.md`/`ARCHITECTURE.md`), assign rank, assign badge top 3.
-- Quota monitoring untuk ip2location.io (alert sebelum mendekati limit bulanan) dan graceful degradation kalau quota habis (`ARCHITECTURE.md` Section 4.4 poin 4).
-- Denormalisasi `currentGroupId` ke `users/{uid}` setelah matching selesai.
-- Leaderboard page UI: tabel, highlight baris user sendiri, indikator fallback lokasi, icon medali top 3 (`DESIGN.md` Section 6.3).
-- Badge showcase di Profile (`DESIGN.md` Section 6.4).
+- Extend `weeklyCycleJob`: city → province fallback matching, `leaderboardScore`
+  computation (formula in `PRD.md`/`ARCHITECTURE.md`), rank assignment, top-3
+  badge assignment.
+- Quota monitoring for ip2location.io (alert before the monthly limit) plus
+  graceful degradation on quota exhaustion (`ARCHITECTURE.md` Section 4.4
+  point 4).
+- Denormalize `currentGroupId` onto `users/{uid}` after matching finishes.
+- Leaderboard page UI: table, own-row highlight, location fallback indicator,
+  top-3 medal icons (`DESIGN.md` Section 6.3).
+- Badge showcase on the Profile page (`DESIGN.md` Section 6.4).
 
-**Depends on**: M4 (butuh `weeklyReports` sebagai input skor).
+**Depends on**: M4 (needs `weeklyReports` as score input).
 
-**Ini milestone paling berisiko** — kompleksitas matching bertingkat, formula weighting, dan interaksi dengan external API (quota, error handling) berkumpul di satu tempat. Sisihkan waktu review lebih untuk milestone ini dibanding estimasi awal.
+**This is the riskiest milestone** — tiered matching complexity, weighting
+formulas, and external API interaction (quotas, error handling) all converge
+here. Budget extra review time for this milestone versus the initial estimate.
 
-**Exit criteria**: leaderboard grup ter-bentuk otomatis tiap awal minggu, skor dan rank akurat sesuai formula, badge top 3 ter-assign dan tampil di profil masing-masing pemenang.
+**Exit criteria**: groups form automatically every week start, scores and ranks
+are accurate per the formula, and top-3 badges are assigned and visible on each
+winner's profile.
 
 ## M7 — Hardening & Edge Cases (M)
 
-**Tujuan**: menutup risiko yang sudah diketahui dari `ARCHITECTURE.md` sebelum dianggap production-ready.
+**Goal**: close the known risks from `ARCHITECTURE.md` before calling it
+production-ready.
 
-- Desain dan implementasi idempotency/resume untuk `weeklyCycleJob` (risk yang dicatat di `ARCHITECTURE.md` Section 12 — belum diselesaikan di level dokumen, harus selesai di sini).
-- Firebase App Check di seluruh callable function.
+- Design and implement idempotency/resume for `weeklyCycleJob` (the risk noted
+  in `ARCHITECTURE.md` Section 12 — not solved at document level, must be
+  solved here).
+- Firebase App Check on all callable functions.
 - Firestore Security Rules test suite (`@firebase/rules-unit-testing`).
-- Unit test Cloud Functions untuk logic scoring, cap validation, balance formula (bagian paling kritis untuk correctness).
-- Verifikasi ToS ip2location.io terkait commercial use sebelum lanjut ke M8.
+- Cloud Functions unit tests for scoring logic, cap validation, and the balance
+  formula (the most correctness-critical part).
+- Verify the ip2location.io ToS on commercial use before proceeding to M8.
 
 **Depends on**: M6.
 
-**Exit criteria**: simulasi kegagalan di tengah `weeklyCycleJob` (misal kill function di tengah proses) bisa di-recover dengan re-run tanpa duplikasi skor/badge; test suite hijau.
+**Exit criteria**: a simulated mid-`weeklyCycleJob` failure (e.g. killing the
+function halfway) recovers via re-run without duplicated scores/badges; the
+test suite is green.
 
 ## M8 — Polish & Launch Prep (S)
 
-**Tujuan**: siap dipakai user nyata.
+**Goal**: ready for real users.
 
-- Empty state dan microcopy pass sesuai tone di `DESIGN.md` Section 8.
-- Responsive QA di seluruh halaman.
-- Review composite index yang benar-benar terpakai vs yang didefinisikan di `DATABASE.md` Section 8, deploy index yang kurang.
-- Setup production Firebase project (kalau belum), pisah dari dev sepenuhnya.
-- Final review upgrade ip2location.io ke paid plan kalau hasil verifikasi ToS di M7 mengharuskan.
+- Empty-state and microcopy pass per the tone in `DESIGN.md` Section 8.
+- Responsive QA across all pages.
+- Review which composite indexes from `DATABASE.md` Section 8 are actually used
+  versus defined; deploy any missing ones.
+- Set up the production Firebase project (if not yet done), fully separated
+  from dev.
+- Final review of upgrading ip2location.io to a paid plan if the M7 ToS
+  verification requires it.
 
 **Depends on**: M7.
 
-**Exit criteria**: aplikasi bisa diakses publik dengan seluruh fitur di scope PRD berfungsi, tanpa known blocker dari risk list di `ARCHITECTURE.md`.
+**Exit criteria**: the app is publicly accessible with every in-scope PRD
+feature working and no known blockers from the `ARCHITECTURE.md` risk list.
 
-## Di Luar Roadmap Ini
+## Outside This Roadmap
 
-Fitur yang sengaja tidak masuk milestone manapun karena eksplisit out-of-scope di `PRD.md` Section 13 (recurring task template, notifikasi push, social feature di luar leaderboard, monetisasi). Kalau prioritas berubah dan salah satu ini masuk scope, perlu revisit `PRD.md` dulu sebelum ditambahkan ke roadmap — supaya requirement dan implementasi tidak diverge.
+Features deliberately excluded from every milestone as explicitly out-of-scope
+in `PRD.md` Section 13 (recurring task templates, push notifications, social
+features beyond the leaderboard, monetization). If priorities change and one of
+these enters scope, revisit `PRD.md` first before adding it to the roadmap —
+so requirements and implementation never diverge.

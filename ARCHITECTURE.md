@@ -2,11 +2,24 @@
 
 ## 1. Architecture Style
 
-BaaS-centric architecture: Next.js sebagai frontend (App Router, di-deploy ke Vercel) berkomunikasi langsung dengan Firebase services untuk sebagian besar operasi (read realtime, auth), dan lewat Cloud Functions untuk operasi yang butuh business logic terpusat atau scheduled job.
+BaaS-centric architecture: Next.js acts as the frontend (App Router, deployed
+to Vercel), talking directly to Firebase services for most operations
+(realtime reads, auth) and through Cloud Functions for operations that need
+centralized business logic or scheduled jobs.
 
-**Kenapa bukan custom backend (Express/Nest di server terpisah)**: scope aplikasi ini (CRUD task, scoring, report, leaderboard) tidak butuh backend server yang selalu hidup. Firestore + Cloud Functions cukup menghandle seluruh business logic tanpa perlu maintain server terpisah, mengurangi operational overhead. Trade-off: vendor lock-in ke Firebase lebih tinggi dibanding custom backend, tapi untuk tim kecil/solo project ini adalah trade-off yang wajar diambil demi development speed.
+**Why not a custom backend (a separate Express/Nest server)**: this app's scope
+(task CRUD, scoring, reports, leaderboard) does not need an always-on backend
+server. Firestore + Cloud Functions cover all business logic with no separate
+server to maintain, which cuts operational overhead. Trade-off: higher Firebase
+vendor lock-in than a custom backend, but for a small/solo project this is a
+reasonable trade-off for development speed.
 
-**Kenapa hosting Next.js di Vercel, bukan Firebase Hosting**: Firebase Hosting punya integrasi Next.js tapi dukungan untuk App Router (server components, streaming, ISR) masih lebih terbatas dibanding Vercel yang memang dibuat oleh tim Next.js. Cloud Functions tetap jalan di Firebase project terlepas dari di mana frontend di-host, jadi tidak ada downside signifikan memisahkan hosting frontend dari backend. Ini assumption yang saya ambil karena tidak dinyatakan eksplisit sebelumnya — kalau ada constraint organisasi yang mengharuskan semua di Firebase (misal budget/billing tunggal), beri tahu saya dan bagian deployment perlu direvisi.
+**Why host Next.js on Vercel instead of Firebase Hosting**: Firebase Hosting
+supports Next.js, but its App Router support (server components, streaming,
+ISR) is more limited than Vercel's, which is built by the Next.js team itself.
+Cloud Functions run in the Firebase project regardless of where the frontend
+is hosted, so there is no significant downside to hosting the frontend
+separately from the backend.
 
 ## 2. High-Level System Diagram
 
@@ -47,7 +60,7 @@ flowchart TB
 ### 3.1 Routing Structure
 
 ```
-app/
+src/app/
   (auth)/
     login/page.tsx
     register/page.tsx
@@ -59,84 +72,165 @@ app/
     profile/page.tsx
 ```
 
-Route group `(app)` pakai layout yang melakukan auth check di server component (redirect ke `/login` kalau belum authenticated). Route group `(auth)` terpisah supaya tidak kena layout yang sama.
+The `(app)` route group uses a layout that runs the auth check in a server
+component (redirects to `/login` when unauthenticated). The `(auth)` group is
+separate so it never inherits that layout.
 
 ### 3.2 Server vs Client Components
 
-| Konten | Tipe | Alasan |
+| Content | Type | Why |
 |---|---|---|
-| Task list (home) | Client | Butuh realtime update (`onSnapshot`) saat task ditambah/completed |
-| Daily/weekly report | Server Component (initial fetch) + client untuk interaksi kecil | Data report tidak perlu realtime, cocok di-fetch di server untuk mengurangi client bundle dan loading state |
-| Leaderboard table | Server Component | Data hanya berubah di akhir minggu, tidak perlu realtime listener yang menghabiskan koneksi Firestore |
-| Profile form | Client | Interaktif (edit form, upload avatar) |
+| Task list (home) | Client | Needs realtime updates (`onSnapshot`) when tasks are added/completed |
+| Daily/weekly report | Server Component (initial fetch) + client for small interactions | Report data needs no realtime; server-fetching shrinks the client bundle and loading states |
+| Leaderboard table | Server Component | Data only changes at week end; no need for a realtime listener burning Firestore connections |
+| Profile form | Client | Interactive (edit form, avatar upload) |
 
-Prinsip umum: default ke Server Component, turun ke Client Component hanya kalau butuh interaktivitas atau realtime data. Ini mengurangi JS yang dikirim ke browser dibanding all-client-side SPA pattern.
+General principle: default to Server Components, drop to Client Components only
+when interactivity or realtime data is required. This ships less JavaScript to
+the browser than an all-client-side SPA pattern.
 
 ### 3.3 State Management
 
-- **Realtime data** (task list hari berjalan): custom hook di atas Firestore `onSnapshot`, di-wrap sebagai `useTasks(date)`. Tidak butuh state management library tambahan karena Firestore SDK sudah handle subscription lifecycle.
-- **Non-realtime data** (report, leaderboard): fetch di server component, atau kalau butuh client-side refetch/cache gunakan SWR tipis di atasnya. Tidak perlu React Query penuh untuk scope ini.
-- **Global UI state** (modal open/close, toast, theme): Zustand, single small store. Redux ditolak karena overkill untuk state yang sesimpel ini — akan menambah boilerplate tanpa benefit nyata di skala aplikasi ini.
+- **Realtime data** (the current day's task list): a thin custom hook over
+  Firestore `onSnapshot`, wrapped as `useTasks(date)`. No extra state library
+  needed — the Firestore SDK already handles the subscription lifecycle.
+- **Non-realtime data** (reports, leaderboards): fetched in server components,
+  or with a light SWR layer on top when client-side refetch/caching is needed.
+  No full React Query for this scope.
+- **Global UI state** (modal open/close, toast, theme): Zustand, one small
+  store. Redux was rejected as overkill for state this simple — it would add
+  boilerplate with no real benefit at this scale.
 
 ## 4. Backend Architecture (Firebase)
 
-### 4.1 Kenapa Task Completion Tidak Ditulis Langsung dari Client
+### 4.1 Why Task Completion Is Not Written Directly from the Client
 
-Task completion menghasilkan skor, dan skor punya business rule yang cukup kompleks (level x durasi, per-task cap, daily aggregate cap 24 jam). Kalau logic ini hanya divalidasi lewat Firestore Security Rules, ada dua masalah:
+Task completion produces a score, and scoring has fairly complex business rules
+(level x duration, per-task cap, 24h daily aggregate cap). Validating this
+logic through Firestore Security Rules alone has two problems:
 
-1. Security rules tidak bisa dengan mudah melakukan aggregate query (menjumlahkan durasi semua task di tanggal yang sama) untuk validasi cap harian.
-2. Logic scoring akan tersebar: sebagian di client (untuk UX, preview skor), sebagian di rules (untuk enforcement). Kalau formula berubah, harus diubah di dua tempat.
+1. Security rules cannot easily run aggregate queries (summing every task's
+   duration on the same date) for daily-cap validation.
+2. Scoring logic would be split: partly on the client (for UX, score preview),
+   partly in rules (for enforcement). Every formula change would have to be
+   made in two places.
 
-**Keputusan**: task completion dan creation yang mempengaruhi skor melalui **Cloud Functions callable function**, bukan direct Firestore write dari client.
+**Decision**: task creation and completion that affect scores go through
+**Cloud Functions callable functions**, not direct Firestore writes from the
+client.
 
-- `createTask(input)`: validasi input, cek daily aggregate cap (query task existing di tanggal sama dalam Firestore transaction), simpan task dengan status `pending`.
-- `completeTask(taskId)`: hitung skor dari level x durasi, update status jadi `completed`, tulis skor final. Dilakukan di Cloud Function pakai Admin SDK sehingga security rules bisa deny direct write ke field `status` dan `score` dari client sama sekali.
+- `createTask(input)`: validates input, checks the daily aggregate cap (queries
+  the same-date existing tasks inside a Firestore transaction), saves the task
+  with `pending` status.
+- `completeTask(taskId)`: computes the score from level x duration, flips the
+  status to `completed`, writes the final score. Runs in a Cloud Function with
+  the Admin SDK, so security rules can deny direct client writes to `status`
+  and `score` entirely.
 
-Firestore Security Rules jadi sederhana: user hanya boleh read task miliknya sendiri, dan create/update terbatas ke field non-sensitif (title, misal saat masih pending). Semua mutasi yang berhubungan dengan skor lewat Cloud Function.
+Firestore Security Rules stay simple: users may only read their own tasks, and
+create/update is limited to non-sensitive fields (e.g. title while still
+pending). Every score-related mutation goes through a Cloud Function.
 
 ### 4.2 Scheduled Cloud Functions
 
-| Function | Trigger | Tanggung Jawab |
+| Function | Trigger | Responsibility |
 |---|---|---|
-| `taskCutoverJob` | Cloud Scheduler, tiap jam | Cari user yang local midnight-nya jatuh di jam tersebut (berdasarkan timezone tersimpan di profile), transisi task `pending` mereka yang sudah lewat tanggalnya jadi `missed` |
-| `weeklyCycleJob` | Cloud Scheduler, **fixed cron global** (default `0 0 * * 1` — Senin 00:00 UTC) | 1) Hitung weekly report tiap user (balance index, completion rate). 2) Jalankan leaderboard matching (city -> province fallback). 3) Hitung leaderboard score tiap grup. 4) Assign badge top 3. 5) Generate rule-based suggestion, trigger AI enhancement kalau enabled |
+| `taskCutoverJob` | Cloud Scheduler, hourly | Finds users whose local midnight falls in that hour (from the timezone stored on their profile) and flips their overdue `pending` tasks to `missed` |
+| `weeklyCycleJob` | Cloud Scheduler, **fixed global cron** (default `0 0 * * 1` — Monday 00:00 UTC) | 1) Compute each user's weekly report (balance index, completion rate). 2) Run leaderboard matching (city -> province fallback). 3) Compute each group's leaderboard scores. 4) Assign top-3 badges. 5) Generate the rule-based suggestion, trigger AI enhancement when enabled |
 
-**Kenapa global UTC, bukan per-timezone user seperti `taskCutoverJob`**: satu grup leaderboard berisi user dari kota/provinsi berbeda yang bisa saja beda timezone. Kalau batas minggu per-user, dua anggota grup yang sama bisa punya window kompetisi yang tidak sinkron (user A minggu-nya sudah tutup, user B masih jalan) — ini merusak fairness leaderboard. Batas minggu untuk seluruh sistem harus satu titik waktu global. Cron time-nya sendiri fixed di deploy time (Cloud Scheduler tidak bisa baca Remote Config secara real-time untuk menentukan kapan trigger jalan), beda dengan konstanta weighting yang memang bisa di-tune lewat Remote Config karena dibaca saat function dieksekusi, bukan saat menentukan kapan function di-trigger.
+**Why a global UTC cron instead of per-user timezones like `taskCutoverJob`**:
+one leaderboard group holds users from different cities that may sit in
+different timezones. With per-user week boundaries, two members of the same
+group could compete in unsynced windows (user A's week already closed while
+user B's is still running) — that breaks leaderboard fairness. The week
+boundary must be one global point in time for the whole system. The cron time
+itself is fixed at deploy time (Cloud Scheduler cannot read Remote Config in
+realtime to decide when to trigger), unlike the weighting constants which can
+be tuned via Remote Config because they are read when the function executes,
+not when its trigger fires.
 
-**Kenapa hourly job untuk task cutover, bukan per-menit atau strictly per-user real time**: presisi ke menit tidak dibutuhkan untuk use case "hari berakhir" — toleransi delay hingga ~1 jam masih acceptable secara produk. Hourly job jauh lebih murah dan simpel dibanding scheduling per-user yang presisi ke detik, yang butuh infrastruktur seperti Cloud Tasks per-user schedule (overkill untuk kebutuhan ini).
+**Why an hourly job for task cutover instead of per-minute or strictly
+per-user realtime**: minute precision is unnecessary for an "end of day" use
+case — up to ~1 hour of delay is product-acceptable. An hourly job is far
+cheaper and simpler than precise per-user scheduling, which would need
+infrastructure like per-user Cloud Tasks schedules (overkill here).
 
-### 4.3 Remote Config untuk Tunable Constants
+### 4.3 Remote Config for Tunable Constants
 
-Constants berikut ditaruh di Firebase Remote Config, di-fetch oleh Cloud Functions (server-side, bukan client) supaya bisa di-tune tanpa redeploy dan tidak bisa dibaca/dimanipulasi dari browser:
+The following constants live in Firebase Remote Config, fetched by Cloud
+Functions (server-side, never the client) so they can be tuned without
+redeploying and cannot be read/manipulated from the browser:
 
 - `dailyDurationCapHours` (default 24)
-- `perTaskDurationCapHours` (default 16) — flat cap, sama untuk hustle maupun humble (`PRD.md` Section 5.2)
-- `balanceWeightFloor`, `balanceWeightRange` (default 0.5, 0.5)
-- `completionWeightFloor`, `completionWeightRange` (default 0.5, 0.5)
-- `aiReportEnabled` (global kill switch, terpisah dari per-user setting di profile)
+- `perTaskDurationCapHours` (default 16) — flat cap, same for hustle and humble
+  (`PRD.md` Section 5.2)
+- `balanceWeightFloor`, `balanceWeightRange` (defaults 0.5, 0.5)
+- `completionWeightFloor`, `completionWeightRange` (defaults 0.5, 0.5)
+- `aiReportEnabled` (global kill switch, separate from the per-user profile
+  setting)
 
 ### 4.4 External Service Abstraction
 
-Baik IP geolocation maupun LLM API dipanggil lewat interface tipis di dalam Cloud Functions (`services/geolocation.ts`, `services/aiSuggestion.ts`), bukan dipanggil langsung dari business logic. Tujuannya supaya provider bisa diganti (misal pindah dari ip2location.io ke provider lain, atau ganti LLM provider) tanpa mengubah kode di `weeklyCycleJob`. Untuk MVP, provider yang direkomendasikan:
+Both the IP geolocation and LLM APIs are called through thin interfaces inside
+Cloud Functions (`services/geolocation.ts`, `services/aiSuggestion.ts`), never
+directly from business logic. The goal: swapping providers (e.g. moving off
+ip2location.io, or changing LLM provider) never touches `weeklyCycleJob` code.
+Recommended providers for the MVP:
 
-- **IP Geolocation**: [ip2location.io](https://www.ip2location.io), dipilih sesuai keputusan. Catatan yang mempengaruhi implementasi:
-  1. **Free plan (dengan API key) memberi 50.000 query/bulan**, HTTPS didukung (beda dari ip-api.com yang sempat dipertimbangkan sebelumnya dan HTTP-only di free tier). Tanpa API key (keyless), limitnya jauh lebih kecil (1.000 query/hari) — jadi **wajib register dan pakai API key** dari awal, bukan pakai endpoint keyless.
-  2. **Tidak ditemukan larangan eksplisit commercial use** di free plan seperti ip-api.com, tapi ini belum saya verifikasi langsung ke Terms of Service resmi mereka — sebelum production launch, baca ToS lengkap untuk memastikan penggunaan di produk yang (berpotensi) komersial tidak melanggar ketentuan free plan.
-  3. **Free plan berhenti total saat quota bulanan habis** (bukan throttle/degrade, tapi hard stop sampai reset bulan berikutnya). Ini beda karakter risiko dari ip-api.com yang throttle per-menit: di sini risikonya adalah kehabisan quota di pertengahan bulan kalau user base tumbuh cepat. Karena resolve city cuma dilakukan sekali per user per weekly cycle (bukan tiap request), 50.000/bulan cukup untuk kira-kira 12.000 user aktif per minggu (asumsi 4-5 weekly cycle per bulan) — cukup generous untuk MVP, tapi perlu monitoring quota usage dan alert sebelum mendekati limit, supaya tidak tiba-tiba semua resolve city gagal di tengah `weeklyCycleJob`.
-  4. **Fallback saat quota habis**: `weeklyCycleJob` harus punya graceful degradation — kalau geolocation call gagal karena quota habis, user tersebut sebaiknya dilewati dari matching cycle minggu itu (bukan bikin seluruh job gagal), dan dicatat untuk di-retry atau diberi notifikasi supaya isi city manual sebagai override sementara.
+- **IP Geolocation**: [ip2location.io](https://www.ip2location.io). Notes that
+  affect implementation:
+  1. **The free plan (with an API key) allows 50,000 queries/month**, with HTTPS
+     support (unlike ip-api.com, which was considered earlier and is HTTP-only
+     on its free tier). Without a key (keyless), the limit is far smaller
+     (1,000 queries/day) — so **register and use an API key from day one**,
+     not the keyless endpoint.
+  2. **No explicit commercial-use ban** was found on the free plan (unlike
+     ip-api.com), but this was not verified directly against their official
+     Terms of Service — before the production launch, read the full ToS to make
+     sure using it in a (potentially) commercial product does not violate the
+     free plan.
+  3. **The free plan hard-stops when the monthly quota is exhausted** (not a
+     throttle/degrade, but a full stop until next month's reset). This is a
+     different risk shape than ip-api.com's per-minute throttle: here the risk
+     is running out mid-month if the user base grows fast. Since city
+     resolution happens once per user per weekly cycle (not per request),
+     50,000/month covers roughly 12,000 weekly active users (assuming 4–5
+     weekly cycles per month) — generous enough for an MVP, but quota usage
+     needs monitoring and alerting before the limit so city resolution does not
+     suddenly start failing mid-`weeklyCycleJob`.
+  4. **Fallback when the quota runs out**: `weeklyCycleJob` needs graceful
+     degradation — if a geolocation call fails on quota, that user should be
+     skipped from that week's matching (not fail the whole job), logged for
+     retry, or notified to enter their city manually as a temporary override.
 
-  Provider tetap dipanggil lewat abstraction layer (`services/geolocation.ts`) supaya bisa pindah provider lain kalau limitasi di atas jadi blocker nyata.
-- **AI suggestion**: dipanggil lewat Anthropic API atau provider lain, dengan timeout ketat (misal 10 detik) dan fallback otomatis ke rule-based suggestion kalau call gagal atau timeout. Report tidak boleh gagal total hanya karena AI enhancement bermasalah.
+  The provider is still called through the abstraction layer
+  (`services/geolocation.ts`) so it can be swapped if these limits become real
+  blockers.
+- **AI suggestion**: called through the LLM API with a tight timeout (e.g. 10
+  seconds) and automatic fallback to the rule-based suggestion when the call
+  fails or times out. A report must never fail entirely just because the AI
+  enhancement is having problems.
 
 ## 5. Authentication Flow
 
-1. User memilih login method: email/password atau OAuth (Google, GitHub, X).
-2. Firebase Auth SDK menghandle flow di client (popup/redirect untuk OAuth).
-3. Setelah berhasil, `onAuthStateChanged` listener di root layout menyimpan auth state.
-4. **First-time login**: cek apakah dokumen user profile sudah ada di Firestore (`users/{uid}`). Kalau belum, buat dokumen baru dan minta user melengkapi city (untuk kasus IP geolocation gagal) serta auto-detect timezone lewat `Intl.DateTimeFormat().resolvedOptions().timeZone` di client, dikirim sekali saat onboarding.
-5. Server Component untuk halaman terproteksi memverifikasi session lewat Firebase Admin SDK (session cookie, bukan hanya client-side ID token) supaya SSR bisa tahu status auth sebelum render.
+1. The user picks a login method: email/password or OAuth (Google, GitHub, X).
+2. The Firebase Auth SDK handles the flow on the client (popup/redirect for
+   OAuth).
+3. On success, the `onAuthStateChanged` listener in the root layout stores the
+   auth state.
+4. **First-time login**: check whether the user profile document already exists
+   in Firestore (`users/{uid}`). If not, create it and ask the user to complete
+   their city (for cases where IP geolocation fails); auto-detect the timezone
+   via `Intl.DateTimeFormat().resolvedOptions().timeZone` on the client, sent
+   once during onboarding.
+5. Server Components for protected pages verify the session through the
+   Firebase Admin SDK (session cookie, not just the client-side ID token) so
+   SSR knows the auth status before rendering.
 
-**Catatan teknis X (Twitter) OAuth**: provider ID di Firebase Auth SDK saat ini masih `twitter.com` (legacy naming). Perlu dicek ulang saat implementasi apakah SDK versi yang dipakai sudah ada perubahan, karena X sudah lama rebrand dari Twitter.
+**Technical note on X (Twitter) OAuth**: the provider ID in the Firebase Auth
+SDK is still `twitter.com` (legacy naming). Re-check during implementation
+whether the SDK version in use has changed anything, since X rebranded from
+Twitter long ago.
 
 ## 6. Data Flow: Task Completion (Detail)
 
@@ -148,71 +242,105 @@ sequenceDiagram
 
     U->>CF: completeTask(taskId)
     CF->>FS: read task document
-    FS-->>CF: task data (level, durasi, category)
-    CF->>CF: hitung score = level x durasi
+    FS-->>CF: task data (level, duration, category)
+    CF->>CF: compute score = level x duration
     CF->>FS: transaction: update status=completed, score
     FS-->>CF: ack
     CF-->>U: return updated score
-    Note over U: UI update via realtime listener,<br/>bukan return value langsung
+    Note over U: UI updates via realtime listener,<br/>not the direct return value
 ```
 
 ## 7. Security Architecture
 
-- **Firestore Security Rules**: default deny. User hanya bisa read dokumen milik sendiri (task, report, badge). Write ke field `score`, `status: completed`, dan seluruh koleksi `leaderboard`/`badges` ditolak dari client — hanya Admin SDK (Cloud Functions) yang bisa menulis field tersebut.
-- **Secrets**: API key untuk IP geolocation dan LLM provider disimpan di Cloud Functions environment config / Secret Manager, tidak pernah di-expose ke client bundle.
-- **Rate limiting**: callable functions (`createTask`, `completeTask`) perlu app check (Firebase App Check) untuk mencegah abuse dari luar aplikasi resmi (bukan hanya mengandalkan auth token).
+- **Firestore Security Rules**: default deny. Users may only read their own
+  documents (tasks, reports, badges). Writes to `score`, `status: completed`,
+  and the entire `leaderboard`/`badges` collections are rejected from the
+  client — only the Admin SDK (Cloud Functions) may write those fields.
+- **Secrets**: API keys for IP geolocation and the LLM provider live in Cloud
+  Functions environment config / Secret Manager, never exposed to the client
+  bundle.
+- **Rate limiting**: callable functions (`createTask`, `completeTask`) need
+  Firebase App Check to block abuse from outside the official app (not just
+  relying on the auth token).
 
-## 8. Keputusan atas Open Items dari PRD Section 14
+## 8. Decisions on the PRD Section 14 Open Items
 
-| Item PRD | Keputusan |
+| PRD item | Decision |
 |---|---|
-| Konstanta formula weighting leaderboard | Ditaruh di Remote Config (Section 4.3), bukan hardcoded |
-| Timezone handling task cutover | Timezone disimpan per-user di profile, hourly scheduled job (Section 4.2) |
-| IP geolocation provider | ip2location.io (free plan, 50.000 query/bulan dengan API key) untuk MVP, di belakang service abstraction (Section 4.4). Verifikasi ToS commercial use sebelum production launch |
-| Manual override city | **In scope** untuk MVP. Field city di profile settings bisa di-edit manual, override hasil IP geolocation. Alasan: implementasi murah (satu field form), langsung mengurangi risiko kompensasi user kalau IP geolocation salah deteksi |
+| Leaderboard weighting formula constants | Firebase Remote Config (Section 4.3), not hardcoded |
+| Task cutover timezone handling | Timezone stored per-user on the profile, hourly scheduled job (Section 4.2) |
+| IP geolocation provider | ip2location.io (free plan, 50,000 queries/month with API key) for the MVP, behind a service abstraction (Section 4.4). Verify commercial-use ToS before production launch |
+| Manual city override | **In scope** for the MVP. The profile settings city field is manually editable and overrides IP geolocation results. Rationale: cheap to implement (one form field), immediately reduces user pain when IP geolocation misdetects |
 
 ## 9. Scalability Considerations
 
-- Leaderboard grouping (14 user per grup) berarti query harus di-partition per grup, bukan scan seluruh koleksi user. Struktur data grup leaderboard didesain sebagai sub-collection per cycle, detail di `DATABASE.md`.
-- Firestore composite index dibutuhkan untuk query task by `userId + date` dan `userId + status`.
-- `weeklyCycleJob` yang memproses seluruh user sekaligus berpotensi jadi bottleneck kalau user base besar. Untuk MVP, jalankan sebagai satu batched function dengan pagination (proses N user per batch). Kalau user base tumbuh signifikan, pertimbangkan pecah jadi task queue (Cloud Tasks) per user/grup.
+- Leaderboard grouping (14 users per group) means queries must be partitioned
+  per group, not scan the whole users collection. Leaderboard group data is
+  structured as a per-cycle sub-collection — details in `DATABASE.md`.
+- Firestore composite indexes are needed for task queries by `userId + date`
+  and `userId + status`.
+- A `weeklyCycleJob` that processes every user at once can become a bottleneck
+  with a large user base. For the MVP, run it as one batched function with
+  pagination (N users per batch). With significant growth, consider splitting
+  into a task queue (Cloud Tasks) per user/group.
 
-## 10. Testing Strategy (Ringkas)
+## 10. Testing Strategy (Summary)
 
-- Cloud Functions (business logic scoring, cap validation, balance formula): unit test dengan Firebase Emulator Suite, karena ini bagian paling kritis untuk correctness dan paling rawan bug perhitungan.
-- Firestore Security Rules: test terpisah pakai `@firebase/rules-unit-testing`.
-- Frontend: component test untuk form validation (task create), skip end-to-end penuh di fase awal untuk menghemat waktu development, tambahkan kalau app sudah stabil.
+- Cloud Functions (scoring business logic, cap validation, balance formula):
+  unit tests with the Firebase Emulator Suite, since this is the most
+  correctness-critical and calculation-bug-prone part.
+- Firestore Security Rules: separate tests with `@firebase/rules-unit-testing`.
+- Frontend: component tests for form validation (task creation); skip full
+  end-to-end in the early phase to save development time, add it once the app
+  is stable.
 
 ## 11. Project Structure
 
 ```
-/app                    -> Next.js App Router
+src/app                  -> Next.js App Router
   (auth)/
   (app)/
   components/
-    ui/                 -> shadcn/neobrutalism components
+    ui/                  -> shadcn/neobrutalism components
   lib/
-    firebase/           -> client SDK init, hooks (useTasks, useAuth)
-/functions              -> Firebase Cloud Functions (TypeScript)
+    firebase/            -> client SDK init, hooks (useTasks, useAuth)
+/functions               -> Firebase Cloud Functions (TypeScript)
   src/
-    callable/           -> createTask, completeTask
+    callable/            -> createTask, completeTask
     scheduled/           -> taskCutoverJob, weeklyCycleJob
     services/            -> geolocation.ts, aiSuggestion.ts
-/shared                 -> tipe TypeScript yang dipakai app dan functions (Task, Report, dll)
+/shared                  -> TypeScript types used by both app and functions (Task, Report, ...)
 firestore.rules
 firebase.json
 ```
 
-**Catatan tentang `/shared`**: Firebase Functions di-deploy terpisah dari Next.js app, jadi folder `/shared` perlu di-copy ke `functions/` saat build (lewat build script sederhana), bukan pakai monorepo tooling seperti Turborepo/Nx yang overkill untuk dua target build ini. Alternatif kalau duplikasi type kecil terasa lebih simpel daripada build step tambahan: duplicate manual, cukup untuk beberapa interface dasar (Task, WeeklyReport).
+**Note on `/shared`**: Firebase Functions deploy separately from the Next.js
+app, so the `/shared` folder needs to be copied into `functions/` at build
+time (via a small build script) — not monorepo tooling like Turborepo/Nx,
+which is overkill for two build targets. If duplicating a few small types
+feels simpler than an extra build step, manual duplication is fine for a few
+basic interfaces (Task, WeeklyReport).
 
 ## 12. Risks Summary
 
-- **Vendor lock-in ke Firebase**: migrasi ke backend lain di masa depan akan mahal. Diterima sebagai trade-off untuk development speed di tahap ini.
-- **IP geolocation accuracy**: sudah dimitigasi dengan manual override, tapi tetap ada residual risk user salah grup di grup leaderboard.
-- **ip2location.io quota bulanan**: free plan hard-stop saat 50.000 query/bulan habis, bukan throttle bertahap. Butuh monitoring quota usage dan graceful degradation di `weeklyCycleJob` (Section 4.4) supaya kehabisan quota tidak menggagalkan seluruh weekly cycle. ToS commercial use juga perlu diverifikasi sebelum production launch.
-- **AI API dependency**: mitigasi dengan fallback ke rule-based, tidak ada single point of failure untuk fitur report.
-- **`weeklyCycleJob` sebagai satu titik kritis**: kalau job ini gagal di tengah proses (misal error di user ke-500 dari 1000), perlu strategi idempotency dan resume, bukan restart dari awal. Ini perlu didesain lebih detail saat implementasi, dicatat sebagai technical risk yang belum fully solved di level architecture ini.
+- **Firebase vendor lock-in**: migrating to another backend later will be
+  expensive. Accepted as a development-speed trade-off at this stage.
+- **IP geolocation accuracy**: mitigated with the manual override, but residual
+  risk remains of users landing in the wrong leaderboard group.
+- **ip2location.io monthly quota**: the free plan hard-stops at 50,000
+  queries/month, not a gradual throttle. Quota monitoring plus graceful
+  degradation in `weeklyCycleJob` (Section 4.4) is required so an exhausted
+  quota cannot fail the whole weekly cycle. Commercial-use ToS also needs
+  verification before production launch.
+- **AI API dependency**: mitigated with the rule-based fallback — no single
+  point of failure for the report feature.
+- **`weeklyCycleJob` as a single critical point**: if the job dies mid-run
+  (e.g. an error at user 500 of 1000), it needs an idempotency and resume
+  strategy, not a restart from scratch. This needs more detailed design during
+  implementation and is logged as a technical risk not yet fully solved at the
+  architecture level.
 
 ## 13. Next Steps
 
-Lanjut ke `DATABASE.md` untuk detail Firestore collections, document structure, dan composite indexes berdasarkan data flow yang sudah didefinisikan di sini.
+Continue to `DATABASE.md` for Firestore collection details, document
+structures, and composite indexes based on the data flows defined here.

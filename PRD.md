@@ -2,113 +2,178 @@
 
 ## 1. Overview
 
-Web application untuk tracking produktivitas dan kesehatan mental pengguna menggunakan prinsip gamifikasi. Pengguna mengelola daily to-do list yang dibagi menjadi dua kategori task: **Hustle** (produktivitas: kerja, pendidikan, aktivitas lain yang menambah tekanan) dan **Humble** (recovery: makan, tidur, olahraga, hiburan, aktivitas yang menurunkan tekanan). Setiap task menghasilkan skor saat diselesaikan, mendorong user menyeimbangkan output produktivitas dengan pemulihan mental.
+Purrpose is a web app for tracking productivity and mental well-being through
+gamification. Users manage a daily to-do list split into two task categories:
+**Hustle** (productivity: work, study, and other pressure-adding activities)
+and **Humble** (recovery: meals, sleep, exercise, entertainment, and other
+pressure-releasing activities). Each completed task earns a score, encouraging
+users to balance productive output with mental recovery.
 
-Kompetisi sosial dihadirkan lewat weekly leaderboard berbasis lokasi (city-level), dengan badge collectible sebagai reward jangka panjang.
+Social competition comes from a location-based weekly leaderboard (city-level),
+with collectible badges as the long-term reward.
 
 ## 2. Problem Statement
 
-Aplikasi productivity tracker pada umumnya hanya mengukur output (task selesai) tanpa mempertimbangkan burnout risk. User yang hustle terus-menerus tanpa recovery time tidak mendapat sinyal peringatan apa pun dari tools yang ada. Aplikasi ini secara eksplisit men-track dua sisi: produktivitas dan recovery, lalu memberi insight tentang keseimbangan keduanya.
+Most productivity trackers only measure output (finished tasks) and ignore
+burnout risk. Users who hustle non-stop with no recovery time get no warning
+signal from existing tools. This app explicitly tracks both sides —
+productivity and recovery — and gives insight into how well they are balanced.
 
 ## 3. Target User
 
-Individu produktif (pekerja, mahasiswa, freelancer) yang ingin membangun kebiasaan kerja sekaligus menjaga kesehatan mental, dan termotivasi oleh elemen kompetitif/gamifikasi (skor, leaderboard, badge).
+Productive individuals (workers, students, freelancers) who want to build
+working habits while protecting their mental health, and who are motivated by
+competitive/gamified elements (scores, leaderboards, badges).
 
 ## 4. Core Concept: Hustle & Humble
 
-| Aspek | Hustle | Humble |
+| Aspect | Hustle | Humble |
 |---|---|---|
-| Tujuan | Produktivitas | Recovery / stress management |
-| Contoh | Kerja, belajar, meeting, project | Tidur, makan, olahraga, nonton, journaling |
-| Skala skor | 5 level tekanan (1 = ringan, 5 = berat) | 5 level relaksasi (1 = ringan, 5 = sangat memulihkan) |
+| Goal | Productivity | Recovery / stress management |
+| Examples | Work, study, meetings, projects | Sleep, meals, exercise, shows, journaling |
+| Score scale | 5 pressure levels (1 = light, 5 = heavy) | 5 restoration levels (1 = light, 5 = deeply restoring) |
 
-Task bersifat **manual, non-recurring**. User re-add task setiap hari secara eksplisit. Tidak ada task template/recurring generator di scope awal ini — keputusan ini menyederhanakan data model karena setiap task adalah dokumen independen dengan field `date`, tanpa perlu sinkronisasi antara template dan instance harian.
+Tasks are **manual and non-recurring**. Users re-add tasks explicitly every day.
+There is no recurring-task template/generator in the initial scope — this keeps
+the data model simple, because every task is an independent document with a
+`date` field and no template-to-instance syncing is needed.
 
 ## 5. Scoring System
 
 ### 5.1 Formula
 
 ```
-score = level (1-5) x durasi (jam)
+score = level (1-5) x duration (hours)
 ```
 
-- `level` diisi user saat create task: tingkat tekanan (hustle) atau tingkat relaksasi (humble).
-- `durasi` diisi user dalam satuan jam (bisa desimal, misal 1.5).
+- `level` is entered by the user when creating a task: pressure level (hustle)
+  or restoration level (humble).
+- `duration` is entered by the user in hours (decimals allowed, e.g. 1.5).
 
-### 5.2 Anti-abuse: Duration Cap
+### 5.2 Anti-abuse: Duration Caps
 
-Tanpa batas atas, user bisa memanipulasi skor (misal input durasi 20 jam untuk satu task). Dua lapis cap diterapkan:
+Without an upper bound, users could game the score (e.g. entering 20 hours for
+a single task). Two cap layers apply:
 
-- **Flat per-task cap**: setiap task tunggal, apa pun kategorinya, maksimum **16 jam**. Angka ini dipilih cukup generous untuk kasus durasi terpanjang yang wajar (tidur ekstrem, kerja maraton) tapi tetap menangkap input yang jelas tidak masuk akal. Berlaku sama untuk hustle maupun humble — **bukan per-tipe task** (tidur/olahraga/kerja beda cap), karena title task bersifat free-text di skema (lihat `DATABASE.md`), bukan enum yang bisa dipetakan ke cap berbeda-beda. Memaksakan cap per-tipe berarti harus menambah field klasifikasi baru yang belum ada nilainya buat fase MVP — flat cap adalah trade-off yang disengaja untuk kesederhanaan.
-- **Daily aggregate cap (confirmed)**: total durasi seluruh task (hustle + humble digabung) dalam satu tanggal tidak boleh melebihi **24 jam**.
+- **Flat per-task cap**: any single task, regardless of category, may be at
+  most **16 hours**. This is generous enough for the longest reasonable
+  durations (extreme sleep, marathon work) while still catching clearly absurd
+  input. It applies equally to hustle and humble — **not per task type**
+  (sleep/exercise/work do not get different caps), because task titles are
+  free text in the schema (see `DATABASE.md`), not an enum that could map to
+  different caps. Enforcing per-type caps would require a new classification
+  field with no value for the MVP phase — the flat cap is a deliberate
+  simplicity trade-off.
+- **Daily aggregate cap (confirmed)**: the total duration of all tasks (hustle
+  + humble combined) on a single date may not exceed **24 hours**.
 
-Validasi dilakukan saat create/update task: cek durasi task itu sendiri terhadap flat cap, lalu hitung total durasi task existing di tanggal yang sama, tolak input kalau salah satu dari dua threshold ini terlampaui.
+Validation runs on task create/update: the task's own duration is checked
+against the flat cap, then the total duration of existing tasks on the same
+date is computed, and the input is rejected if either threshold is exceeded.
 
-Implikasi implementasi: validasi cap harian butuh read existing tasks di tanggal tersebut sebelum write, idealnya dilakukan dalam Firestore transaction untuk menghindari race condition kalau user membuat beberapa task hampir bersamaan (misal dari multiple tab/device). Kedua angka cap (16 jam per-task, 24 jam per-hari) ditaruh di Firebase Remote Config, bukan hardcoded, supaya bisa di-tune tanpa redeploy (`ARCHITECTURE.md` Section 4.3).
+Implementation note: daily-cap validation needs to read the existing tasks for
+that date before writing, ideally inside a Firestore transaction to avoid race
+conditions when a user creates several tasks nearly simultaneously (e.g. from
+multiple tabs/devices). Both cap numbers (16h per-task, 24h per-day) live in
+Firebase Remote Config, not hardcoded, so they can be tuned without redeploying
+(`ARCHITECTURE.md` Section 4.3).
 
-### 5.3 Skor tidak dikurangi
+### 5.3 Scores are never reduced
 
-Task yang tidak diselesaikan tidak mengurangi skor secara langsung (tidak ada skor negatif per task). Efeknya tetap ada lewat `completion_rate` sebagai salah satu komponen weighting leaderboard score (`ARCHITECTURE.md` Section 8.1) — jadi task yang sering `missed` tetap berdampak ke daya saing user di leaderboard, hanya tidak dalam bentuk pengurangan skor langsung. Keputusan non-punitive ini konsisten dipakai di seluruh dokumen turunan (`DESIGN.md` Section 8 microcopy tone), dianggap final.
+Unfinished tasks do not reduce the score directly (no negative score per task).
+The effect still exists through `completion_rate` as one weighting component of
+the leaderboard score (`ARCHITECTURE.md` Section 8.1) — so frequently `missed`
+tasks still hurt a user's leaderboard competitiveness, just not as a direct
+score deduction. This non-punitive decision is applied consistently across all
+derived documents (`DESIGN.md` Section 8, microcopy tone) and is considered
+final.
 
 ## 6. Task Management (Home Page)
 
-- User membuat task baru: pilih kategori (Hustle/Humble), title, level (1-5), durasi (jam), tanggal.
-- Task tampil dalam list harian, dikelompokkan per kategori.
-- User menandai task sebagai selesai (mark as complete) untuk mendapat skor.
-- User bisa edit/delete task yang belum selesai.
-- Task yang sudah completed bersifat read-only (tidak bisa diedit untuk mencegah manipulasi skor setelah fakta).
+- Users create a new task: pick a category (Hustle/Humble), title, level (1-5),
+  duration (hours), date.
+- Tasks appear in a daily list, grouped per category.
+- Users mark a task as complete to earn its score.
+- Users can edit/delete tasks that are not yet finished.
+- Completed tasks are read-only (they cannot be edited, to prevent score
+  manipulation after the fact).
 
 ### 6.1 Task Lifecycle
 
-Task punya 3 status: `pending` -> `completed` atau `missed`.
+A task has 3 statuses: `pending` -> `completed` or `missed`.
 
-- `pending`: default saat dibuat, masih dalam window hari berjalan.
-- `completed`: user menandai selesai sebelum hari berakhir, menghasilkan skor.
-- `missed`: otomatis di-assign saat hari berakhir dan task masih `pending`. Tidak menghasilkan skor, tapi tercatat untuk dihitung di completion rate leaderboard (lihat Section 8.1).
+- `pending`: the default on creation, while still inside the current day's
+  window.
+- `completed`: the user marks it done before the day ends; it earns a score.
+- `missed`: assigned automatically when the day ends while the task is still
+  `pending`. It earns no score but is recorded for the leaderboard completion
+  rate (see Section 8.1).
 
-**Implikasi arsitektur**: transisi `pending` -> `missed` butuh scheduled job (Cloud Scheduler + Cloud Function) yang berjalan di akhir hari. Perlu diputuskan apakah cutover ini berbasis timezone per-user (lebih akurat, lebih kompleks karena harus query user berdasarkan timezone masing-masing) atau satu cutover global (misal UTC 00:00, lebih simpel tapi tidak akurat untuk user di timezone yang jauh dari UTC). Ini akan dibahas di ARCHITECTURE.md.
+**Architecture implication**: the `pending` -> `missed` transition needs a
+scheduled job (Cloud Scheduler + Cloud Function) running at end of day. The
+cutover is per-user timezone via an hourly scheduled job — see the final
+decision in `ARCHITECTURE.md` Section 4.2.
 
 ## 7. Report
 
 ### 7.1 Daily Report
 
-- List seluruh task yang dibuat pada hari itu, dikelompokkan Hustle/Humble.
-- Status masing-masing: completed / not completed.
-- Total skor harian per kategori.
-- Tidak ada analisis mendalam atau saran di level harian — cukup summary faktual.
+- Lists all tasks created that day, grouped Hustle/Humble.
+- Each task's status: completed / not completed.
+- Daily score totals per category.
+- No deep analysis or advice at the daily level — just a factual summary.
 
 ### 7.2 Weekly Report
 
-- Rekap seluruh task dalam 7 hari terakhir.
-- **Balance Score**: metrik 0-100 yang merepresentasikan keseimbangan antara hustle dan humble. Target rasio ideal dikonfirmasi **50:50**.
+- Recap of all tasks in the last 7 days.
+- **Balance Score**: a 0-100 metric representing the hustle/humble balance. The
+  confirmed ideal target ratio is **50:50**.
 
 ```
 humble_percentage = humble_score / (hustle_score + humble_score) x 100
 balance_index = 100 - abs(50 - humble_percentage) x 2
 ```
 
-Balance index = 100 saat rasio hustle:humble tepat 50:50. Semakin skewed ke salah satu sisi (all hustle atau all humble), index turun mendekati 0.
+The balance index is 100 when the hustle:humble ratio is exactly 50:50. The
+more it skews to one side (all hustle or all humble), the closer the index
+drops toward 0.
 
-`balance_index` ini dipakai dua kali: ditampilkan di weekly report, dan menjadi salah satu komponen weighting di leaderboard score (Section 8.1).
+`balance_index` is used twice: shown in the weekly report, and as one
+weighting component of the leaderboard score (Section 8.1).
 
-- **Saran perbaikan**: kombinasi rule-based dan AI-enhanced.
-  - Rule-based (default): threshold-based logic, misal jika `humble_percentage < 20%` maka tampilkan saran standar terkait risiko burnout dan rekomendasi menambah task recovery. Static, cepat, tanpa dependency eksternal.
-  - AI enhancement (optional): jika enabled, kirim data ringkasan minggu tersebut ke LLM API untuk menghasilkan saran yang lebih personalized dan kontekstual. Fallback ke rule-based jika API call gagal atau timeout.
+- **Improvement suggestions**: a rule-based + AI-enhanced combination.
+  - Rule-based (default): threshold logic, e.g. if `humble_percentage < 20%`,
+    show a standard suggestion about burnout risk and adding recovery tasks.
+    Static, fast, no external dependency.
+  - AI enhancement (optional): if enabled, send that week's summary data to an
+    LLM API for more personalized, contextual suggestions. Falls back to
+    rule-based if the API call fails or times out.
 
 ## 8. Leaderboard
 
 ### 8.1 Weekly Cycle
 
-- Setiap awal minggu, sistem mencari 14 user lain berdasarkan lokasi (city-level) untuk membentuk grup kompetisi.
-- Lokasi diperoleh otomatis dari **IP geolocation** (bukan manual input). Konsekuensi teknis:
-  - Butuh third-party IP geolocation service untuk resolve IP ke city — **diputuskan pakai ip2location.io** (lihat `ARCHITECTURE.md` Section 4.4 untuk detail limitasi free plan).
-  - Akurasi IP geolocation tidak sempurna, khususnya untuk user yang browsing lewat mobile data (sering resolve ke city ISP, bukan city aktual user) atau VPN. Risiko: user bisa salah grup, atau sengaja pakai VPN untuk masuk grup yang lebih mudah menang. Ini perlu diterima sebagai known limitation di fase awal, atau ditambah fallback manual override di profile settings kalau user merasa city-nya salah deteksi.
-  - IP di-resolve saat apa: setiap login, atau sekali saat weekly cycle start? Disarankan resolve dan cache city di awal weekly cycle saja (bukan tiap request) untuk mengurangi API call ke geolocation service.
+- At the start of each week, the system finds 14 other users by location
+  (city-level) to form a competition group.
+- Location is resolved automatically from **IP geolocation** (not manual
+  input). Technical consequences:
+  - A third-party IP geolocation service is needed to resolve IP to city —
+    **decided: ip2location.io** (see `ARCHITECTURE.md` Section 4.4 for free-plan
+    limitations).
+  - IP geolocation accuracy is imperfect, especially for users on mobile data
+    (often resolves to the ISP's city, not the user's actual city) or VPNs.
+    Risk: users can land in the wrong group, or deliberately use a VPN to join
+    an easier group. Accept this as a known early-phase limitation, with a
+    manual city override in profile settings as fallback when users feel their
+    detected city is wrong.
+  - Resolve timing: resolve and cache the city once at weekly cycle start (not
+    on every request) to reduce geolocation API calls.
 
-- **Skor leaderboard** bukan raw score, tapi weighted score yang menggabungkan tiga komponen: total skor mingguan, balance ratio, dan completion rate.
+- The **leaderboard score** is not the raw score, but a weighted score combining
+  three components: weekly total score, balance ratio, and completion rate.
 
 ```
-weekly_raw_score   = total skor completed task (hustle + humble) dalam seminggu
+weekly_raw_score   = total score of completed tasks (hustle + humble) in a week
 completion_rate    = completed_tasks / (completed_tasks + missed_tasks)
 balance_weight     = 0.5 + (balance_index / 100) x 0.5      -> range 0.5 - 1.0
 completion_weight  = 0.5 + completion_rate x 0.5             -> range 0.5 - 1.0
@@ -116,67 +181,105 @@ completion_weight  = 0.5 + completion_rate x 0.5             -> range 0.5 - 1.0
 leaderboard_score = weekly_raw_score x balance_weight x completion_weight
 ```
 
-Rasional: user dengan balance sempurna (index 100) dan completion rate 100% mendapat full raw score (multiplier 1.0). User dengan balance dan completion terburuk tetap dapat 25% dari raw score (0.5 x 0.5), bukan nol — supaya user dengan minggu buruk tidak langsung merasa usahanya sia-sia, tapi tetap kalah bersaing dengan user yang konsisten.
+Rationale: a user with perfect balance (index 100) and 100% completion gets
+their full raw score (1.0 multiplier). A user with the worst balance and
+completion still keeps 25% of raw score (0.5 x 0.5), not zero — so a bad week
+never feels like wasted effort, while consistent users still outcompete them.
 
-**Trade-off yang perlu disadari**: ini penalti multiplicative, bukan additive. User dengan raw score tinggi tapi balance dan completion buruk kena penalti ganda (bisa turun ke 25% dari raw score). Kalau ini terasa terlalu punitive setelah playtesting, alternatifnya pakai bobot additive (misal `leaderboard_score = raw_score x 0.6 + balance_index x 2 + completion_rate x 100 x 0.4`, angka arbitrary, perlu tuning). Rekomendasi: constant 0.5 floor dan bobot 0.5/0.5 split di atas jangan di-hardcode, taruh di Firebase Remote Config supaya bisa di-tune tanpa redeploy.
+**Known trade-off**: this is a multiplicative penalty, not additive. A user
+with a high raw score but poor balance and completion gets penalized twice
+(down to 25% of raw score). If playtesting shows this feels too punitive, the
+alternative is additive weighting (e.g.
+`leaderboard_score = raw_score x 0.6 + balance_index x 2 + completion_rate x 100 x 0.4`
+— arbitrary numbers, needs tuning). Recommendation: do not hardcode the 0.5
+floor and the 0.5/0.5 split above; keep them in Firebase Remote Config so they
+can be tuned without redeploying.
 
 ### 8.2 Fallback Matching
 
-Matching bertingkat:
+Tiered matching:
 
-1. Coba city-level dulu (14 user terdekat di kota yang sama).
-2. Kalau kurang dari 14, expand ke provinsi/region terdekat.
-3. Kalau setelah expand ke provinsi masih kurang dari 14, leaderboard tetap jalan dengan peserta yang ada (tidak ada expand lebih lanjut ke level nasional). Ini fallback final yang disepakati — user di region yang sangat sepi tetap punya leaderboard meski grupnya kecil.
+1. Try city-level first (14 closest users in the same city).
+2. If fewer than 14, expand to the nearest province/region.
+3. If still fewer than 14 after the province expansion, the leaderboard runs
+   with whoever is there (no further expansion to national level). This is the
+   agreed final fallback — users in very quiet regions still get a leaderboard,
+   even if the group is small.
 
 ### 8.3 Badge System
 
-- Top 3 user di setiap grup leaderboard mendapat badge dengan tier berbeda: Gold (rank 1), Silver (rank 2), Bronze (rank 3).
-- Badge disimpan sebagai collectible permanen di profil user, terikat ke minggu dan grup kompetisi tertentu (bukan cuma satu badge generik "pernah menang").
-- Badge assets: **diputuskan** di `DESIGN.md` Section 7 — dibedakan lewat icon + label per tier (trophy/medal/award), bukan warna metalik tradisional (palette brand tidak punya warna gold/silver/bronze). Tidak ada variasi tambahan berdasarkan winning streak di fase awal.
+- The top 3 users of each leaderboard group earn a badge with a different tier:
+  Gold (rank 1), Silver (rank 2), Bronze (rank 3).
+- Badges are stored as permanent collectibles on the user profile, tied to a
+  specific week and competition group (not one generic "once a winner" badge).
+- Badge assets: **decided** in `DESIGN.md` Section 7 — tiers differ by icon +
+  label (trophy/medal/award), not traditional metallic colors (the brand palette
+  has no gold/silver/bronze). No extra variations for winning streaks in the
+  initial phase.
 
 ## 9. Profile
 
-- Identitas user: nama, email, avatar, city (untuk leaderboard matching).
-- Edit profil.
-- Showcase badge yang sudah dikoleksi (grid/list view).
-- Settings: preferensi notifikasi, opsi AI-enhanced report on/off.
+- User identity: name, email, avatar, city (for leaderboard matching).
+- Edit profile.
+- Showcase of collected badges (grid/list view).
+- Settings: notification preferences, AI-enhanced report on/off toggle.
 - Logout.
 
 ## 10. Authentication
 
 - Email/password (Firebase Auth).
 - OAuth: Google, GitHub, X.
-  - Catatan teknis: Firebase Auth native provider untuk X terdaftar sebagai `twitter.com` provider ID (legacy naming dari Twitter, belum di-rename ke X di Firebase SDK per pengetahuan terakhir). Perlu verifikasi versi Firebase SDK terbaru saat implementasi karena ini bisa berubah.
+  - Technical note: Firebase Auth's native X provider is registered as the
+    `twitter.com` provider ID (legacy Twitter naming, not yet renamed to X in
+    the Firebase SDK as of last check). Re-verify against the latest Firebase
+    SDK version during implementation, as this may change.
 
 ## 11. Non-Functional Requirements
 
-- **Performance**: leaderboard matching computation (city/province fallback) berpotensi mahal jika dilakukan synchronous saat request. Sebaiknya dijalankan sebagai scheduled Cloud Function di awal minggu, bukan on-demand saat user membuka halaman leaderboard.
-- **Security**: Firestore security rules harus memastikan user hanya bisa write ke task/report miliknya sendiri. Skor dan badge tidak boleh writable langsung dari client (harus lewat Cloud Function/server-side logic untuk mencegah manipulasi skor).
-- **Scalability**: struktur data leaderboard per grup mingguan harus di-partition dengan baik agar query tidak scan seluruh user collection.
-- **Data privacy**: city-level location cukup granular untuk matching tapi tidak boleh expose data lokasi lebih presisi antar user (tidak ada exact address atau GPS coordinate yang ditampilkan ke user lain).
+- **Performance**: leaderboard matching computation (city/province fallback) can
+  be expensive if run synchronously on request. Prefer a scheduled Cloud
+  Function at the start of the week over on-demand computation when the user
+  opens the leaderboard page.
+- **Security**: Firestore security rules must ensure users can only write their
+  own tasks/reports. Scores and badges must never be writable directly from the
+  client (they must go through Cloud Function/server-side logic to prevent
+  score manipulation).
+- **Scalability**: per-group weekly leaderboard data structures must be
+  partitioned well so queries never scan the whole users collection.
+- **Data privacy**: city-level location is granular enough for matching but
+  must not expose more precise location data between users (no exact address or
+  GPS coordinates shown to other users).
 
 ## 12. Tech Stack
 
 - Framework: Next.js (App Router)
 - Database & Auth: Firebase Firestore + Firebase Auth
-- UI: Neo Brutalism template (neobrutalism.dev, berbasis shadcn/ui)
+- UI: Neo Brutalism template (neobrutalism.dev, based on shadcn/ui)
 - Icons: Lucide
 - Color palette: `#FF0052`, `#FFD400`, `#00C68D`, `#0055DA`
 
-## 13. Out of Scope (Fase Awal)
+## 13. Out of Scope (Initial Phase)
 
-- Recurring task template.
-- Notifikasi push/reminder.
-- Social features di luar leaderboard (comment, follow, chat).
-- Monetisasi/subscription.
+- Recurring task templates.
+- Push notifications/reminders.
+- Social features beyond the leaderboard (comments, follows, chat).
+- Monetization/subscriptions.
 
-## 14. Open Questions / Assumptions to Validate
+## 14. Open Questions — Resolution Log
 
-Seluruh item di bawah **sudah diputuskan** di `ARCHITECTURE.md` Section 8 — daftar ini ditinggalkan sebagai riwayat pertanyaan awal, bukan status terkini. Cek `ARCHITECTURE.md` untuk keputusan final, jangan pakai daftar ini sebagai acuan status.
+Every item below was **already decided** in `ARCHITECTURE.md` Section 8. This
+list is kept as the history of the original questions, not as current status.
+Check `ARCHITECTURE.md` for the final decisions; do not use this list as a
+status reference.
 
-1. ~~Angka konstanta di formula weighting leaderboard~~ — diputuskan taruh di Firebase Remote Config, bukan hardcoded.
-2. ~~Timezone handling untuk task lifecycle cutover~~ — diputuskan per-user timezone, hourly scheduled job.
-3. ~~IP geolocation service provider~~ — diputuskan pakai ip2location.io (free plan).
-4. ~~Manual override city di profile settings~~ — diputuskan in-scope untuk MVP.
+1. ~~Leaderboard weighting formula constants~~ — decided: Firebase Remote
+   Config, not hardcoded.
+2. ~~Timezone handling for the task lifecycle cutover~~ — decided: per-user
+   timezone, hourly scheduled job.
+3. ~~IP geolocation service provider~~ — decided: ip2location.io (free plan).
+4. ~~Manual city override in profile settings~~ — decided: in scope for MVP.
 
-Satu item yang sempat muncul saat review dan sekarang sudah **resolved**: cap per-task-type di Section 5.2 diganti flat per-task cap (16 jam, sama untuk semua kategori) karena skema task tidak punya field untuk membedakan tipe task secara terstruktur.
+One item raised during review is now **resolved**: the per-task-type cap in
+Section 5.2 was replaced with a flat per-task cap (16h, same for all
+categories) because the task schema has no field to structurally distinguish
+task types.

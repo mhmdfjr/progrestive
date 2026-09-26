@@ -2,30 +2,38 @@
 
 ## 1. Conventions
 
-Aplikasi ini **tidak punya REST API tradisional**. Ada dua jenis akses data:
+This app has **no traditional REST API**. There are two kinds of data access:
 
-1. **Firebase Callable Functions** — dipakai untuk seluruh operasi write yang mempengaruhi data sensitif (skor, profile, task lifecycle). Ini yang didokumentasikan di file ini.
-2. **Direct Firestore read** lewat client SDK (atau Admin SDK di Server Component untuk SSR) — dipakai untuk seluruh operasi read (task list, report, leaderboard). Query pattern-nya sudah dijelaskan di `DATABASE.md`, tidak diulang di sini kecuali relevan untuk konteks sebuah function.
+1. **Firebase Callable Functions** — used for every write touching sensitive
+   data (scores, profiles, task lifecycle). These are what this file documents.
+2. **Direct Firestore reads** via the client SDK (or the Admin SDK in Server
+   Components for SSR) — used for every read (task lists, reports,
+   leaderboards). Query patterns are already covered in `DATABASE.md` and are
+   not repeated here except where relevant to a function's context.
 
-Semua callable function:
+Every callable function:
 
-- Mensyaratkan `context.auth != null` (request ditolak dengan `unauthenticated` kalau tidak ada auth token valid).
-- Mensyaratkan App Check token valid (`context.app != null`), sesuai `ARCHITECTURE.md` Section 7.
-- Mengembalikan error pakai `HttpsError` standar Firebase Functions (`code`, `message`), bukan custom error shape, supaya konsisten dengan error handling bawaan Firebase SDK di client.
+- Requires `context.auth != null` (requests without a valid auth token are
+  rejected with `unauthenticated`).
+- Requires a valid App Check token (`context.app != null`), per
+  `ARCHITECTURE.md` Section 7.
+- Returns errors with the standard Firebase Functions `HttpsError` (`code`,
+  `message`), not a custom error shape, to stay consistent with the Firebase
+  SDK's built-in client error handling.
 
 ## 2. `createTask`
 
-Membuat task baru dengan status `pending`.
+Creates a new task with `pending` status.
 
 **Request**
 
-| Field | Type | Wajib | Catatan |
+| Field | Type | Required | Notes |
 |---|---|---|---|
-| `category` | `"hustle"` \| `"humble"` | ya | |
-| `title` | string | ya | max 100 karakter |
-| `level` | number | ya | integer 1-5 |
-| `durationHours` | number | ya | > 0, desimal diperbolehkan |
-| `date` | string `YYYY-MM-DD` | ya | tidak boleh tanggal di masa lalu |
+| `category` | `"hustle"` \| `"humble"` | yes | |
+| `title` | string | yes | max 100 characters |
+| `level` | number | yes | integer 1-5 |
+| `durationHours` | number | yes | > 0, decimals allowed |
+| `date` | string `YYYY-MM-DD` | yes | must not be a past date |
 
 **Response**
 
@@ -35,25 +43,31 @@ Membuat task baru dengan status `pending`.
 
 **Error cases**
 
-| Code | Kondisi |
+| Code | Condition |
 |---|---|
-| `invalid-argument` | `level` di luar 1-5, `durationHours` <= 0, `date` di masa lalu, format `date` tidak valid |
-| `failed-precondition` | `durationHours` task ini sendiri melebihi `perTaskDurationCapHours` dari Remote Config (default 16 jam) — flat cap, sama untuk hustle maupun humble |
-| `failed-precondition` | total durasi task di tanggal tersebut (termasuk task baru ini) melebihi `dailyDurationCapHours` dari Remote Config. Message berisi sisa jam yang masih tersedia, supaya frontend bisa tampilkan pesan yang membantu, bukan generic error |
-| `unauthenticated` | tidak ada auth context |
+| `invalid-argument` | `level` outside 1-5, `durationHours` <= 0, `date` in the past, malformed `date` |
+| `failed-precondition` | this task's own `durationHours` exceeds `perTaskDurationCapHours` from Remote Config (default 16h) — flat cap, same for hustle and humble |
+| `failed-precondition` | total task duration on that date (including this new task) exceeds `dailyDurationCapHours` from Remote Config. The message includes the remaining hours available, so the frontend can show a helpful message instead of a generic error |
+| `unauthenticated` | no auth context |
 
-**Implementasi cap check**: dua validasi berurutan — (1) cek `durationHours` task ini sendiri terhadap `perTaskDurationCapHours`, gagal cepat tanpa perlu query lain kalau sudah melebihi; (2) baru kalau lolos, baca Section 4 `DATABASE.md` — pakai Firestore aggregation `sum()` untuk menjumlahkan `durationHours` task existing di tanggal yang sama, dilakukan di dalam transaction bersamaan dengan write task baru untuk menghindari race condition antara pembacaan total dan penulisan task baru.
+**Cap-check implementation**: two sequential validations — (1) check this
+task's own `durationHours` against `perTaskDurationCapHours`, failing fast with
+no further queries when already over; (2) only then, per `DATABASE.md`
+Section 4, use a Firestore aggregation `sum()` to total the existing tasks'
+`durationHours` on the same date, inside a transaction together with the new
+task write to avoid a race between reading the total and writing the task.
 
 ## 3. `updateTask`
 
-Edit task yang masih `pending`. Task `completed`/`missed` tidak bisa diedit.
+Edits a task that is still `pending`. `completed`/`missed` tasks cannot be
+edited.
 
 **Request**
 
-| Field | Type | Wajib |
+| Field | Type | Required |
 |---|---|---|
-| `taskId` | string | ya |
-| `updates` | object, subset dari `{ title, level, durationHours, date }` | ya, minimal satu field |
+| `taskId` | string | yes |
+| `updates` | object, subset of `{ title, level, durationHours, date }` | yes, at least one field |
 
 **Response**
 
@@ -63,13 +77,13 @@ Edit task yang masih `pending`. Task `completed`/`missed` tidak bisa diedit.
 
 **Error cases**
 
-| Code | Kondisi |
+| Code | Condition |
 |---|---|
-| `not-found` | `taskId` tidak ada atau bukan milik user tersebut |
-| `failed-precondition` | task berstatus `completed` atau `missed`, tidak bisa diedit |
-| `failed-precondition` | kalau `durationHours` diubah, dicek ulang terhadap `perTaskDurationCapHours` (flat cap 16 jam) sama seperti `createTask` |
-| `failed-precondition` | kalau `durationHours` atau `date` diubah, cap harian di-cek ulang untuk tanggal barunya (mengeluarkan durasi lama, memasukkan durasi baru) — sama seperti `createTask` |
-| `invalid-argument` | field baru tidak lolos validasi yang sama seperti `createTask` |
+| `not-found` | `taskId` does not exist or does not belong to that user |
+| `failed-precondition` | task is `completed` or `missed` — not editable |
+| `failed-precondition` | when `durationHours` changes, it is re-checked against `perTaskDurationCapHours` (flat 16h cap), same as `createTask` |
+| `failed-precondition` | when `durationHours` or `date` changes, the daily cap is re-checked for the new date (old duration out, new duration in) — same as `createTask` |
+| `invalid-argument` | new fields fail the same validation as `createTask` |
 
 ## 4. `deleteTask`
 
@@ -85,7 +99,9 @@ Edit task yang masih `pending`. Task `completed`/`missed` tidak bisa diedit.
 { "taskId": "abc123", "deleted": true }
 ```
 
-**Error cases**: `not-found`, `failed-precondition` (task sudah `completed`/`missed`, tidak bisa dihapus — task yang sudah menyumbang skor harus tetap ada sebagai audit trail).
+**Error cases**: `not-found`, `failed-precondition` (task is already
+`completed`/`missed` and cannot be deleted — tasks that contributed score must
+remain as an audit trail).
 
 ## 5. `completeTask`
 
@@ -101,25 +117,26 @@ Edit task yang masih `pending`. Task `completed`/`missed` tidak bisa diedit.
 { "taskId": "abc123", "status": "completed", "score": 12 }
 ```
 
-Skor dihitung server-side: `score = level x durationHours`, ditulis bersamaan dengan `status: "completed"` dan `completedAt`.
+The score is computed server-side: `score = level x durationHours`, written
+together with `status: "completed"` and `completedAt`.
 
 **Error cases**
 
-| Code | Kondisi |
+| Code | Condition |
 |---|---|
-| `not-found` | `taskId` tidak ada atau bukan milik user |
-| `failed-precondition` | task sudah berstatus `completed` atau `missed` — tidak bisa complete dua kali atau complete task yang sudah lewat window-nya |
+| `not-found` | `taskId` does not exist or does not belong to the user |
+| `failed-precondition` | task is already `completed` or `missed` — cannot complete twice or complete a task past its window |
 
 ## 6. `updateProfile`
 
-**Request** (semua field opsional, minimal satu)
+**Request** (all fields optional, at least one required)
 
-| Field | Type | Catatan |
+| Field | Type | Notes |
 |---|---|---|
 | `displayName` | string | |
 | `avatarUrl` | string | |
-| `city` | string | kalau diisi, otomatis set `cityManualOverride = true` di document, supaya `weeklyCycleJob` tidak menimpa dengan hasil IP geolocation |
-| `timezone` | string | IANA timezone string, divalidasi terhadap daftar valid timezone. Function ini yang recompute `utcResetHour`, bukan diterima dari client |
+| `city` | string | when filled, automatically sets `cityManualOverride = true` on the document so `weeklyCycleJob` never overwrites it with IP geolocation |
+| `timezone` | string | IANA timezone string, validated against the valid timezone list. This function recomputes `utcResetHour` — the value is never accepted from the client |
 | `aiReportEnabled` | boolean | |
 
 **Response**
@@ -128,11 +145,14 @@ Skor dihitung server-side: `score = level x durationHours`, ditulis bersamaan de
 { "updated": true }
 ```
 
-**Error cases**: `invalid-argument` (timezone string tidak valid, `displayName` kosong/terlalu panjang), `unauthenticated`.
+**Error cases**: `invalid-argument` (invalid timezone string, empty/overlong
+`displayName`), `unauthenticated`.
 
-## 7. `regenerateWeeklySuggestion` (opsional, on-demand)
+## 7. `regenerateWeeklySuggestion` (optional, on-demand)
 
-Dipanggil dari halaman report kalau user mengaktifkan `aiReportEnabled` setelah report minggu itu sudah ter-generate tanpa AI suggestion, atau ingin retry setelah percobaan sebelumnya gagal.
+Called from the report page when the user enables `aiReportEnabled` after that
+week's report was already generated without an AI suggestion, or wants to retry
+after a previous attempt failed.
 
 **Request**
 
@@ -148,33 +168,36 @@ Dipanggil dari halaman report kalau user mengaktifkan `aiReportEnabled` setelah 
 
 **Error cases**
 
-| Code | Kondisi |
+| Code | Condition |
 |---|---|
-| `not-found` | `weeklyReports/{weekId}` belum ada (report belum di-generate oleh `weeklyCycleJob`) |
-| `resource-exhausted` | user memanggil lebih dari 1x dalam periode cooldown (disarankan 1 jam), untuk mencegah cost abuse ke LLM API — bukan rate limit generik, tapi cooldown spesifik per user per function ini |
-| `failed-precondition` | `aiReportEnabled` di profile bernilai `false` — user harus enable dulu di settings sebelum regenerate |
+| `not-found` | `weeklyReports/{weekId}` does not exist yet (report not generated by `weeklyCycleJob`) |
+| `resource-exhausted` | the user called more than once inside the cooldown window (recommended 1 hour), to prevent LLM API cost abuse — a per-user cooldown specific to this function, not a generic rate limit |
+| `failed-precondition` | the profile's `aiReportEnabled` is `false` — the user must enable it in settings before regenerating |
 
-## 8. Scheduled Functions (Internal, Bukan Client-Facing API)
+## 8. Scheduled Functions (Internal, Not Client-Facing API)
 
-Tidak dipanggil dari frontend, didokumentasikan di sini untuk kelengkapan kontrak sistem.
+Never called from the frontend; documented here for system-contract
+completeness.
 
 | Function | Trigger | Idempotency |
 |---|---|---|
-| `taskCutoverJob` | Cloud Scheduler cron `0 * * * *` (tiap jam) | Aman dijalankan berkali-kali: hanya mengubah task dengan `status == "pending"` dan `date < today` (di timezone user), task yang sudah `missed` tidak diproses ulang |
-| `weeklyCycleJob` | Cloud Scheduler cron `0 0 * * 1` (fixed, Senin 00:00 UTC — lihat rationale di `ARCHITECTURE.md` Section 4.2) | **Belum idempotent-safe sepenuhnya** — dicatat sebagai open risk di `ARCHITECTURE.md` Section 12. Kalau job gagal di tengah proses (misal error di user ke-500 dari 1000), re-run job perlu skip user yang groups/entries-nya sudah tertulis di cycle yang sama, bukan proses ulang dari awal. Field `status` di `leaderboardCycles/{cycleId}` (`matching` -> `scoring` -> `completed`) dipakai sebagai checkpoint kasar untuk ini, tapi granularity per-user di dalam satu fase belum didesain — perlu dibahas lebih detail saat implementasi, bukan blocker untuk lanjut ke fase development |
+| `taskCutoverJob` | Cloud Scheduler cron `0 * * * *` (hourly) | Safe to run repeatedly: only touches tasks with `status == "pending"` and `date < today` (in the user's timezone); already-`missed` tasks are never reprocessed |
+| `weeklyCycleJob` | Cloud Scheduler cron `0 0 * * 1` (fixed, Monday 00:00 UTC — rationale in `ARCHITECTURE.md` Section 4.2) | **Not yet fully idempotent-safe** — logged as an open risk in `ARCHITECTURE.md` Section 12. If the job dies mid-run (e.g. an error at user 500 of 1000), re-running must skip users whose groups/entries are already written in the same cycle, not reprocess from the start. The `status` field on `leaderboardCycles/{cycleId}` (`matching` -> `scoring` -> `completed`) serves as a coarse checkpoint for this, but per-user granularity inside one phase is not yet designed — to be worked out during implementation, not a blocker for starting development |
 
-## 9. Read Patterns (Referensi Cepat, Detail di DATABASE.md)
+## 9. Read Patterns (Quick Reference, Details in DATABASE.md)
 
-| Kebutuhan Frontend | Query |
+| Frontend need | Query |
 |---|---|
-| Task list hari ini | `users/{uid}/tasks where date == today`, realtime listener |
-| Daily report | sama seperti di atas, tanpa listener (one-time fetch) |
-| Weekly report | `users/{uid}/weeklyReports/{weekId}`, single doc get |
-| Leaderboard grup user | perlu tahu `groupId` user di cycle berjalan — disarankan denormalize `currentGroupId` ke `users/{uid}` saat `weeklyCycleJob` selesai matching, supaya frontend tidak perlu collection group query mahal tiap kali buka halaman leaderboard |
-| Badge showcase di profil | `users/{uid}/badges`, ordered by `awardedAt desc` |
+| Today's task list | `users/{uid}/tasks where date == today`, realtime listener |
+| Daily report | same as above, one-time fetch (no listener) |
+| Weekly report | `users/{uid}/weeklyReports/{weekId}`, single document get |
+| The user's group leaderboard | needs the user's `groupId` in the running cycle — denormalize `currentGroupId` onto `users/{uid}` when `weeklyCycleJob` finishes matching, so the frontend avoids an expensive collection group query on every leaderboard page open |
+| Profile badge showcase | `users/{uid}/badges`, ordered by `awardedAt desc` |
 
-**Catatan**: field `currentGroupId` yang dibutuhkan untuk read pattern di atas sudah didokumentasikan di `DATABASE.md` Section 3.
+**Note**: the `currentGroupId` field needed by the read pattern above is
+documented in `DATABASE.md` Section 3.
 
 ## 10. Next Steps
 
-Lanjut ke `DESIGN.md` untuk UI/UX guideline (Neo Brutalism component mapping per halaman) sebelum mulai implementasi.
+Continue to `DESIGN.md` for UI/UX guidelines (Neo Brutalism component mapping
+per page) before starting implementation.
