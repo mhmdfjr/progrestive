@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
+import { AuthProvider } from "@/lib/auth/AuthContext";
 import { UserMenu } from "@/components/UserMenu";
 
 export const metadata: Metadata = {
@@ -27,7 +28,8 @@ export default async function AppLayout({
     }
   }
   return (
-    <div className="min-h-screen flex flex-col">
+    <AuthProvider>
+      <div className="min-h-screen flex flex-col">
       <header className="fixed bottom-0 left-0 right-0 md:sticky md:top-0 z-50 border-t-2 md:border-t-0 md:border-b-2 border-border bg-secondary-background">
         <div className="mx-auto max-w-6xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-4 py-3">
           <Link
@@ -89,6 +91,7 @@ export default async function AppLayout({
           </p>
         </div>
       </footer>
-    </div>
+      </div>
+    </AuthProvider>
   );
 }
