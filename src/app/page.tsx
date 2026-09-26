@@ -284,19 +284,19 @@ function About() {
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <ImageCard
-            imageUrl="/images/cover-features-1.webp"
+            imageUrl="/images/cover features 1.webp"
             alt="Hustle daily checklist with completed tasks and progress bar"
             caption="Daily checklist, 2 stacks of ur Hustle/Humble."
             className="w-full rotate-[0.4deg]"
           />
           <ImageCard
-            imageUrl="/images/cover-features-2.webp"
+            imageUrl="/images/cover features 2.webp"
             alt="Weekly balance gauge showing hustle versus humble score"
             caption="Weekly gauge balance + rule-based / AI enhanced advice."
             className="w-full rotate-[-0.6deg]"
           />
           <ImageCard
-            imageUrl="/images/cover-features-3.webp"
+            imageUrl="/images/cover features 3.webp"
             alt="City leaderboard podium with gold badge for the top rank"
             caption="Leaderboard : ur city rank, badge Gold/Silver/Bronze."
             className="w-full rotate-[0.3deg]"
