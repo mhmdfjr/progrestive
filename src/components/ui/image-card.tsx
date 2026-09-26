@@ -22,6 +22,7 @@ export default function ImageCard({ imageUrl, caption, alt, className }: Props) 
         alt={alt ?? caption}
         width={1920}
         height={1080}
+        sizes="(max-width: 768px) 100vw, 400px"
         loading="lazy"
       />
       <figcaption className="border-t-2 text-main-foreground border-border p-4">
