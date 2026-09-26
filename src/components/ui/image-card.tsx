@@ -17,11 +17,11 @@ export default function ImageCard({ imageUrl, caption, alt, className }: Props) 
       )}
     >
       <Image
-        className="aspect-4/3 w-full"
+        className="aspect-video w-full object-cover"
         src={imageUrl}
         alt={alt ?? caption}
-        width={600}
-        height={400}
+        width={1920}
+        height={1080}
         loading="lazy"
       />
       <figcaption className="border-t-2 text-main-foreground border-border p-4">
