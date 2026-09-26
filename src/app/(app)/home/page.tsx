@@ -38,13 +38,6 @@ import {
   CheckCircle2,
   Inbox,
 } from "lucide-react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/components/ui/carousel";
 
 function todayStr() {
   const d = new Date();
@@ -316,6 +309,9 @@ export default function HomePage() {
         )}
 
         {/* Main Grid / Carousel Container */}
+        {/* CSS scroll-snap swipe on mobile, plain 2-col grid on md+.
+            Replaces the embla Carousel (hidden nav buttons made it a pure
+            swipe container) so no carousel runtime ships in initial JS. */}
         {loading ? (
           <div className="grid gap-6 md:grid-cols-2">
             {[0, 1].map((i) => (
@@ -331,12 +327,10 @@ export default function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="w-full">
-            <Carousel opts={{ align: "start" }} className="w-full">
-              <CarouselContent className="-ml-4">
-                {/* HUSTLE CARD */}
-                <CarouselItem className="pl-4 basis-full md:basis-1/2">
-                  <Card className="h-full border-2 shadow-shadow bg-secondary-background flex flex-col">
+          <>
+          <div className="grid w-full grid-flow-col auto-cols-[88%] gap-6 overflow-x-auto pb-2 snap-x snap-mandatory md:grid-flow-row md:grid-cols-2 md:auto-cols-auto md:overflow-visible md:pb-0 md:snap-none">
+            <div className="snap-center">
+              <Card className="h-full border-2 shadow-shadow bg-secondary-background flex flex-col">
                     <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border">
                       <div className="flex items-center gap-2">
                         <div className="flex size-8 items-center justify-center border-2 border-border bg-hustle">
@@ -397,10 +391,10 @@ export default function HomePage() {
                       )}
                     </CardContent>
                   </Card>
-                </CarouselItem>
+                </div>
 
                 {/* HUMBLE CARD */}
-                <CarouselItem className="pl-4 basis-full md:basis-1/2">
+                <div className="snap-center">
                   <Card className="h-full border-2 shadow-shadow bg-secondary-background flex flex-col">
                     <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border">
                       <div className="flex items-center gap-2">
@@ -463,19 +457,16 @@ export default function HomePage() {
                       )}
                     </CardContent>
                   </Card>
-                </CarouselItem>
-              </CarouselContent>
-              <CarouselPrevious className="hidden" />
-              <CarouselNext className="hidden" />
-            </Carousel>
+                </div>
+              </div>
 
-            {/* Mobile Swipe Hint */}
-            <div className="mt-2 flex justify-center md:hidden">
+              {/* Mobile Swipe Hint */}
+              <div className="mt-2 flex justify-center md:hidden">
               <p className="text-xs font-bold tracking-widest text-foreground/60">
                 ← Swipe to See Tasks →
               </p>
-            </div>
-          </div>
+              </div>
+          </>
         )}
 
         <TaskDialog

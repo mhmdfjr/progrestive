@@ -37,10 +37,9 @@ export function HowItWorks() {
   ];
 
   return (
-    <section
-      id="how"
-      className="bg-secondary-background border-t-2 border-border"
-    >
+    // NOTE: no id here — the lazy wrapper owns id="how" so /#how anchors
+    // keep working before this chunk loads. Border/bg live on the wrapper.
+    <section className="bg-secondary-background">
       <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <h2 className="font-heading text-3xl font-black md:text-4xl">

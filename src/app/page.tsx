@@ -1,5 +1,4 @@
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,25 +14,8 @@ import {
   Heart,
 } from "lucide-react";
 import Marquee from "@/components/ui/marquee";
+import { LazyHowItWorks } from "@/components/landing/LazyHowItWorks";
 import { LandingHeader as Nav } from "@/components/SiteHeader";
-
-// Code-split below-the-fold carousel (embla runtime) out of the landing
-// page's initial JS. SSR stays on so the HTML + SEO are unchanged.
-const HowItWorks = dynamic(
-  () => import("@/components/landing/HowItWorks").then((m) => m.HowItWorks),
-  {
-    loading: () => (
-      <section
-        aria-hidden
-        className="border-t-2 border-border bg-secondary-background"
-      >
-        <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
-          <div className="h-64 animate-pulse border-2 border-border bg-white/50" />
-        </div>
-      </section>
-    ),
-  },
-);
 
 function MarqueeStrip() {
   const items = [
@@ -453,7 +435,7 @@ export default function LandingPage() {
         <Hero />
         <MarqueeStrip />
         <About />
-        <HowItWorks />
+        <LazyHowItWorks />
         <FinalCTA />
       </main>
       <Footer />
