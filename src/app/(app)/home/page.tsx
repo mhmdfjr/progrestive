@@ -57,9 +57,6 @@ function parseDateStr(s: string): Date {
 }
 
 export default function HomePage() {
-  React.useEffect(() => {
-    document.title = "Today - Purrpose";
-  }, []);
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = React.useState(todayStr());
   const { tasks, loading, error } = useTasks(selectedDate);

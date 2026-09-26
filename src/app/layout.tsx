@@ -36,9 +36,21 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Mr. Sun" }],
   creator: "Mr. Sun",
+  applicationName: SITE_NAME,
+  formatDetection: { telephone: false },
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: SITE_NAME,
   },
   alternates: {
     canonical: "/",
@@ -47,14 +59,24 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: SITE_NAME,
+    locale: "en_US",
     title: "Purrpose - Balance Hustle & Humble",
     description: SITE_DESCRIPTION,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Purrpose — Balance Hustle × Humble",
+      },
+    ],
     // og:image resolved automatically from src/app/opengraph-image.tsx
   },
   twitter: {
     card: "summary_large_image",
     title: "Purrpose - Balance Hustle & Humble",
     description: SITE_DESCRIPTION,
+    images: ["/opengraph-image"],
     // twitter:image resolved automatically from src/app/opengraph-image.tsx
   },
   robots: {

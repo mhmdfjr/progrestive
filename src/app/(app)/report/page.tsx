@@ -127,9 +127,6 @@ function parseDateStr(s: string): Date {
 }
 
 export default function ReportPage() {
-  React.useEffect(() => {
-    document.title = "Weekly report - Purrpose";
-  }, []);
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = React.useState(todayStr());
   const [tasks, setTasks] = React.useState<TaskDoc[]>([]);

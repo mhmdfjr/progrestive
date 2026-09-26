@@ -76,9 +76,6 @@ type BadgeDoc = {
 };
 
 export default function ProfilePage() {
-  React.useEffect(() => {
-    document.title = "Profile - Purrpose";
-  }, []);
   const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<ProfileDoc | null>(null);
   const [loading, setLoading] = useState(true);

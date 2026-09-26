@@ -32,9 +32,6 @@ import {
 } from "lucide-react";
 
 export default function LoginPage() {
-  React.useEffect(() => {
-    document.title = "Log in — Purrpose";
-  }, []);
   const router = useRouter();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");

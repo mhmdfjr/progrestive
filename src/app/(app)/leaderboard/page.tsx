@@ -74,9 +74,6 @@ type GroupDoc = {
 const PAGE_SIZE = 10;
 
 export default function LeaderboardPage() {
-  React.useEffect(() => {
-    document.title = "Leaderboard - Purrpose";
-  }, []);
   const { user } = useAuth();
   const [cycleId, setCycleId] = React.useState<string | null>(null);
   const [groupId, setGroupId] = React.useState<string | null>(null);

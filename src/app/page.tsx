@@ -516,15 +516,49 @@ function Footer() {
   );
 }
 
+const howToJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How Purrpose works",
+  description:
+    "Balance ur day in 3 steps: add Hustle and Humble tasks, check ur weekly Balance Index, and climb the city leaderboard.",
+  step: [
+    {
+      "@type": "HowToStep",
+      position: 1,
+      name: "Add task, mark as done",
+      text: "Choose category, level 1-5, duration in hours. Complete → score level×duration directly added. Incomplete = ‘Have no time’, not failed.",
+    },
+    {
+      "@type": "HowToStep",
+      position: 2,
+      name: "View Balance 0-100",
+      text: "Weekly report calculates balance index, total Hustle/Humble scores, and improvement suggestions with AI enhancement.",
+    },
+    {
+      "@type": "HowToStep",
+      position: 3,
+      name: "Climb the leaderboard",
+      text: "Leaderboard per city. Balance ur day and compete with users. Top 3 get a badge to collect and share.",
+    },
+  ],
+};
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-secondary-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+      />
       <Nav />
-      <Hero />
-      <MarqueeStrip />
-      <About />
-      <HowItWorks />
-      <FinalCTA />
+      <main>
+        <Hero />
+        <MarqueeStrip />
+        <About />
+        <HowItWorks />
+        <FinalCTA />
+      </main>
       <Footer />
     </div>
   );
