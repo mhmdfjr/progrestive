@@ -18,12 +18,12 @@ export function HowItWorks() {
       title: "Add task, mark as done",
       desc: "Choose category, level 1-5, duration in hours. Complete → score level×duration directly added. Incomplete = ‘Have no time’, not failed.",
       icon: Briefcase,
-      color: "var(--color-hustle)",
+      color: "var(--color-push)",
     },
     {
       badge: "02 - WEEKLY",
       title: "View Balance 0-100",
-      desc: "Weekly report calculates balance index, total Hustle/Humble scores, and improvement suggestions with AI enhancement.",
+      desc: "Weekly report calculates balance index, total Push/Pause scores, and improvement suggestions with AI enhancement.",
       icon: BarChart3,
       color: "var(--color-accent)",
     },
@@ -73,7 +73,7 @@ export function HowItWorks() {
                         style={{
                           color:
                             s.color === "var(--color-accent)" ||
-                            s.color === "var(--color-humble)"
+                            s.color === "var(--color-pause)"
                               ? "black"
                               : "white",
                         }}

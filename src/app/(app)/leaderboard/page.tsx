@@ -487,13 +487,13 @@ export default function LeaderboardPage() {
                     </div>
                     <div>Score</div>
                   </div>
-                  <div className="border-2 border-border bg-hustle text-white px-2 py-1 text-center shadow-sm">
+                  <div className="border-2 border-border bg-push text-white px-2 py-1 text-center shadow-sm">
                     <div className="text-lg leading-none">
                       {selfEntry.balanceIndex.toFixed(0)}
                     </div>
                     <div>Balance</div>
                   </div>
-                  <div className="border-2 border-border bg-humble px-2 py-1 text-center shadow-sm">
+                  <div className="border-2 border-border bg-pause px-2 py-1 text-center shadow-sm">
                     <div className="text-lg leading-none">
                       {(selfEntry.completionRate * 100).toFixed(0)}%
                     </div>
@@ -640,7 +640,7 @@ export default function LeaderboardPage() {
             </AlertTitle>
             <AlertDescription className="font-bold text-xs">
               U don&apos;t have a score for this week yet, the leaderboard is
-              showing 10 PurrBot. Start creating tasks today, and next week
+              showing 10 ProgBot. Start creating tasks today, and next week
               you&apos;ll be included in the real rankings with them!
             </AlertDescription>
           </Alert>

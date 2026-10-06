@@ -117,7 +117,7 @@ export function TaskDialog({
   };
 
   const accent =
-    category === "hustle" ? "var(--color-hustle)" : "var(--color-humble)";
+    category === "hustle" ? "var(--color-push)" : "var(--color-pause)";
 
   // Helper untuk mengubah string YYYY-MM-DD ke Date object tanpa timezone shift
   const selectedDateObject = React.useMemo(() => {
@@ -150,8 +150,8 @@ export function TaskDialog({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="hustle">Hustle (Productivity)</SelectItem>
-                <SelectItem value="humble">Humble (Recovery)</SelectItem>
+                <SelectItem value="hustle">Push (Productivity)</SelectItem>
+                <SelectItem value="humble">Pause (Recovery)</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -247,13 +247,13 @@ export function TaskDialog({
           <DialogFooter className="flex justify-end gap-2">
             <Button
               type="button"
-              className="bg-hustle"
+              className="bg-push"
               onClick={() => onOpenChange(false)}
               disabled={loading}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={loading} className="bg-humble">
+            <Button type="submit" disabled={loading} className="bg-pause">
               {loading ? "Saving..." : isEdit ? "Update" : "Create"}
             </Button>
           </DialogFooter>

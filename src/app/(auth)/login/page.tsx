@@ -120,24 +120,24 @@ export default function LoginPage() {
           <h1 className="font-heading text-4xl font-black leading-none tracking-tight">
             Enter and do ur
             <br />
-            <span className="inline-block border-2 border-border bg-hustle px-2 text-white shadow-shadow">
+            <span className="inline-block border-2 border-border bg-push px-2 text-white shadow-shadow">
               daily
             </span>
-            <span className="inline-block border-2 border-border bg-humble px-2 text-black shadow-shadow ml-2">
+            <span className="inline-block border-2 border-border bg-pause px-2 text-black shadow-shadow ml-2">
               progress.
             </span>
           </h1>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-foreground/70">
-            Track <b>Hustle</b> & <b>Humble</b> without punishment. Achieve high
+            Track <b>Push</b> & <b>Pause</b> without punishment. Achieve high
             Balance Index, climb ur leaderboard.
           </p>
         </div>
 
         <div className="relative max-w-105">
-          <Card className="relative z-10 border-hustle gap-0 bg-secondary-background rotate-[-1.2deg] shadow-shadow">
+          <Card className="relative z-10 border-push gap-0 bg-secondary-background rotate-[-1.2deg] shadow-shadow">
             <CardHeader className="">
-              <CardTitle className="flex items-center gap-2 text-sm text-hustle">
-                <Briefcase className="size-4" strokeWidth={2.5} /> HUSTLE •
+              <CardTitle className="flex items-center gap-2 text-sm text-push">
+                <Briefcase className="size-4" strokeWidth={2.5} /> PUSH •
                 Today
               </CardTitle>
             </CardHeader>
@@ -149,14 +149,14 @@ export default function LoginPage() {
                 </span>
               </div>
               <div className="h-2 border-2 border-border bg-white">
-                <div className="h-full w-[72%] bg-hustle" />
+                <div className="h-full w-[72%] bg-push" />
               </div>
             </CardContent>
           </Card>
-          <Card className="absolute -bottom-5 -right-3 z-20 w-[86%] border-humble bg-secondary-background rotate-1 shadow-shadow">
+          <Card className="absolute -bottom-5 -right-3 z-20 w-[86%] border-pause bg-secondary-background rotate-1 shadow-shadow">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-sm text-humble">
-                <BedDouble className="size-4" strokeWidth={2.5} /> HUMBLE •
+              <CardTitle className="flex items-center gap-2 text-sm text-pause">
+                <BedDouble className="size-4" strokeWidth={2.5} /> PAUSE •
                 Recovery
               </CardTitle>
             </CardHeader>
@@ -165,7 +165,7 @@ export default function LoginPage() {
                 Chill walk - 1h <span>LV 2 ••○○○</span>
               </div>
               <div className="h-2 border-2 border-border bg-white">
-                <div className="h-full w-[55%] bg-humble" />
+                <div className="h-full w-[55%] bg-pause" />
               </div>
             </CardContent>
           </Card>
@@ -186,14 +186,14 @@ export default function LoginPage() {
       <Card className="w-full max-w-md mx-auto border-2 gap-0 shadow-shadow bg-secondary-background">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-black">
-            Login to Purrpose
+            Login to ProgRestive
           </CardTitle>
           <CardDescription className="text-sm">
             Enter ur email or continue with Google.
           </CardDescription>
           <div className="flex gap-2 pt-1">
-            <span className="size-3 bg-hustle border-2 border-border" />
-            <span className="size-3 bg-humble border-2 border-border" />
+            <span className="size-3 bg-push border-2 border-border" />
+            <span className="size-3 bg-pause border-2 border-border" />
             <span className="size-3 bg-accent border-2 border-border" />
             <span className="size-3 bg-info border-2 border-border" />
           </div>
@@ -296,7 +296,7 @@ export default function LoginPage() {
               </Link>
             </div>
             <p className="mt-2 text-center text-xs text-foreground/60">
-              By logging in, you agree to track hustle & humble with balance.
+              By logging in, you agree to track push & pause with balance.
             </p>
           </div>
         </form>

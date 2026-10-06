@@ -55,8 +55,8 @@ export function SiteHeader({
           className="font-heading text-xl font-black tracking-tight"
           onClick={() => setOpen(false)}
         >
-          PURRPOSE<span className="text-hustle">.</span>
-          <span className="text-humble">.</span>
+          PROGRESTIVE<span className="text-push">.</span>
+          <span className="text-pause">.</span>
         </Link>
 
         {/* Desktop nav */}

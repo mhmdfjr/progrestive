@@ -38,10 +38,14 @@ colors above would clash with no room to breathe:
 
 | Semantic token | Color | Why |
 |---|---|---|
-| `--color-hustle` | Rose `#FF0052` | the "hottest"/most intense color in the palette — fits pressure/productivity |
-| `--color-humble` | Green `#00C68D` | the "calmest" color in the palette — fits recovery/relaxation |
-| `--color-accent` (main CTA, primary buttons) | Yellow `#FFD400` | most eye-catching — used sparingly so it never visually competes with hustle/humble |
-| `--color-info` (links, neutral states) | Blue `#0055DA` | informational elements outside the hustle/humble system, e.g. links to other pages |
+| `--color-push` | Rose `#FF0052` | the "hottest"/most intense color in the palette — fits pressure/productivity |
+| `--color-pause` | Green `#00C68D` | the "calmest" color in the palette — fits recovery/relaxation |
+| `--color-accent` (main CTA, primary buttons) | Yellow `#FFD400` | most eye-catching — used sparingly so it never visually competes with push/pause |
+| `--color-info` (links, neutral states) | Blue `#0055DA` | informational elements outside the push/pause system, e.g. links to other pages |
+
+> Note: `--color-hustle` / `--color-humble` remain defined as aliases of
+> `--color-push` / `--color-pause` for backward compatibility. New code uses the
+> `push` / `pause` tokens.
 
 This mapping is used consistently on every page: task cards, category tags,
 report charts, and progress bars — so users build a long-term visual
@@ -87,9 +91,9 @@ across the app, so icon weight stays consistent with thick neo-brutalist
 borders — thin-stroked icons would look "skinny" next to 2–3px black-bordered
 cards.
 
-## 5. Hustle vs Humble Visual Language
+## 5. Push vs Pause Visual Language
 
-| Element | Hustle | Humble |
+| Element | Push | Pause |
 |---|---|---|
 | Category tag/border color | Rose | Green |
 | Representative icons (examples) | `briefcase`, `book-open`, `laptop` | `bed`, `utensils`, `dumbbell` |
@@ -105,11 +109,11 @@ task cards, so users can scan task intensity without reading numbers.
 
 | Need | Component |
 |---|---|
-| Hustle / Humble columns | two side-by-side `Card` panels (vertical stack on mobile), each bordered in its Section 5 color |
+| Push / Pause columns | two side-by-side `Card` panels (vertical stack on mobile), each bordered in its Section 5 color |
 | Task item | small `Card` inside the column: title, level pips, duration, a large neo-brutalist checkbox for mark-complete |
 | Add task | `Dialog`/`Sheet` with a `Form`: category select, title input, pip selector for level, duration input, date picker |
 | Finished task (read-only) | distinct visual state: lowered opacity or title strikethrough, solid-filled checkbox |
-| Missed task (when shown in history) | small gray "Missed" badge — not a hustle/humble color, so it never reads as a "third category" |
+| Missed task (when shown in history) | small gray "Missed" badge — not a push/pause color, so it never reads as a "third category" |
 
 ### 6.2 Report
 
@@ -135,7 +139,7 @@ task cards, so users can scan task intensity without reading numbers.
 |---|---|
 | Identity + edit | `Avatar` + `Form` (name, manual city override, timezone) |
 | Badge showcase | grid of small `Card`s per badge, each showing its tier (see Section 7) plus `locationName` + week |
-| Settings | `Switch` for `aiReportEnabled`, logout button kept separate in the standard shadcn `destructive` red (not one of the 4 brand colors, so it clearly reads as a different context from Rose/hustle) |
+| Settings | `Switch` for `aiReportEnabled`, logout button kept separate in the standard shadcn `destructive` red (not one of the 4 brand colors, so it clearly reads as a different context from Rose/push) |
 
 ## 7. Badge Tier Treatment
 
@@ -147,7 +151,7 @@ consistency. Decision: **tiers differ by icon + label, not new colors**:
 |---|---|---|
 | Gold (rank 1) | `trophy` | Yellow (`--color-accent`) — the most "standout" color in the palette, fitting for the top achievement |
 | Silver (rank 2) | `medal` | `--neo-gray-100` with a thick black border |
-| Bronze (rank 3) | `award` | Blue (`--color-info`) — used here because it overlaps neither hustle/humble/accent, not because of any traditional bronze association |
+| Bronze (rank 3) | `award` | Blue (`--color-info`) — used here because it overlaps neither push/pause/accent, not because of any traditional bronze association |
 
 Tier text labels ("Gold"/"Silver"/"Bronze") always appear next to the icon —
 never color alone — so tiers stay unambiguous and accessible to users with
@@ -169,7 +173,7 @@ score (non-punitive design), microcopy across the app follows these principles:
 
 Follow Tailwind's default breakpoints (`sm`, `md`, `lg`, `xl`) with no extra
 customization unless a specific need surfaces during implementation. The Home
-page's two Hustle/Humble columns stack vertically below the `md` breakpoint.
+page's two Push/Pause columns stack vertically below the `md` breakpoint.
 
 ## 10. Next Steps
 

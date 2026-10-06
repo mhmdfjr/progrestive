@@ -42,7 +42,7 @@ export default function OpengraphImage() {
               color: "#000",
             }}
           >
-            PURRPOSE.
+            PROGRESTIVE.
           </div>
           <div
             style={{
@@ -54,11 +54,11 @@ export default function OpengraphImage() {
             }}
           >
             <span style={{ background: "#FF0052", color: "#fff", padding: "4px 18px", border: "5px solid #000" }}>
-              HUSTLE
+              PUSH
             </span>
             <span style={{ margin: "4px 14px" }}>×</span>
             <span style={{ background: "#00C68D", color: "#000", padding: "4px 18px", border: "5px solid #000" }}>
-              HUMBLE
+              PAUSE
             </span>
           </div>
           <div style={{ display: "flex", marginTop: 24, fontSize: 30, fontWeight: 700, color: "#000" }}>

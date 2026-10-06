@@ -12,22 +12,22 @@ export function generateRuleBasedSuggestion(params: {
   const { humbleScore, hustleScore, totalScore, balanceIndex, humblePercentage, completionRate } = params;
 
   if (totalScore === 0) {
-    return "No completed tasks this week yet. Start small — add one light Hustle and one restorative Humble tomorrow to build momentum.";
+    return "No completed tasks this week yet. Start small — add one light Push and one restorative Pause tomorrow to build momentum.";
   }
 
   const parts: string[] = [];
 
   // Balance framing (non-punitive per DESIGN 8)
   if (balanceIndex >= 80) {
-    parts.push(`Great balance (balance index ${balanceIndex.toFixed(0)}). Hustle ${hustleScore.toFixed(0)} and Humble ${humbleScore.toFixed(0)} are nicely even — keep this rhythm.`);
+    parts.push(`Great balance (balance index ${balanceIndex.toFixed(0)}). Push ${hustleScore.toFixed(0)} and Pause ${humbleScore.toFixed(0)} are nicely even — keep this rhythm.`);
   } else if (humblePercentage < 20) {
-    parts.push(`Humble is only ${humblePercentage.toFixed(0)}% of ur week — burnout risk is rising. Try adding 1–2 recovery tasks (enough sleep, an easy walk, or journaling) for next week.`);
+    parts.push(`Pause is only ${humblePercentage.toFixed(0)}% of ur week — burnout risk is rising. Try adding 1–2 recovery tasks (enough sleep, an easy walk, or journaling) for next week.`);
   } else if (humblePercentage > 80) {
-    parts.push(`Humble dominates ${humblePercentage.toFixed(0)}% of ur week. Good for recovery, but if u have productivity goals, try mixing in 1–2 light Hustles.`);
+    parts.push(`Pause dominates ${humblePercentage.toFixed(0)}% of ur week. Good for recovery, but if u have productivity goals, try mixing in 1–2 light Pushes.`);
   } else if (humblePercentage < 35) {
-    parts.push(`The ratio still leans Hustle (${(100 - humblePercentage).toFixed(0)}% Hustle). Balance index ${balanceIndex.toFixed(0)} — add a little Humble to protect ur energy.`);
+    parts.push(`The ratio still leans Push (${(100 - humblePercentage).toFixed(0)}% Push). Balance index ${balanceIndex.toFixed(0)} — add a little Pause to protect ur energy.`);
   } else if (humblePercentage > 65) {
-    parts.push(`The ratio leans Humble (${humblePercentage.toFixed(0)}% Humble). Balance index ${balanceIndex.toFixed(0)} — consider one focused Hustle next week.`);
+    parts.push(`The ratio leans Pause (${humblePercentage.toFixed(0)}% Pause). Balance index ${balanceIndex.toFixed(0)} — consider one focused Push next week.`);
   } else {
     parts.push(`Balance index ${balanceIndex.toFixed(0)} — fairly balanced. Aim for consistency, not perfection.`);
   }

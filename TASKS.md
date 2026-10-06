@@ -390,10 +390,10 @@ _(empty — put here anything undecided in every document that needs user confir
 
 ## M9 — SEO + Custom Domain (S)
 
-**Goal**: `purrpose.mhmdfjr.com` live with correct SEO foundations. Site language stays English (`lang="en"` kept, `"ur"` copy kept as brand voice). Depends on M8. No scoring/schema/formula changes.
+**Goal**: `progrestive.mhmdfjr.com` live with correct SEO foundations. Site language stays English (`lang="en"` kept, `"ur"` copy kept as brand voice). Depends on M8. No scoring/schema/formula changes.
 
 ### 1. Root metadata + canonical + social (P1) — DONE 2026-09-24
-- [x] `src/app/layout.tsx`: `metadataBase https://purrpose.mhmdfjr.com`, title `{ default, template }`, EN description, keywords, authors/creator, `alternates.canonical "/"`, `openGraph` + `twitter`, `robots index/follow`, `viewport` export (`themeColor #FFDC58`), JSON-LD `WebSite` + `Organization` — verified via `next start` + `curl` (meta/OG/canonical/JSON-LD present)
+- [x] `src/app/layout.tsx`: `metadataBase https://progrestive.mhmdfjr.com`, title `{ default, template }`, EN description, keywords, authors/creator, `alternates.canonical "/"`, `openGraph` + `twitter`, `robots index/follow`, `viewport` export (`themeColor #FFDC58`), JSON-LD `WebSite` + `Organization` — verified via `next start` + `curl` (meta/OG/canonical/JSON-LD present)
 
 ### 2. Crawl control (P2) — DONE 2026-09-24
 - [x] `src/app/robots.ts` (new): allow `/`, disallow `/home /report /leaderboard /profile /login /register /api/`, sitemap on the absolute custom domain
@@ -401,7 +401,7 @@ _(empty — put here anything undecided in every document that needs user confir
 
 ### 3. Noindex + tab titles (P3) — DONE 2026-09-24, titles upgraded to route metadata 2026-09-26
 - [x] `src/app/(app)/layout.tsx` + `src/app/(auth)/layout.tsx`: `metadata robots { index: false, follow: false }` (all six pages are `"use client"` components, so the Metadata API only applies at group-layout level)
-- [x] Per-route `layout.tsx` files (`login`, `register`, `home`, `leaderboard`, `report`, `profile`) export SSR-friendly `title` metadata via the root `%s — Purrpose` template — replacing the earlier `document.title`-in-`useEffect` approach, whose effects were removed from all six pages
+- [x] Per-route `layout.tsx` files (`login`, `register`, `home`, `leaderboard`, `report`, `profile`) export SSR-friendly `title` metadata via the root `%s — ProgRestive` template — replacing the earlier `document.title`-in-`useEffect` approach, whose effects were removed from all six pages
 
 ### 4. Images & semantics (P4) — DONE 2026-09-24, covers refreshed 2026-09-26
 - [x] 3 `picsum.photos` in `src/app/page.tsx` → local assets `public/images/hustle-checklist.svg`, `balance-report.svg`, `leaderboard-badge.svg` (600×400, neobrutalist: hustle `#ff0052`, humble `#00c68d`, accent `#ffd400`)
@@ -429,3 +429,39 @@ _(empty — put here anything undecided in every document that needs user confir
 ## Notes / Deviations M9
 - Tab titles moved from `document.title` effects to per-route `layout.tsx` metadata exports (2026-09-26 post-M9 follow-up). If a page ever becomes a server component, its title can move into that page's own `export const metadata`.
 - The OG image URL was declared in metadata before the file existed (P6) — scrapers simply showed no image until the file went live; tag validation was unaffected.
+
+---
+
+## Terminology Rename — Push / Pause (2026-10-06)
+
+**Goal**: rename user-facing terminology Hustle → Push, Humble → Pause across
+code, copywriting, and documentation. Database untouched: Firestore keeps
+`category` values `"hustle"`/`"humble"`, `hustleScore`/`humbleScore` fields,
+validation literals, and `DATABASE.md` as-is (no migration).
+
+- [x] `src/app/globals.css`: new tokens `--color-push` / `--color-pause`;
+  `--color-hustle` / `--color-humble` kept as aliases (+ `@theme inline` entries)
+- [x] New `src/lib/category.ts`: `CATEGORY_LABEL` (`hustle` → Push,
+  `humble` → Pause) mapping helper for UI display
+- [x] `TaskCard` badge now renders Push/Pause via `categoryLabel()`; accent
+  uses `var(--color-push)` / `var(--color-pause)`, classes `bg-push` / `bg-pause`
+- [x] `TaskDialog`: select values stay `"hustle"`/`"humble"` (DB), labels →
+  Push (Productivity) / Pause (Recovery)
+- [x] `(app)/home`: locals `push`/`pause`, `totalPushScore`/`totalPauseScore`,
+  all copy/classes → Push/Pause; DB literals kept
+- [x] `(app)/report`: daily locals + chart keys/configs → push/pause; weekly DB
+  reads (`weekly.hustleScore`, `w.hustleScore`) kept; all labels/copy → Push/Pause
+- [x] Landing, login, register, layouts, headers, `HowItWorks`, `UserMenu`,
+  `opengraph-image`, `manifest.webmanifest`, root metadata → Push/Pause copy
+- [x] `src/lib/server/reportSuggestion.ts` + `aiSuggestion.ts` and
+  `functions/src/services/*` counterparts: user-facing sentences → Push/Pause;
+  param/field names unchanged; functions test expectation updated
+  (`"Pause mendominasi"`)
+- [x] `src/app/api/admin/seed/route.ts`: `displayName` + `pushTitles`/`pauseTitles`
+  renamed; category literals + score aggregation unchanged
+- [x] Docs: `PRD.md` (incl. formula vars → `push_score`/`pause_score`/
+  `pause_percentage` + storage note), `ARCHITECTURE.md`, `API.md`,
+  `DESIGN.md` (tokens + Section 5), `README.md`, `ROADMAP.md`,
+  `progrestive.txt`. `DATABASE.md`, `shared/index.ts`, `firestore.rules`,
+  validation messages, and `TASKS.md` history entries intentionally unchanged
+- [x] Verification: `tsc --noEmit`, `lint`, `vitest run` (root + functions)

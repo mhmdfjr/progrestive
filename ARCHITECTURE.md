@@ -162,7 +162,7 @@ Functions (server-side, never the client) so they can be tuned without
 redeploying and cannot be read/manipulated from the browser:
 
 - `dailyDurationCapHours` (default 24)
-- `perTaskDurationCapHours` (default 16) — flat cap, same for hustle and humble
+- `perTaskDurationCapHours` (default 16) — flat cap, same for push and pause
   (`PRD.md` Section 5.2)
 - `balanceWeightFloor`, `balanceWeightRange` (defaults 0.5, 0.5)
 - `completionWeightFloor`, `completionWeightRange` (defaults 0.5, 0.5)

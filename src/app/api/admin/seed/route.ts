@@ -24,23 +24,23 @@ const FAKE_USERS: Array<{
   avatarUrl: string | null;
 }> = [
   // Jakarta (DKI Jakarta) — 8 users
-  { uid: "fake-001", displayName: "Ayu • Hustle Queen", email: "fake01@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Ayu" },
-  { uid: "fake-002", displayName: "Bima • Steady", email: "fake02@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Bima" },
-  { uid: "fake-003", displayName: "Citra • Flow", email: "fake03@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Citra" },
-  { uid: "fake-004", displayName: "Dito • Grind", email: "fake04@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Dito" },
-  { uid: "fake-005", displayName: "Elsa • Balance", email: "fake05@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Elsa" },
-  { uid: "fake-006", displayName: "Fajar • Focus", email: "fake06@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Fajar" },
-  { uid: "fake-007", displayName: "Kiki • Vibes", email: "fake07@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Kiki" },
-  { uid: "fake-008", displayName: "Lukman • Smart", email: "fake08@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Lukman" },
+  { uid: "fake-001", displayName: "Ayu • Push Queen", email: "fake01@progrestive.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Ayu" },
+  { uid: "fake-002", displayName: "Bima • Steady", email: "fake02@progrestive.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Bima" },
+  { uid: "fake-003", displayName: "Citra • Flow", email: "fake03@progrestive.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Citra" },
+  { uid: "fake-004", displayName: "Dito • Grind", email: "fake04@progrestive.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Dito" },
+  { uid: "fake-005", displayName: "Elsa • Balance", email: "fake05@progrestive.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Elsa" },
+  { uid: "fake-006", displayName: "Fajar • Focus", email: "fake06@progrestive.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Fajar" },
+  { uid: "fake-007", displayName: "Kiki • Vibes", email: "fake07@progrestive.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Kiki" },
+  { uid: "fake-008", displayName: "Lukman • Smart", email: "fake08@progrestive.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Lukman" },
   // Semarang (Jawa Tengah) — 8 users
-  { uid: "fake-009", displayName: "Gita • Calm", email: "fake09@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Gita" },
-  { uid: "fake-010", displayName: "Hadi • Sprint", email: "fake10@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Hadi" },
-  { uid: "fake-011", displayName: "Intan • Zen", email: "fake11@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Intan" },
-  { uid: "fake-012", displayName: "Jaka • Builder", email: "fake12@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Jaka" },
-  { uid: "fake-013", displayName: "Maya • Dreamer", email: "fake13@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Maya" },
-  { uid: "fake-014", displayName: "Nina • Glow", email: "fake14@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Nina" },
-  { uid: "fake-015", displayName: "Omar • Chill", email: "fake15@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Omar" },
-  { uid: "fake-016", displayName: "Putri • Spark", email: "fake16@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Putri" },
+  { uid: "fake-009", displayName: "Gita • Calm", email: "fake09@progrestive.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Gita" },
+  { uid: "fake-010", displayName: "Hadi • Sprint", email: "fake10@progrestive.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Hadi" },
+  { uid: "fake-011", displayName: "Intan • Zen", email: "fake11@progrestive.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Intan" },
+  { uid: "fake-012", displayName: "Jaka • Builder", email: "fake12@progrestive.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Jaka" },
+  { uid: "fake-013", displayName: "Maya • Dreamer", email: "fake13@progrestive.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Maya" },
+  { uid: "fake-014", displayName: "Nina • Glow", email: "fake14@progrestive.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Nina" },
+  { uid: "fake-015", displayName: "Omar • Chill", email: "fake15@progrestive.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Omar" },
+  { uid: "fake-016", displayName: "Putri • Spark", email: "fake16@progrestive.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Putri" },
 ];
 
 function randInt(min: number, max: number) {
@@ -56,13 +56,13 @@ function randomTasksForWeek(startDate: string, endDate: string) {
     days.push(d.toISOString().slice(0, 10));
   }
   const tasks: Array<{ category: "hustle" | "humble"; title: string; level: number; durationHours: number; date: string; status: "completed" | "missed"; score: number | null }> = [];
-  const hustleTitles = ["Deep work", "Learn Next.js", "Tinker with API", "Review PR", "Sprint planning"];
-  const humbleTitles = ["Easy walk", "Journaling", "Sleep 8 hours", "Meditation", "Slow coffee"];
+  const pushTitles = ["Deep work", "Learn Next.js", "Tinker with API", "Review PR", "Sprint planning"];
+  const pauseTitles = ["Easy walk", "Journaling", "Sleep 8 hours", "Meditation", "Slow coffee"];
   for (const day of days) {
     const perDay = randInt(1, 3);
     for (let i = 0; i < perDay; i++) {
       const cat: "hustle" | "humble" = Math.random() < 0.55 ? "hustle" : "humble";
-      const titles = cat === "hustle" ? hustleTitles : humbleTitles;
+      const titles = cat === "hustle" ? pushTitles : pauseTitles;
       const title = titles[randInt(0, titles.length - 1)] + ` ${randInt(1, 99)}`;
       const level = randInt(2, 5);
       const durationHours = [0.5, 1, 1.5, 2, 2.5][randInt(0, 4)];

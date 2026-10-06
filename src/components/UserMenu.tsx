@@ -16,7 +16,7 @@ export function UserMenu() {
       <ThemeToggle />
       <Button
         size="sm"
-        className="bg-hustle text-white font-black"
+        className="bg-push text-white font-black"
         onClick={async () => {
           await signOut();
           router.push("/login");

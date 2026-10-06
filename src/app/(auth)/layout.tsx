@@ -29,7 +29,7 @@ export default async function AuthLayout({
         <div className="mx-auto max-w-6xl px-4 py-6">
           <div className="flex flex-col gap-3 text-sm md:flex-row md:items-center md:justify-between">
             <div className="font-heading font-black">
-              PURRPOSE: Track Hustle & Humble.
+              PROGRESTIVE: Track Push & Pause.
             </div>
             <div className="flex gap-4 text-xs font-bold">
               <Link href="#about" className="hover:underline">
@@ -44,7 +44,7 @@ export default async function AuthLayout({
             </div>
           </div>
           <p className="mt-3 text-xs text-foreground/60">
-            © {new Date().getFullYear()} Purrpose. Built with Luv by Mr. Sun.
+            © {new Date().getFullYear()} ProgRestive. Built with Luv by Mr. Sun.
           </p>
         </div>
       </footer>

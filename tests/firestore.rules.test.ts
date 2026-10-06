@@ -16,7 +16,7 @@ beforeAll(async () => {
     return;
   }
   testEnv = await initializeTestEnvironment({
-    projectId: "purrpose-test",
+    projectId: "progrestive-test",
     firestore: {
       rules: fs.readFileSync("firestore.rules", "utf8"),
     },

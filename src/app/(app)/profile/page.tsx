@@ -285,7 +285,7 @@ export default function ProfilePage() {
                     {user.email}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    <Badge className="bg-humble text-xs md:text-sm border-black font-black gap-1">
+                    <Badge className="bg-pause text-xs md:text-sm border-black font-black gap-1">
                       <MapPin className="size-2 md:size-3" strokeWidth={2.5} />{" "}
                       {profile?.city || city || "-"}
                       {profile?.province ? `, ${profile.province}` : ""}
@@ -297,7 +297,7 @@ export default function ProfilePage() {
                     ) : (
                       <Badge
                         variant="neutral"
-                        className="bg-hustle border-black font-black text-xs md:text-sm dark:text-black"
+                        className="bg-push border-black font-black text-xs md:text-sm dark:text-black"
                       >
                         auto
                       </Badge>
@@ -312,7 +312,7 @@ export default function ProfilePage() {
                     </Badge>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1.5 font-bold">
-                    <span className="text-xs md:text-sm border-2 border-border font-black bg-humble px-2 py-1 inline-flex items-center gap-1 dark:text-black">
+                    <span className="text-xs md:text-sm border-2 border-border font-black bg-pause px-2 py-1 inline-flex items-center gap-1 dark:text-black">
                       <Globe className="size-2 md:size-3" strokeWidth={2.5} />{" "}
                       {profile?.timezone || timezone || "-"}
                     </span>
@@ -387,7 +387,7 @@ export default function ProfilePage() {
                   <span>AI Suggestions</span>
                   <Badge
                     variant="neutral"
-                    className={`font-black border-black ${aiEnabled ? "bg-humble text-black" : "bg-(--neo-gray-100) dark:text-black"}`}
+                    className={`font-black border-black ${aiEnabled ? "bg-pause text-black" : "bg-(--neo-gray-100) dark:text-black"}`}
                   >
                     {aiEnabled ? "ON" : "OFF"}
                   </Badge>
@@ -395,7 +395,7 @@ export default function ProfilePage() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 shadow-shadow bg-hustle text-white">
+            <Card className="border-2 shadow-shadow bg-push text-white">
               <CardContent className="flex items-center justify-between">
                 <div>
                   <p className="font-heading font-black text-sm flex items-center gap-1">
@@ -451,7 +451,7 @@ export default function ProfilePage() {
                     id="displayName"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Purrfect User"
+                    placeholder="ProgRestive User"
                     className="bg-white border-2 font-bold dark:text-black dark:placeholder:text-black/50"
                   />
                 </div>

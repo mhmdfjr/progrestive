@@ -36,8 +36,8 @@ export default async function AppLayout({
             href="/home"
             className="font-heading hidden md:block text-xl font-black tracking-tight"
           >
-            PURRPOSE<span className="text-hustle">.</span>
-            <span className="text-humble">.</span>
+            PROGRESTIVE<span className="text-push">.</span>
+            <span className="text-pause">.</span>
           </Link>
           <nav className="flex items-center justify-between gap-6 font-heading font-bold">
             <Link href="/home" className="hover:underline underline-offset-4">
@@ -69,7 +69,7 @@ export default async function AppLayout({
         <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 md:pb-4">
           <div className="flex flex-col gap-3 text-sm md:flex-row md:items-center md:justify-between">
             <div className="font-heading font-black">
-              PURRPOSE: Track Hustle & Humble.
+              PROGRESTIVE: Track Push & Pause.
             </div>
             <div className="flex gap-4 text-xs font-bold">
               <Link href="/home" className="hover:underline">
@@ -87,7 +87,7 @@ export default async function AppLayout({
             </div>
           </div>
           <p className="mt-3 text-xs text-foreground/60">
-            © {new Date().getFullYear()} Purrpose. Built with Luv by Mr. Sun.
+            © {new Date().getFullYear()} ProgRestive. Built with Luv by Mr. Sun.
           </p>
         </div>
       </footer>

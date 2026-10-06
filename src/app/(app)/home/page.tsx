@@ -61,12 +61,12 @@ export default function HomePage() {
   const [completingId, setCompletingId] = React.useState<string | null>(null);
   const [calendarOpen, setCalendarOpen] = React.useState(false);
 
-  const hustle = tasks.filter((t) => t.category === "hustle");
-  const humble = tasks.filter((t) => t.category === "humble");
-  const totalHustleScore = tasks
+  const push = tasks.filter((t) => t.category === "hustle");
+  const pause = tasks.filter((t) => t.category === "humble");
+  const totalPushScore = tasks
     .filter((t) => t.status === "completed" && t.category === "hustle")
     .reduce((s, t) => s + (t.score || 0), 0);
-  const totalHumbleScore = tasks
+  const totalPauseScore = tasks
     .filter((t) => t.status === "completed" && t.category === "humble")
     .reduce((s, t) => s + (t.score || 0), 0);
   const totalDuration = tasks.reduce((s, t) => s + t.durationHours, 0);
@@ -197,19 +197,19 @@ export default function HomePage() {
             <Card className="border-2 bg-secondary-background shadow-shadow py-4 gap-3">
               <CardContent className="px-4 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-black tracking-widest flex items-center gap-1 text-hustle">
-                    <Briefcase className="size-3" strokeWidth={2.5} /> HUSTLE
+                  <p className="text-xs font-black tracking-widest flex items-center gap-1 text-push">
+                    <Briefcase className="size-3" strokeWidth={2.5} /> PUSH
                   </p>
                   <p className="font-heading text-2xl font-black">
-                    {totalHustleScore.toFixed(1)}
+                    {totalPushScore.toFixed(1)}
                   </p>
                   <p className="text-xs font-bold text-foreground/60">
-                    {hustle.length} Tasks •{" "}
-                    {hustle.filter((t) => t.status === "completed").length}{" "}
+                    {push.length} Tasks •{" "}
+                    {push.filter((t) => t.status === "completed").length}{" "}
                     Completed
                   </p>
                 </div>
-                <div className="flex size-10 items-center justify-center border-2 border-border bg-hustle shadow-sm">
+                <div className="flex size-10 items-center justify-center border-2 border-border bg-push shadow-sm">
                   <Briefcase className="size-5 text-white" strokeWidth={2.5} />
                 </div>
               </CardContent>
@@ -218,19 +218,19 @@ export default function HomePage() {
             <Card className="border-2 bg-secondary-background shadow-shadow py-4 gap-3">
               <CardContent className="px-4 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-black tracking-widest flex items-center gap-1 text-humble">
-                    <BedDouble className="size-3" strokeWidth={2.5} /> HUMBLE
+                  <p className="text-xs font-black tracking-widest flex items-center gap-1 text-pause">
+                    <BedDouble className="size-3" strokeWidth={2.5} /> PAUSE
                   </p>
                   <p className="font-heading text-2xl font-black">
-                    {totalHumbleScore.toFixed(1)}
+                    {totalPauseScore.toFixed(1)}
                   </p>
                   <p className="text-xs font-bold text-foreground/60">
-                    {humble.length} Tasks •{" "}
-                    {humble.filter((t) => t.status === "completed").length}{" "}
+                    {pause.length} Tasks •{" "}
+                    {pause.filter((t) => t.status === "completed").length}{" "}
                     Completed
                   </p>
                 </div>
-                <div className="flex size-10 items-center justify-center border-2 border-border bg-humble shadow-sm">
+                <div className="flex size-10 items-center justify-center border-2 border-border bg-pause shadow-sm">
                   <BedDouble className="size-5 text-black" strokeWidth={2.5} />
                 </div>
               </CardContent>
@@ -275,9 +275,9 @@ export default function HomePage() {
           {/* Balance hint */}
           <div className="flex flex-wrap gap-2 text-xs font-black">
             <span className="border-2 border-border bg-accent py-1 px-1 shadow-sm flex items-center gap-1 dark:text-black">
-              <BarChart3 className="size-3" strokeWidth={2.5} /> Balance: Hustle{" "}
-              {totalHustleScore.toFixed(1)} vs Humble{" "}
-              {totalHumbleScore.toFixed(1)}
+              <BarChart3 className="size-3" strokeWidth={2.5} /> Balance: Push{" "}
+              {totalPushScore.toFixed(1)} vs Pause{" "}
+              {totalPauseScore.toFixed(1)}
             </span>
             <span className="border-2 border-border bg-white py-1 px-1 shadow-sm flex items-center gap-1 dark:text-black">
               <Trophy className="size-3" strokeWidth={2.5} /> {tasks.length}{" "}
@@ -333,52 +333,52 @@ export default function HomePage() {
               <Card className="h-full border-2 shadow-shadow bg-secondary-background flex flex-col">
                     <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border">
                       <div className="flex items-center gap-2">
-                        <div className="flex size-8 items-center justify-center border-2 border-border bg-hustle">
+                        <div className="flex size-8 items-center justify-center border-2 border-border bg-push">
                           <Briefcase
                             className="size-4 text-white"
                             strokeWidth={2.5}
                           />
                         </div>
-                        <CardTitle className="text-hustle text-lg">
-                          HUSTLE
+                        <CardTitle className="text-push text-lg">
+                          PUSH
                         </CardTitle>
-                        <Badge className="bg-hustle text-white border-black font-black">
-                          {hustle.length}
+                        <Badge className="bg-push text-white border-black font-black">
+                          {push.length}
                         </Badge>
                       </div>
                       <Button
                         size="sm"
-                        className="bg-hustle text-white border-black font-black shadow-shadow"
+                        className="bg-push text-white border-black font-black shadow-shadow"
                         onClick={() => handleAdd("hustle")}
                       >
-                        <Plus className="size-3.5" strokeWidth={2.5} /> Hustle
+                        <Plus className="size-3.5" strokeWidth={2.5} /> Push
                       </Button>
                     </CardHeader>
                     <CardContent className="space-y-3 flex-1 pt-4">
-                      {hustle.length === 0 ? (
+                      {push.length === 0 ? (
                         <div className="text-center py-8 border-2 border-dashed border-border bg-(--neo-gray-100) dark:bg-white/10">
                           <Inbox
                             className="mx-auto size-8 text-foreground/40"
                             strokeWidth={2}
                           />
                           <p className="mt-2 text-sm font-black">
-                            U don&apos;t have any Hustle today
+                            U don&apos;t have any Push today
                           </p>
                           <p className="mx-auto mt-1 max-w-65 text-xs leading-relaxed text-foreground/60">
-                            Let&apos;s add some Hustle: work, study, or side
+                            Let&apos;s add some Push: work, study, or side
                             project to earn points and stay productive.
                           </p>
                           <Button
                             size="sm"
-                            className="mt-4 bg-hustle text-white border-black font-black"
+                            className="mt-4 bg-push text-white border-black font-black"
                             onClick={() => handleAdd("hustle")}
                           >
                             <Plus className="size-3.5" strokeWidth={2.5} /> Add
-                            Hustle
+                            Push
                           </Button>
                         </div>
                       ) : (
-                        hustle.map((t) => (
+                        push.map((t) => (
                           <TaskCard
                             key={t.id}
                             task={t}
@@ -393,41 +393,41 @@ export default function HomePage() {
                   </Card>
                 </div>
 
-                {/* HUMBLE CARD */}
+                {/* PAUSE CARD */}
                 <div className="snap-center">
                   <Card className="h-full border-2 shadow-shadow bg-secondary-background flex flex-col">
                     <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border">
                       <div className="flex items-center gap-2">
-                        <div className="flex size-8 items-center justify-center border-2 border-border bg-humble">
+                        <div className="flex size-8 items-center justify-center border-2 border-border bg-pause">
                           <BedDouble
                             className="size-4 text-black"
                             strokeWidth={2.5}
                           />
                         </div>
-                        <CardTitle className="text-humble text-lg">
-                          HUMBLE
+                        <CardTitle className="text-pause text-lg">
+                          PAUSE
                         </CardTitle>
-                        <Badge className="bg-humble text-black border-black font-black">
-                          {humble.length}
+                        <Badge className="bg-pause text-black border-black font-black">
+                          {pause.length}
                         </Badge>
                       </div>
                       <Button
                         size="sm"
-                        className="bg-humble text-black border-black font-black shadow-shadow"
+                        className="bg-pause text-black border-black font-black shadow-shadow"
                         onClick={() => handleAdd("humble")}
                       >
-                        <Plus className="size-3.5" strokeWidth={2.5} /> Humble
+                        <Plus className="size-3.5" strokeWidth={2.5} /> Pause
                       </Button>
                     </CardHeader>
                     <CardContent className="space-y-3 flex-1 pt-4">
-                      {humble.length === 0 ? (
+                      {pause.length === 0 ? (
                         <div className="text-center py-8 border-2 border-dashed border-border bg-(--neo-gray-100) dark:bg-white/10">
                           <Inbox
                             className="mx-auto size-8 text-foreground/40"
                             strokeWidth={2}
                           />
                           <p className="mt-2 text-sm font-black">
-                            U don&apos;t have any Humble today
+                            U don&apos;t have any Pause today
                           </p>
                           <p className="mx-auto mt-1 max-w-65 text-xs leading-relaxed text-foreground/60">
                             Add some rest time: sleep, take a walk, or do some
@@ -436,15 +436,15 @@ export default function HomePage() {
                           <Button
                             size="sm"
                             variant="neutral"
-                            className="mt-4 bg-humble font-black dark:text-black"
+                            className="mt-4 bg-pause font-black dark:text-black"
                             onClick={() => handleAdd("humble")}
                           >
                             <Plus className="size-3.5" strokeWidth={2.5} /> Add
-                            Humble
+                            Pause
                           </Button>
                         </div>
                       ) : (
-                        humble.map((t) => (
+                        pause.map((t) => (
                           <TaskCard
                             key={t.id}
                             task={t}

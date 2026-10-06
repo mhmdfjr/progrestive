@@ -199,12 +199,12 @@ export default function ReportPage() {
     if (tab === "weekly") void loadWeekly();
   }, [loadWeekly, tab]);
 
-  const hustle = tasks.filter((t) => t.category === "hustle");
-  const humble = tasks.filter((t) => t.category === "humble");
-  const hustleScore = tasks
+  const push = tasks.filter((t) => t.category === "hustle");
+  const pause = tasks.filter((t) => t.category === "humble");
+  const pushScore = tasks
     .filter((t) => t.category === "hustle" && t.status === "completed")
     .reduce((s, t) => s + (t.score || 0), 0);
-  const humbleScore = tasks
+  const pauseScore = tasks
     .filter((t) => t.category === "humble" && t.status === "completed")
     .reduce((s, t) => s + (t.score || 0), 0);
   const pendingCount = tasks.filter((t) => t.status === "pending").length;
@@ -242,36 +242,36 @@ export default function ReportPage() {
 
   const levelData = [1, 2, 3, 4, 5].map((lvl) => ({
     level: `Lv ${lvl}`,
-    hustle: tasks.filter((t) => t.level === lvl && t.category === "hustle")
+    push: tasks.filter((t) => t.level === lvl && t.category === "hustle")
       .length,
-    humble: tasks.filter((t) => t.level === lvl && t.category === "humble")
+    pause: tasks.filter((t) => t.level === lvl && t.category === "humble")
       .length,
   }));
   const levelConfig = {
-    hustle: { label: "Hustle", color: "#FF0052" },
-    humble: { label: "Humble", color: "#00C68D" },
+    push: { label: "Push", color: "#FF0052" },
+    pause: { label: "Pause", color: "#00C68D" },
   } satisfies Record<string, { label: string; color: string }>;
 
   const pieData = [
-    { name: "Hustle", value: hustleScore || 0, fill: "#FF0052" },
-    { name: "Humble", value: humbleScore || 0, fill: "#00C68D" },
+    { name: "Push", value: pushScore || 0, fill: "#FF0052" },
+    { name: "Pause", value: pauseScore || 0, fill: "#00C68D" },
     { name: "Pending", value: pendingCount, fill: "#F2F2F2" },
   ].filter((d) => d.value > 0);
   const pieConfig = {
-    hustle: { label: "Hustle", color: "#FF0052" },
-    humble: { label: "Humble", color: "#00C68D" },
+    push: { label: "Push", color: "#FF0052" },
+    pause: { label: "Pause", color: "#00C68D" },
     pending: { label: "Pending", color: "#F2F2F2" },
   };
 
   const weeklyTrendData = weeklyHistory.map((w) => ({
     week: w.weekId.slice(-2),
-    hustle: w.hustleScore,
-    humble: w.humbleScore,
+    push: w.hustleScore,
+    pause: w.humbleScore,
     balance: w.balanceIndex,
   }));
   const weeklyTrendConfig = {
-    hustle: { label: "Hustle", color: "#FF0052" },
-    humble: { label: "Humble", color: "#00C68D" },
+    push: { label: "Push", color: "#FF0052" },
+    pause: { label: "Pause", color: "#00C68D" },
     balance: { label: "Balance", color: "#0055DA" },
   };
 
@@ -281,7 +281,7 @@ export default function ReportPage() {
         <Inbox className="mx-auto size-6 text-foreground" strokeWidth={2} />
         <p className="text-sm font-black mt-2">No tasks yet</p>
         <p className="text-xs text-foreground/60 mt-1">
-          Add a Hustle or Humble task — starting small is fine.
+          Add a Push or Pause task — starting small is fine.
         </p>
       </div>
     ) : (
@@ -412,61 +412,61 @@ export default function ReportPage() {
               <>
                 {/* Summary cards */}
                 <div className="grid gap-4 md:grid-cols-3">
-                  <Card className="border-2 shadow-shadow gap-0 bg-hustle">
+                  <Card className="border-2 shadow-shadow gap-0 bg-push">
                     <CardHeader className="py-0">
                       <CardTitle className="text-xs text-white font-black tracking-widest flex items-center gap-1">
                         <Briefcase className="size-3" strokeWidth={2.5} />{" "}
-                        HUSTLE SCORE
+                        PUSH SCORE
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
                       <p className="text-3xl font-black text-white">
-                        {hustleScore.toFixed(1)}
+                        {pushScore.toFixed(1)}
                       </p>
                       <p className="text-xs font-bold text-white">
-                        {hustle.length} tasks •{" "}
-                        {hustle.filter((t) => t.status === "completed").length}{" "}
+                        {push.length} tasks •{" "}
+                        {push.filter((t) => t.status === "completed").length}{" "}
                         completed
                       </p>
                       <Progress
                         value={
-                          hustle.length
-                            ? (hustle.filter((t) => t.status === "completed")
+                          push.length
+                            ? (push.filter((t) => t.status === "completed")
                                 .length /
-                                hustle.length) *
+                                push.length) *
                               100
                             : 0
                         }
-                        className=" h-2 [&>div]:bg-black bg-hustle"
+                        className=" h-2 [&>div]:bg-black bg-push"
                       />
                     </CardContent>
                   </Card>
-                  <Card className="border-2 shadow-shadow gap-0 bg-humble">
+                  <Card className="border-2 shadow-shadow gap-0 bg-pause">
                     <CardHeader className="py-0">
                       <CardTitle className="text-xs font-black tracking-widest flex items-center gap-1 text-black">
                         <BedDouble className="size-3" strokeWidth={2.5} />{" "}
-                        HUMBLE SCORE
+                        PAUSE SCORE
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
                       <p className="text-3xl font-black text-black">
-                        {humbleScore.toFixed(1)}
+                        {pauseScore.toFixed(1)}
                       </p>
                       <p className="text-xs font-bold text-black">
-                        {humble.length} tasks •{" "}
-                        {humble.filter((t) => t.status === "completed").length}{" "}
+                        {pause.length} tasks •{" "}
+                        {pause.filter((t) => t.status === "completed").length}{" "}
                         completed
                       </p>
                       <Progress
                         value={
-                          humble.length
-                            ? (humble.filter((t) => t.status === "completed")
+                          pause.length
+                            ? (pause.filter((t) => t.status === "completed")
                                 .length /
-                                humble.length) *
+                                pause.length) *
                               100
                             : 0
                         }
-                        className="h-2 [&>div]:bg-black bg-humble"
+                        className="h-2 [&>div]:bg-black bg-pause"
                       />
                     </CardContent>
                   </Card>
@@ -511,7 +511,7 @@ export default function ReportPage() {
                       {dailyBarData.length === 0 ? (
                         <div className="text-center py-2 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm dark:bg-white/10">
                           U don&apos;t have data for chart yet. Add
-                          Hustle/Humble tasks and mark them completed to see the
+                          Push/Pause tasks and mark them completed to see the
                           chart.
                         </div>
                       ) : (
@@ -555,9 +555,9 @@ export default function ReportPage() {
                                     )?.payload;
                                     const cat =
                                       p?.category === "hustle"
-                                        ? "Hustle"
+                                        ? "Push"
                                         : p?.category === "humble"
-                                          ? "Humble"
+                                          ? "Pause"
                                           : "";
                                     const title = p?.fullTitle || "";
                                     return (
@@ -621,7 +621,7 @@ export default function ReportPage() {
                       </div>
                       <div className="text-foreground/60 leading-none font-bold text-xs">
                         Score = level × duration • different colors per bar •
-                        check tooltip for hustle/humble
+                        check tooltip for push/pause
                       </div>
                     </CardFooter>
                   </Card>
@@ -633,13 +633,13 @@ export default function ReportPage() {
                         Distribution
                       </CardTitle>
                       <CardDescription className="font-bold text-xs">
-                        Hustle rose • Humble green • Pending gray
+                        Push rose • Pause green • Pending gray
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="">
                       {pieData.length === 0 ? (
                         <div className="text-center py-4 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm dark:bg-white/10">
-                          No scores available. Complete Hustle/Humble tasks to
+                          No scores available. Complete Push/Pause tasks to
                           see the distribution chart.
                         </div>
                       ) : (
@@ -712,8 +712,8 @@ export default function ReportPage() {
                     </CardContent>
                     <CardFooter className="flex-col gap-2 text-sm py-0 ">
                       <div className="flex items-center gap-2 leading-none font-black">
-                        Hustle {hustleScore.toFixed(1)} vs Humble{" "}
-                        {humbleScore.toFixed(1)}{" "}
+                        Push {pushScore.toFixed(1)} vs Pause{" "}
+                        {pauseScore.toFixed(1)}{" "}
                         <TrendingUp className="size-4" strokeWidth={2.5} />
                       </div>
                       <div className="text-foreground/60 leading-none font-bold text-xs">
@@ -731,7 +731,7 @@ export default function ReportPage() {
                       Distribution Level (1-5)
                     </CardTitle>
                     <CardDescription className="font-bold text-xs">
-                      Hustle (Pressure Level) • Humble (Relaxation Level)
+                      Push (Pressure Level) • Pause (Relaxation Level)
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="">
@@ -765,10 +765,10 @@ export default function ReportPage() {
                           content={<ChartTooltipContent indicator="line" />}
                         />
                         <Area
-                          dataKey="humble"
+                          dataKey="pause"
                           type="natural"
-                          fill="var(--color-humble)"
-                          stroke="var(--color-humble)"
+                          fill="var(--color-pause)"
+                          stroke="var(--color-pause)"
                           stackId="a"
                           strokeWidth={2}
                           fillOpacity={0.9}
@@ -779,10 +779,10 @@ export default function ReportPage() {
                           }}
                         />
                         <Area
-                          dataKey="hustle"
+                          dataKey="push"
                           type="natural"
-                          fill="var(--color-hustle)"
-                          stroke="var(--color-hustle)"
+                          fill="var(--color-push)"
+                          stroke="var(--color-push)"
                           stackId="a"
                           strokeWidth={2}
                           fillOpacity={0.9}
@@ -801,27 +801,27 @@ export default function ReportPage() {
                 <div className="grid gap-6 md:grid-cols-2">
                   <Card className="border-2 pt-0 shadow-shadow bg-secondary-background">
                     <CardHeader className="border-b-2 border-border py-2 flex flex-row items-center justify-between">
-                      <CardTitle className="text-white bg-hustle flex items-center gap-2 p-2 border-2 border-black">
+                      <CardTitle className="text-white bg-push flex items-center gap-2 p-2 border-2 border-black">
                         <Briefcase className="size-4" strokeWidth={2.5} />{" "}
-                        HUSTLE
+                        PUSH
                       </CardTitle>
-                      <Badge className="bg-hustle text-white border-black font-black">
-                        {hustle.length}
+                      <Badge className="bg-push text-white border-black font-black">
+                        {push.length}
                       </Badge>
                     </CardHeader>
-                    <CardContent>{renderList(hustle)}</CardContent>
+                    <CardContent>{renderList(push)}</CardContent>
                   </Card>
                   <Card className="border-2 pt-0 shadow-shadow bg-secondary-background">
                     <CardHeader className="border-b-2 border-border py-2 flex flex-row items-center justify-between">
-                      <CardTitle className="text-black bg-humble flex items-center gap-2 p-2 border-2 border-black">
+                      <CardTitle className="text-black bg-pause flex items-center gap-2 p-2 border-2 border-black">
                         <BedDouble className="size-4" strokeWidth={2.5} />{" "}
-                        HUMBLE
+                        PAUSE
                       </CardTitle>
-                      <Badge className="bg-humble text-black border-black font-black">
-                        {humble.length}
+                      <Badge className="bg-pause text-black border-black font-black">
+                        {pause.length}
                       </Badge>
                     </CardHeader>
-                    <CardContent>{renderList(humble)}</CardContent>
+                    <CardContent>{renderList(pause)}</CardContent>
                   </Card>
                 </div>
               </>
@@ -908,7 +908,7 @@ export default function ReportPage() {
                         className="mt-3 h-4 w-full border-2 border-border relative overflow-hidden"
                         style={{
                           background:
-                            "linear-gradient(90deg, var(--color-hustle) 0%, var(--color-humble) 100%)",
+                            "linear-gradient(90deg, var(--color-push) 0%, var(--color-pause) 100%)",
                         }}
                       >
                         <div
@@ -920,7 +920,7 @@ export default function ReportPage() {
                       </div>
                       <p className="text-xs font-bold text-foreground/60 mt-2">
                         {weekly.startDate} → {weekly.endDate} • Ideal 50:50
-                        (humble{" "}
+                        (pause{" "}
                         {(
                           (weekly.humbleScore / (weekly.totalScore || 1)) *
                           100
@@ -941,17 +941,17 @@ export default function ReportPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="flex gap-4">
-                        <div className="border-2 border-border bg-hustle text-white px-3 py-2 text-center shadow-sm">
+                        <div className="border-2 border-border bg-push text-white px-3 py-2 text-center shadow-sm">
                           <p className="text-xl font-black">
                             {weekly.hustleScore.toFixed(1)}
                           </p>
-                          <p className="text-xs font-black">Hustle</p>
+                          <p className="text-xs font-black">Push</p>
                         </div>
-                        <div className="border-2 border-border bg-humble text-black px-3 py-2 text-center shadow-sm">
+                        <div className="border-2 border-border bg-pause text-black px-3 py-2 text-center shadow-sm">
                           <p className="text-xl font-black">
                             {weekly.humbleScore.toFixed(1)}
                           </p>
-                          <p className="text-xs font-black">Humble</p>
+                          <p className="text-xs font-black">Pause</p>
                         </div>
                         <div className="border-2 border-border bg-accent text-black px-3 py-2 text-center shadow-sm">
                           <p className="text-xl font-black">
@@ -1002,18 +1002,18 @@ export default function ReportPage() {
                     <CardHeader>
                       <CardTitle className="text-sm font-black flex items-center gap-2">
                         <BarChart3 className="size-4" strokeWidth={2.5} />{" "}
-                        Hustle vs Humble (this week)
+                        Push vs Pause (this week)
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <ChartContainer
                         config={{
-                          hustle: {
-                            label: "Hustle",
+                          push: {
+                            label: "Push",
                             color: "#FF0052",
                           },
-                          humble: {
-                            label: "Humble",
+                          pause: {
+                            label: "Pause",
                             color: "#00C68D",
                           },
                         }}
@@ -1023,8 +1023,8 @@ export default function ReportPage() {
                           data={[
                             {
                               name: weekly.weekId,
-                              hustle: weekly.hustleScore,
-                              humble: weekly.humbleScore,
+                              push: weekly.hustleScore,
+                              pause: weekly.humbleScore,
                             },
                           ]}
                         >
@@ -1039,14 +1039,14 @@ export default function ReportPage() {
                           <YAxis tick={{ fill: "var(--foreground)" }} />
                           <ChartTooltip content={<ChartTooltipContent />} />
                           <Bar
-                            dataKey="hustle"
-                            fill="var(--color-hustle)"
+                            dataKey="push"
+                            fill="var(--color-push)"
                             stroke="var(--border)"
                             strokeWidth={2}
                           />
                           <Bar
-                            dataKey="humble"
-                            fill="var(--color-humble)"
+                            dataKey="pause"
+                            fill="var(--color-pause)"
                             stroke="var(--border)"
                             strokeWidth={2}
                           />
@@ -1065,12 +1065,12 @@ export default function ReportPage() {
                     <CardContent>
                       <ChartContainer
                         config={{
-                          hustle: {
-                            label: "Hustle",
+                          push: {
+                            label: "Push",
                             color: "#FF0052",
                           },
-                          humble: {
-                            label: "Humble",
+                          pause: {
+                            label: "Pause",
                             color: "#00C68D",
                           },
                         }}
@@ -1080,12 +1080,12 @@ export default function ReportPage() {
                           <Pie
                             data={[
                               {
-                                name: "Hustle",
+                                name: "Push",
                                 value: weekly.hustleScore,
                                 fill: "#FF0052",
                               },
                               {
-                                name: "Humble",
+                                name: "Pause",
                                 value: weekly.humbleScore,
                                 fill: "#00C68D",
                               },
@@ -1138,18 +1138,18 @@ export default function ReportPage() {
                           />
                           <Area
                             type="monotone"
-                            dataKey="hustle"
+                            dataKey="push"
                             stackId="a"
-                            stroke="var(--color-hustle)"
-                            fill="var(--color-hustle)"
+                            stroke="var(--color-push)"
+                            fill="var(--color-push)"
                             strokeWidth={2}
                           />
                           <Area
                             type="monotone"
-                            dataKey="humble"
+                            dataKey="pause"
                             stackId="a"
-                            stroke="var(--color-humble)"
-                            fill="var(--color-humble)"
+                            stroke="var(--color-pause)"
+                            fill="var(--color-pause)"
                             strokeWidth={2}
                           />
                         </AreaChart>

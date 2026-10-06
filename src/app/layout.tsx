@@ -13,23 +13,23 @@ const spaceGrotesk = Space_Grotesk({
   weight: ["400", "500", "700"],
 });
 
-const SITE_URL = "https://purrpose.mhmdfjr.com";
-const SITE_NAME = "Purrpose";
+const SITE_URL = "https://progrestive.mhmdfjr.com";
+const SITE_NAME = "ProgRestive";
 const SITE_DESCRIPTION =
-  "Track ur hustle and humble, score ur balance 0–100, and climb city leaderboards. Purrpose keeps productivity guilt-free.";
+  "Track ur push and pause, score ur balance 0–100, and climb city leaderboards. ProgRestive keeps productivity guilt-free.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Purrpose - Balance Hustle & Humble",
-    template: "%s — Purrpose",
+    default: "ProgRestive - Balance Push & Pause",
+    template: "%s — ProgRestive",
   },
   description: SITE_DESCRIPTION,
   keywords: [
     "productivity tracker",
     "balance index",
     "habit tracker",
-    "hustle and humble",
+    "push and pause",
     "weekly report",
     "city leaderboard",
   ],
@@ -59,21 +59,21 @@ export const metadata: Metadata = {
     url: "/",
     siteName: SITE_NAME,
     locale: "en_US",
-    title: "Purrpose - Balance Hustle & Humble",
+    title: "ProgRestive - Balance Push & Pause",
     description: SITE_DESCRIPTION,
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Purrpose — Balance Hustle × Humble",
+        alt: "ProgRestive — Balance Push × Pause",
       },
     ],
     // og:image resolved automatically from src/app/opengraph-image.tsx
   },
   twitter: {
     card: "summary_large_image",
-    title: "Purrpose - Balance Hustle & Humble",
+    title: "ProgRestive - Balance Push & Pause",
     description: SITE_DESCRIPTION,
     images: ["/opengraph-image"],
     // twitter:image resolved automatically from src/app/opengraph-image.tsx

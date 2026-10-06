@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const SITE_URL = "https://purrpose.mhmdfjr.com";
+const SITE_URL = "https://progrestive.mhmdfjr.com";
 
 // Only public routes are listed. Auth-gated app pages (/home, /report,
 // /leaderboard, /profile) and auth pages (/login, /register) are intentionally

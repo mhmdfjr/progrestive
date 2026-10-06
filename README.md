@@ -1,11 +1,11 @@
-# 🐾 Purrpose
+# ProgRestive
 
-> Track your hustle. Honor your humble. Balance is the ultimate productivity hack.
+> Track your push. Honor your pause. Balance is the ultimate productivity hack.
 
-**Try it live:** [purrpose.mhmdfjr.com](https://purrpose.mhmdfjr.com)
+**Try it live:** [progrestive.mhmdfjr.com](https://progrestive.mhmdfjr.com)
 
-Purrpose is a gamified productivity web app. It splits your daily tasks into two
-categories - **Hustle** (work, study, build) and **Humble** (rest, reflection,
+ProgRestive is a gamified productivity web app. It splits your daily tasks into two
+categories - **Push** (work, study, build) and **Pause** (rest, reflection,
 recharge) - and rewards you for keeping them in **balance**, not for grinding
 yourself into the ground. Unfinished tasks are never punished; they simply roll
 over with a friendly nudge.
@@ -14,17 +14,17 @@ over with a friendly nudge.
 
 ## 📸 Screenshots
 
-### 🏠 Home: your daily Hustle & Humble boards
+### 🏠 Home: your daily Push & Pause boards
 
-![Purrpose Home page showing daily Hustle and Humble task boards](public/images/screenshot-home.webp)
+![ProgRestive Home page showing daily Push and Pause task boards](public/images/screenshot-home.webp)
 
 ### 📊 Report: scores, charts & weekly balance
 
-![Purrpose Report page with score cards, charts and task breakdown](public/images/screenshot-report.webp)
+![ProgRestive Report page with score cards, charts and task breakdown](public/images/screenshot-report.webp)
 
 ### 🏆 Leaderboard: city ranks & badges
 
-![Purrpose Leaderboard page with city ranking table and Gold Silver Bronze podium](public/images/screenshot-leaderboard.webp)
+![ProgRestive Leaderboard page with city ranking table and Gold Silver Bronze podium](public/images/screenshot-leaderboard.webp)
 
 ---
 
@@ -32,10 +32,10 @@ over with a friendly nudge.
 
 ### 🚀 How it works: 3 steps
 
-1. **Add a task, mark it done.** Pick a category (Hustle/Humble), a level
+1. **Add a task, mark it done.** Pick a category (Push/Pause), a level
    1–5, and a duration. Done = score of `level × duration` added instantly.
    Not done = "have no time", never "failed".
-2. **Check your Balance 0–100.** The weekly report blends your Hustle/Humble
+2. **Check your Balance 0–100.** The weekly report blends your Push/Pause
    scores with rule-based + AI-enhanced suggestions (powered by Google Gemini).
 3. **Climb the leaderboard.** Weekly city-based groups (~15 people). Top 3 earn
    collectible **Gold / Silver / Bronze** badges.
@@ -58,7 +58,7 @@ over with a friendly nudge.
 ### ❓ FAQ
 
 - **Am I punished for unfinished tasks?** No. They are marked "have no time"
-  and excluded from scoring - Purrpose measures what you did, not what you
+  and excluded from scoring - ProgRestive measures what you did, not what you
   didn't.
 - **Is my data private?** Your tasks are visible only to you. Leaderboards show
   only your display name, city, and score.
@@ -91,8 +91,8 @@ over with a friendly nudge.
 ### 📦 Installation
 
 ```bash
-git clone https://github.com/mhmdfjr/purrpose.git
-cd purrpose
+git clone https://github.com/mhmdfjr/progrestive.git
+cd progrestive
 npm install
 ```
 

@@ -20,13 +20,15 @@
   --chart-5: #5294ff;
   --chart-active-dot: #000;
 
-  /* DESIGN.md Section 2 — Purrpose brand tokens */
+  /* DESIGN.md Section 2 — ProgRestive brand tokens */
   --neo-black: #000000;
   --neo-white: #ffffff;
   --neo-gray-100: #f2f2f2;
   --neo-gray-500: #8a8a8a;
-  --color-hustle: #ff0052;
-  --color-humble: #00c68d;
+  --color-push: #ff0052;
+  --color-pause: #00c68d;
+  --color-hustle: var(--color-push);
+  --color-humble: var(--color-pause);
   --color-accent: #ffd400;
   --color-info: #0055da;
 }
@@ -62,6 +64,8 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-push: var(--color-push);
+  --color-pause: var(--color-pause);
   --color-hustle: var(--color-hustle);
   --color-humble: var(--color-humble);
   --color-accent: var(--color-accent);

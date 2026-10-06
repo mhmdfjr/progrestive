@@ -6,24 +6,24 @@ exports.generateRuleBasedSuggestion = generateRuleBasedSuggestion;
 function generateRuleBasedSuggestion(params) {
     const { humbleScore, hustleScore, totalScore, balanceIndex, humblePercentage, completionRate } = params;
     if (totalScore === 0) {
-        return "Minggu ini belum ada task yang diselesaikan. Mulai kecil — tambah satu Hustle ringan dan satu Humble memulihkan besok untuk membangun momentum.";
+        return "Minggu ini belum ada task yang diselesaikan. Mulai kecil — tambah satu Push ringan dan satu Pause memulihkan besok untuk membangun momentum.";
     }
     const parts = [];
     // Balance framing (non-punitive per DESIGN 8)
     if (balanceIndex >= 80) {
-        parts.push(`Keseimbanganmu bagus (balance index ${balanceIndex.toFixed(0)}). Hustle ${hustleScore.toFixed(0)} dan Humble ${humbleScore.toFixed(0)} cukup seimbang — pertahankan ritme ini.`);
+        parts.push(`Keseimbanganmu bagus (balance index ${balanceIndex.toFixed(0)}). Push ${hustleScore.toFixed(0)} dan Pause ${humbleScore.toFixed(0)} cukup seimbang — pertahankan ritme ini.`);
     }
     else if (humblePercentage < 20) {
-        parts.push(`Humble hanya ${humblePercentage.toFixed(0)}% dari total minggu ini — risiko burnout meningkat. Coba tambah 1–2 task recovery (tidur cukup, jalan santai, atau journaling) untuk minggu depan.`);
+        parts.push(`Pause hanya ${humblePercentage.toFixed(0)}% dari total minggu ini — risiko burnout meningkat. Coba tambah 1–2 task recovery (tidur cukup, jalan santai, atau journaling) untuk minggu depan.`);
     }
     else if (humblePercentage > 80) {
-        parts.push(`Humble mendominasi ${humblePercentage.toFixed(0)}% minggu ini. Bagus untuk recovery, tapi kalau ada target produktivitas, coba selingi 1–2 Hustle ringan.`);
+        parts.push(`Pause mendominasi ${humblePercentage.toFixed(0)}% minggu ini. Bagus untuk recovery, tapi kalau ada target produktivitas, coba selingi 1–2 Push ringan.`);
     }
     else if (humblePercentage < 35) {
-        parts.push(`Rasio masih condong ke Hustle (${(100 - humblePercentage).toFixed(0)}% Hustle). Balance index ${balanceIndex.toFixed(0)} — tambahkan sedikit Humble untuk jaga energi.`);
+        parts.push(`Rasio masih condong ke Push (${(100 - humblePercentage).toFixed(0)}% Push). Balance index ${balanceIndex.toFixed(0)} — tambahkan sedikit Pause untuk jaga energi.`);
     }
     else if (humblePercentage > 65) {
-        parts.push(`Rasio condong ke Humble (${humblePercentage.toFixed(0)}% Humble). Balance index ${balanceIndex.toFixed(0)} — pertimbangkan satu Hustle terfokus minggu depan.`);
+        parts.push(`Rasio condong ke Pause (${humblePercentage.toFixed(0)}% Pause). Balance index ${balanceIndex.toFixed(0)} — pertimbangkan satu Push terfokus minggu depan.`);
     }
     else {
         parts.push(`Balance index ${balanceIndex.toFixed(0)} — cukup seimbang. Perhatikan konsistensi, bukan kesempurnaan.`);

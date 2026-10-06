@@ -29,7 +29,7 @@ Creates a new task with `pending` status.
 
 | Field | Type | Required | Notes |
 |---|---|---|---|
-| `category` | `"hustle"` \| `"humble"` | yes | |
+| `category` | `"hustle"` \| `"humble"` | yes | display names Push / Pause; stored values unchanged |
 | `title` | string | yes | max 100 characters |
 | `level` | number | yes | integer 1-5 |
 | `durationHours` | number | yes | > 0, decimals allowed |
@@ -46,7 +46,7 @@ Creates a new task with `pending` status.
 | Code | Condition |
 |---|---|
 | `invalid-argument` | `level` outside 1-5, `durationHours` <= 0, `date` in the past, malformed `date` |
-| `failed-precondition` | this task's own `durationHours` exceeds `perTaskDurationCapHours` from Remote Config (default 16h) — flat cap, same for hustle and humble |
+| `failed-precondition` | this task's own `durationHours` exceeds `perTaskDurationCapHours` from Remote Config (default 16h) — flat cap, same for push and pause |
 | `failed-precondition` | total task duration on that date (including this new task) exceeds `dailyDurationCapHours` from Remote Config. The message includes the remaining hours available, so the frontend can show a helpful message instead of a generic error |
 | `unauthenticated` | no auth context |
 

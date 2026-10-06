@@ -45,7 +45,7 @@ const reportSuggestion_1 = require("../reportSuggestion");
             humblePercentage: 85,
             completionRate: 0.8,
         });
-        (0, vitest_1.expect)(s).toContain("Humble mendominasi");
+        (0, vitest_1.expect)(s).toContain("Pause mendominasi");
     });
     (0, vitest_1.it)("completionRate <0.5 -> low completion suggestion", () => {
         const s = (0, reportSuggestion_1.generateRuleBasedSuggestion)({

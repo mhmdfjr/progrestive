@@ -47,7 +47,7 @@ describe("generateRuleBasedSuggestion — PRD 7.2", () => {
       humblePercentage: 85,
       completionRate: 0.8,
     });
-    expect(s).toContain("Humble mendominasi");
+    expect(s).toContain("Pause mendominasi");
   });
 
   it("completionRate <0.5 -> low completion suggestion", () => {

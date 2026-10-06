@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { TaskDoc } from "@/lib/hooks/useTasks";
+import { categoryLabel } from "@/lib/category";
 import {
   Pencil,
   Trash2,
@@ -34,8 +35,8 @@ export function TaskCard({
   const isMissed = task.status === "missed";
   const isPending = task.status === "pending";
   const accent =
-    task.category === "hustle" ? "var(--color-hustle)" : "var(--color-humble)";
-  const accentBg = task.category === "hustle" ? "bg-hustle" : "bg-humble";
+    task.category === "hustle" ? "var(--color-push)" : "var(--color-pause)";
+  const accentBg = task.category === "hustle" ? "bg-push" : "bg-pause";
 
   return (
     <Card
@@ -84,7 +85,7 @@ export function TaskCard({
                   borderColor: "black",
                 }}
               >
-                {task.category}
+                {categoryLabel(task.category)}
               </Badge>
               <span className="inline-flex items-center gap-1 border-2 border-border bg-white px-1.5 py-0.5 text-xs font-bold dark:text-black">
                 <Clock3 className="size-3" strokeWidth={2.5} />{" "}

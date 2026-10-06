@@ -2,10 +2,10 @@
 
 ## 1. Overview
 
-Purrpose is a web app for tracking productivity and mental well-being through
+ProgRestive is a web app for tracking productivity and mental well-being through
 gamification. Users manage a daily to-do list split into two task categories:
-**Hustle** (productivity: work, study, and other pressure-adding activities)
-and **Humble** (recovery: meals, sleep, exercise, entertainment, and other
+**Push** (productivity: work, study, and other pressure-adding activities)
+and **Pause** (recovery: meals, sleep, exercise, entertainment, and other
 pressure-releasing activities). Each completed task earns a score, encouraging
 users to balance productive output with mental recovery.
 
@@ -15,7 +15,7 @@ with collectible badges as the long-term reward.
 ## 2. Problem Statement
 
 Most productivity trackers only measure output (finished tasks) and ignore
-burnout risk. Users who hustle non-stop with no recovery time get no warning
+burnout risk. Users who push non-stop with no recovery time get no warning
 signal from existing tools. This app explicitly tracks both sides —
 productivity and recovery — and gives insight into how well they are balanced.
 
@@ -25,13 +25,16 @@ Productive individuals (workers, students, freelancers) who want to build
 working habits while protecting their mental health, and who are motivated by
 competitive/gamified elements (scores, leaderboards, badges).
 
-## 4. Core Concept: Hustle & Humble
+## 4. Core Concept: Push & Pause
 
-| Aspect | Hustle | Humble |
+| Aspect | Push | Pause |
 |---|---|---|
 | Goal | Productivity | Recovery / stress management |
 | Examples | Work, study, meetings, projects | Sleep, meals, exercise, shows, journaling |
 | Score scale | 5 pressure levels (1 = light, 5 = heavy) | 5 restoration levels (1 = light, 5 = deeply restoring) |
+
+> Storage note: user-facing names are **Push**/**Pause**, but the values stored
+> in Firestore stay `"hustle"`/`"humble"` (see `DATABASE.md`) — no migration.
 
 Tasks are **manual and non-recurring**. Users re-add tasks explicitly every day.
 There is no recurring-task template/generator in the initial scope — this keeps
@@ -46,8 +49,8 @@ the data model simple, because every task is an independent document with a
 score = level (1-5) x duration (hours)
 ```
 
-- `level` is entered by the user when creating a task: pressure level (hustle)
-  or restoration level (humble).
+- `level` is entered by the user when creating a task: pressure level (push)
+  or restoration level (pause).
 - `duration` is entered by the user in hours (decimals allowed, e.g. 1.5).
 
 ### 5.2 Anti-abuse: Duration Caps
@@ -58,14 +61,14 @@ a single task). Two cap layers apply:
 - **Flat per-task cap**: any single task, regardless of category, may be at
   most **16 hours**. This is generous enough for the longest reasonable
   durations (extreme sleep, marathon work) while still catching clearly absurd
-  input. It applies equally to hustle and humble — **not per task type**
+  input. It applies equally to push and pause — **not per task type**
   (sleep/exercise/work do not get different caps), because task titles are
   free text in the schema (see `DATABASE.md`), not an enum that could map to
   different caps. Enforcing per-type caps would require a new classification
   field with no value for the MVP phase — the flat cap is a deliberate
   simplicity trade-off.
-- **Daily aggregate cap (confirmed)**: the total duration of all tasks (hustle
-  + humble combined) on a single date may not exceed **24 hours**.
+- **Daily aggregate cap (confirmed)**: the total duration of all tasks (push
+  + pause combined) on a single date may not exceed **24 hours**.
 
 Validation runs on task create/update: the task's own duration is checked
 against the flat cap, then the total duration of existing tasks on the same
@@ -90,7 +93,7 @@ final.
 
 ## 6. Task Management (Home Page)
 
-- Users create a new task: pick a category (Hustle/Humble), title, level (1-5),
+- Users create a new task: pick a category (Push/Pause), title, level (1-5),
   duration (hours), date.
 - Tasks appear in a daily list, grouped per category.
 - Users mark a task as complete to earn its score.
@@ -118,7 +121,7 @@ decision in `ARCHITECTURE.md` Section 4.2.
 
 ### 7.1 Daily Report
 
-- Lists all tasks created that day, grouped Hustle/Humble.
+- Lists all tasks created that day, grouped Push/Pause.
 - Each task's status: completed / not completed.
 - Daily score totals per category.
 - No deep analysis or advice at the daily level — just a factual summary.
@@ -126,23 +129,23 @@ decision in `ARCHITECTURE.md` Section 4.2.
 ### 7.2 Weekly Report
 
 - Recap of all tasks in the last 7 days.
-- **Balance Score**: a 0-100 metric representing the hustle/humble balance. The
+- **Balance Score**: a 0-100 metric representing the push/pause balance. The
   confirmed ideal target ratio is **50:50**.
 
 ```
-humble_percentage = humble_score / (hustle_score + humble_score) x 100
-balance_index = 100 - abs(50 - humble_percentage) x 2
+pause_percentage = pause_score / (push_score + pause_score) x 100
+balance_index = 100 - abs(50 - pause_percentage) x 2
 ```
 
-The balance index is 100 when the hustle:humble ratio is exactly 50:50. The
-more it skews to one side (all hustle or all humble), the closer the index
+The balance index is 100 when the push:pause ratio is exactly 50:50. The
+more it skews to one side (all push or all pause), the closer the index
 drops toward 0.
 
 `balance_index` is used twice: shown in the weekly report, and as one
 weighting component of the leaderboard score (Section 8.1).
 
 - **Improvement suggestions**: a rule-based + AI-enhanced combination.
-  - Rule-based (default): threshold logic, e.g. if `humble_percentage < 20%`,
+  - Rule-based (default): threshold logic, e.g. if `pause_percentage < 20%`,
     show a standard suggestion about burnout risk and adding recovery tasks.
     Static, fast, no external dependency.
   - AI enhancement (optional): if enabled, send that week's summary data to an
@@ -173,7 +176,7 @@ weighting component of the leaderboard score (Section 8.1).
   three components: weekly total score, balance ratio, and completion rate.
 
 ```
-weekly_raw_score   = total score of completed tasks (hustle + humble) in a week
+weekly_raw_score   = total score of completed tasks (push + pause) in a week
 completion_rate    = completed_tasks / (completed_tasks + missed_tasks)
 balance_weight     = 0.5 + (balance_index / 100) x 0.5      -> range 0.5 - 1.0
 completion_weight  = 0.5 + completion_rate x 0.5             -> range 0.5 - 1.0

@@ -57,7 +57,7 @@ tasks.
 - Callable functions: `createTask`, `updateTask`, `deleteTask`, `completeTask`,
   including daily aggregate cap validation (aggregation `sum()` query).
 - Security rules: deny all direct writes to `tasks`.
-- Home page UI: two Hustle/Humble columns, task cards, create/edit dialog,
+- Home page UI: two Push/Pause columns, task cards, create/edit dialog,
   complete checkbox (`DESIGN.md` Section 6.1).
 - Realtime listener for the current day's task list.
 

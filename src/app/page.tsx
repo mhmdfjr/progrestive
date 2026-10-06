@@ -19,11 +19,11 @@ import { LandingHeader as Nav } from "@/components/SiteHeader";
 
 function MarqueeStrip() {
   const items = [
-    "HUSTLE • ",
-    "HUMBLE • ",
+    "PUSH • ",
+    "PAUSE • ",
     "BALANCE • ",
     "REPEAT • ",
-    "STAY PURRPOSEFUL • ",
+    "STAY PROGRESTIVE • ",
   ];
   return <Marquee items={items} />;
 }
@@ -36,31 +36,31 @@ function Hero() {
           {/* left copy */}
           <div className="space-y-6">
             <Badge className="bg-accent text-black border-border px-3 py-1 text-xs font-black">
-              <Sparkles className="mr-1 size-3" /> BALANCE = HUSTLE × HUMBLE
+              <Sparkles className="mr-1 size-3" /> BALANCE = PUSH × PAUSE
             </Badge>
 
             <h1 className="font-heading text-4xl font-black leading-[0.9] tracking-tight md:text-6xl">
               Balance Ur Day,
               <br />
               Get{" "}
-              <span className="inline-block border-2 border-border bg-hustle px-2 text-white shadow-shadow">
+              <span className="inline-block border-2 border-border bg-push px-2 text-white shadow-shadow">
                 Productive.
               </span>
-              <span className="inline-block border-2 border-border bg-humble px-2 text-black shadow-shadow ml-2">
+              <span className="inline-block border-2 border-border bg-pause px-2 text-black shadow-shadow ml-2">
                 .
               </span>
             </h1>
 
             <p className="max-w-xl text-base leading-relaxed text-foreground/80">
-              Purrpose helps u to track{" "}
-              <span className="border-b-2 border-accent font-bold">Hustle</span>{" "}
-              (work, study, build) and{" "}
-              <span className="border-b-2 border-accent font-bold">Humble</span>{" "}
-              (rest, reflection, recharge) without punishment. Get highest{" "}
+              ProgRestive helps u to track{" "}
+              <span className="border-b-2 border-accent font-bold">Push</span>{" "}
+              activities and{" "}
+              <span className="border-b-2 border-accent font-bold">Pause</span>{" "}
+              activities without punishment. Get highest{" "}
               <span className="border-b-2 border-accent font-bold">
                 Balance Index
               </span>{" "}
-              , climb ur leaderboard, claim ur badge.
+              , climb ur leaderboard, and claim ur badge.
             </p>
 
             <div className="flex flex-wrap gap-3">
@@ -85,12 +85,12 @@ function Hero() {
 
             <div className="flex items-center gap-3 text-xs font-bold">
               <span className="flex items-center gap-1">
-                <span className="size-2 bg-hustle border border-border" />{" "}
+                <span className="size-2 bg-push border border-border" />{" "}
                 Non-punitive
               </span>
               <span className="flex items-center gap-1">
-                <span className="size-2 bg-humble border border-border" />{" "}
-                Weekly reset
+                <span className="size-2 bg-pause border border-border" /> Weekly
+                reset
               </span>
               <span className="flex items-center gap-1">
                 <span className="size-2 bg-accent border border-border" />{" "}
@@ -103,13 +103,13 @@ function Hero() {
           <div className="relative mx-auto w-full max-w-105 md:ml-auto">
             {/* stacked cards - neobrutalism */}
             <div className="relative">
-              <Card className="relative z-10 border-hustle bg-secondary-background p-0 shadow-shadow rotate-[-1.5deg]">
+              <Card className="relative z-10 border-push bg-secondary-background p-0 shadow-shadow rotate-[-1.5deg]">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2 text-hustle">
-                      <Briefcase className="size-5" strokeWidth={2.5} /> HUSTLE
+                    <CardTitle className="flex items-center gap-2 text-push">
+                      <Briefcase className="size-5" strokeWidth={2.5} /> PUSH
                     </CardTitle>
-                    <Badge className="bg-hustle text-white border-border">
+                    <Badge className="bg-push text-white border-border">
                       4.2 pts
                     </Badge>
                   </div>
@@ -126,7 +126,7 @@ function Hero() {
                     <span className="text-xs">Lv 3 •••○○</span>
                   </div>
                   <div className="h-2 border-2 border-border bg-white">
-                    <div className="h-full w-[68%] bg-hustle" />
+                    <div className="h-full w-[68%] bg-push" />
                   </div>
                   <p className="text-xs text-foreground/60">
                     Todays total: 3.5h • Score 7.1
@@ -134,13 +134,13 @@ function Hero() {
                 </CardContent>
               </Card>
 
-              <Card className="absolute -bottom-6 right-2 z-20 w-[88%] border-humble bg-secondary-background p-0 shadow-shadow rotate-[1.2deg] md:-right-4">
+              <Card className="absolute -bottom-6 right-2 z-20 w-[88%] border-pause bg-secondary-background p-0 shadow-shadow rotate-[1.2deg] md:-right-4">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2 text-humble">
-                      <BedDouble className="size-5" strokeWidth={2.5} /> HUMBLE
+                    <CardTitle className="flex items-center gap-2 text-pause">
+                      <BedDouble className="size-5" strokeWidth={2.5} /> PAUSE
                     </CardTitle>
-                    <Badge className="bg-humble text-black border-border">
+                    <Badge className="bg-pause text-black border-border">
                       3.8 pts
                     </Badge>
                   </div>
@@ -157,7 +157,7 @@ function Hero() {
                     <span className="text-xs">Lv 2 ••○○○</span>
                   </div>
                   <div className="h-2 border-2 border-border bg-white">
-                    <div className="h-full w-[52%] bg-humble" />
+                    <div className="h-full w-[52%] bg-pause" />
                   </div>
                   <p className="text-xs text-foreground/60">
                     Balance recovery : Score 83/100
@@ -185,7 +185,7 @@ function About() {
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <Badge variant="neutral" className="font-black">
-              ABOUT : WHY IS PURRPOSE?
+              ABOUT : WHY IS PROGRESTIVE?
             </Badge>
             <h2 className="mt-3 font-heading text-3xl font-black leading-none md:text-4xl">
               Balance productivity without{" "}
@@ -203,10 +203,10 @@ function About() {
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <Card className="border-border bg-secondary-background">
             <CardHeader>
-              <div className="flex size-10 items-center justify-center border-2 border-border bg-hustle shadow-shadow">
+              <div className="flex size-10 items-center justify-center border-2 border-border bg-push shadow-shadow">
                 <Zap className="size-5 text-white" strokeWidth={2.5} />
               </div>
-              <CardTitle className="text-xl">Hustle</CardTitle>
+              <CardTitle className="text-xl">Push</CardTitle>
               <p className="text-sm text-foreground/70">
                 Productive pressure : score from level × duration, daily cap
                 anti grind.
@@ -228,10 +228,10 @@ function About() {
 
           <Card className="border-border bg-secondary-background">
             <CardHeader>
-              <div className="flex size-10 items-center justify-center border-2 border-border bg-humble shadow-shadow">
+              <div className="flex size-10 items-center justify-center border-2 border-border bg-pause shadow-shadow">
                 <Heart className="size-5 text-black" strokeWidth={2.5} />
               </div>
-              <CardTitle className="text-xl">Humble</CardTitle>
+              <CardTitle className="text-xl">Pause</CardTitle>
               <p className="text-sm text-foreground/70">
                 Easy calculated recovery : sleep, read, walk, journaling, etc.
               </p>
@@ -244,7 +244,7 @@ function About() {
                 </li>
                 <li className="flex gap-2">
                   <Check className="size-4 shrink-0" strokeWidth={2.5} />{" "}
-                  Balance &gt; purrfect
+                  Balance &gt; perfect
                 </li>
               </ul>
             </CardContent>
@@ -262,13 +262,13 @@ function About() {
               </p>
             </CardHeader>
             <CardContent>
-              <div className="h-3 border-2 border-border bg-humble">
-                <div className="h-full w-[62%] bg-hustle border-r-2 border-border" />
+              <div className="h-3 border-2 border-border bg-pause">
+                <div className="h-full w-[62%] bg-push border-r-2 border-border" />
               </div>
               <div className="mt-2 flex justify-between text-xs font-black">
-                <span>Hustle</span>
+                <span>Push</span>
                 <span>62</span>
-                <span>Humble</span>
+                <span>Pause</span>
               </div>
             </CardContent>
           </Card>
@@ -277,13 +277,13 @@ function About() {
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <ImageCard
             imageUrl="/images/cover features 1.webp"
-            alt="Hustle daily checklist with completed tasks and progress bar"
-            caption="Daily checklist, 2 stacks of ur Hustle/Humble."
+            alt="Push daily checklist with completed tasks and progress bar"
+            caption="Daily checklist, 2 stacks of ur Push/Pause."
             className="w-full rotate-[0.4deg]"
           />
           <ImageCard
             imageUrl="/images/cover features 2.webp"
-            alt="Weekly balance gauge showing hustle versus humble score"
+            alt="Weekly balance gauge showing push versus pause score"
             caption="Weekly gauge balance + rule-based / AI enhanced advice."
             className="w-full rotate-[-0.6deg]"
           />
@@ -311,8 +311,8 @@ function FinalCTA() {
                   Ready to balance today?
                 </h3>
                 <p className="mt-3 max-w-xl text-sm leading-relaxed">
-                  Sign up, set your city & timezone, add 1 Hustle + 1 Humble.
-                  See your balance index this week. Free, no penalties.
+                  Sign up, set your city & timezone, add 1 Push + 1 Pause. See
+                  your balance index this week. Free, no penalties.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
                   <Button
@@ -335,14 +335,14 @@ function FinalCTA() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div className="border-2 border-border bg-humble p-3 shadow-shadow">
+                <div className="border-2 border-border bg-pause p-3 shadow-shadow">
                   <div className="text-xs font-black">TODAY</div>
                   <div className="mt-1 font-heading text-2xl font-black">
                     3 TASKS
                   </div>
-                  <div className="text-xs">2 Hustles • 1 Humble</div>
+                  <div className="text-xs">2 Push • 1 Pause</div>
                 </div>
-                <div className="border-2 border-border bg-hustle p-3 text-white shadow-shadow">
+                <div className="border-2 border-border bg-push p-3 text-white shadow-shadow">
                   <div className="text-xs font-black">STREAK</div>
                   <div className="mt-1 font-heading text-2xl font-black">
                     5 DAYS
@@ -354,8 +354,8 @@ function FinalCTA() {
                     <span>BALANCE</span>
                     <span>83/100</span>
                   </div>
-                  <div className="mt-2 h-3 border-2 border-border bg-hustle">
-                    <div className="h-full w-[83%] bg-humble" />
+                  <div className="mt-2 h-3 border-2 border-border bg-push">
+                    <div className="h-full w-[83%] bg-pause" />
                   </div>
                 </div>
               </div>
@@ -373,7 +373,7 @@ function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-6">
         <div className="flex flex-col gap-3 text-sm md:flex-row md:items-center md:justify-between">
           <div className="font-heading font-black">
-            PURRPOSE: Track Hustle & Humble.
+            PROGRESTIVE: Track Push & Pause.
           </div>
           <div className="flex gap-4 text-xs font-bold">
             <Link href="#about" className="hover:underline">
@@ -388,7 +388,7 @@ function Footer() {
           </div>
         </div>
         <p className="mt-3 text-xs text-foreground/60">
-          © {new Date().getFullYear()} Purrpose. Built with Luv by Mr. Sun.
+          © {new Date().getFullYear()} ProgRestive. Built with Luv by Mr. Sun.
         </p>
       </div>
     </footer>
@@ -398,9 +398,9 @@ function Footer() {
 const howToJsonLd = {
   "@context": "https://schema.org",
   "@type": "HowTo",
-  name: "How Purrpose works",
+  name: "How ProgRestive works",
   description:
-    "Balance ur day in 3 steps: add Hustle and Humble tasks, check ur weekly Balance Index, and climb the city leaderboard.",
+    "Balance ur day in 3 steps: add Push and Pause tasks, check ur weekly Balance Index, and climb the city leaderboard.",
   step: [
     {
       "@type": "HowToStep",
@@ -412,7 +412,7 @@ const howToJsonLd = {
       "@type": "HowToStep",
       position: 2,
       name: "View Balance 0-100",
-      text: "Weekly report calculates balance index, total Hustle/Humble scores, and improvement suggestions with AI enhancement.",
+      text: "Weekly report calculates balance index, total Push/Pause scores, and improvement suggestions with AI enhancement.",
     },
     {
       "@type": "HowToStep",

@@ -75,5 +75,5 @@ export function buildWeeklySummary(params: {
   missed: number;
 }): string {
   const { hustleScore, humbleScore, totalScore, balanceIndex, humblePercentage, completionRate, completed, missed } = params;
-  return `Hustle ${hustleScore.toFixed(1)}, Humble ${humbleScore.toFixed(1)}, Total ${totalScore.toFixed(1)}, BalanceIndex ${balanceIndex.toFixed(0)}/100 (Humble ${humblePercentage.toFixed(0)}%), Completed ${completed}, Missed ${missed}, CompletionRate ${(completionRate * 100).toFixed(0)}%.`;
+  return `Push ${hustleScore.toFixed(1)}, Pause ${humbleScore.toFixed(1)}, Total ${totalScore.toFixed(1)}, BalanceIndex ${balanceIndex.toFixed(0)}/100 (Pause ${humblePercentage.toFixed(0)}%), Completed ${completed}, Missed ${missed}, CompletionRate ${(completionRate * 100).toFixed(0)}%.`;
 }

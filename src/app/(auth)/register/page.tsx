@@ -117,7 +117,7 @@ export default function RegisterPage() {
     <div className="w-full max-w-6xl grid gap-6 md:grid-cols-[1.05fr_0.95fr] items-center">
       {/* left: branding + benefits */}
       <div className="hidden md:flex flex-col gap-6 pr-4">
-        <Badge className="w-fit bg-humble text-black border-border font-black">
+        <Badge className="w-fit bg-pause text-black border-border font-black">
           <Sparkles className="mr-1 size-3" /> JOIN, START BALANCE TODAY!
         </Badge>
         <div>
@@ -133,29 +133,29 @@ export default function RegisterPage() {
             </span>
           </h1>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-foreground/70">
-            1 Hustle + 1 Humble per day is enough. Gamification approach,
+            1 Push + 1 Pause per day is enough. Gamification approach,
             city&apos;s leaderboard, dan weekly suggestions.
           </p>
         </div>
 
         <div className="grid gap-3 max-w-105">
           <div className="border-2 border-border bg-white p-3 shadow-shadow flex items-center gap-3 dark:text-black">
-            <div className="flex size-8 items-center justify-center border-2 border-border bg-hustle">
+            <div className="flex size-8 items-center justify-center border-2 border-border bg-push">
               <Briefcase className="size-4 text-white" strokeWidth={2.5} />
             </div>
             <div className="text-sm">
-              <div className="font-black">Measured Hustle</div>
+              <div className="font-black">Measured Push</div>
               <div className="text-xs text-foreground/60 dark:text-black/60">
                 Level × duration, daily cap anti burnout
               </div>
             </div>
           </div>
           <div className="border-2 border-border bg-white p-3 shadow-shadow flex items-center gap-3 dark:text-black">
-            <div className="flex size-8 items-center justify-center border-2 border-border bg-humble">
+            <div className="flex size-8 items-center justify-center border-2 border-border bg-pause">
               <BedDouble className="size-4 text-black" strokeWidth={2.5} />
             </div>
             <div className="text-sm">
-              <div className="font-black">Valuable Humble</div>
+              <div className="font-black">Valuable Pause</div>
               <div className="text-xs text-foreground/60 dark:text-black/60">
                 Recovery is calculated, not ignored
               </div>
@@ -190,8 +190,8 @@ export default function RegisterPage() {
             Register with ur Google account.
           </CardDescription>
           <div className="flex gap-2 pt-1">
-            <span className="size-3 bg-hustle border-2 border-border" />
-            <span className="size-3 bg-humble border-2 border-border" />
+            <span className="size-3 bg-push border-2 border-border" />
+            <span className="size-3 bg-pause border-2 border-border" />
             <span className="size-3 bg-accent border-2 border-border" />
             <span className="size-3 bg-info border-2 border-border" />
           </div>
@@ -210,7 +210,7 @@ export default function RegisterPage() {
               <Input
                 id="name"
                 type="text"
-                placeholder="Purrfect User"
+                placeholder="ProgRestive User"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required

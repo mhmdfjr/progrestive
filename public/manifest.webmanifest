@@ -1,7 +1,7 @@
 {
-  "name": "Purrpose — Balance Hustle & Humble",
-  "short_name": "Purrpose",
-  "description": "Track ur hustle and humble, score ur balance 0–100, and climb city leaderboards.",
+  "name": "ProgRestive — Balance Push & Pause",
+  "short_name": "ProgRestive",
+  "description": "Track ur push and pause, score ur balance 0–100, and climb city leaderboards.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
