@@ -40,21 +40,27 @@ export default async function AppLayout({
             <span className="text-pause">.</span>
           </Link>
           <nav className="flex items-center justify-between gap-6 font-heading font-bold">
-            <Link href="/home" className="hover:underline underline-offset-4">
+            <Link
+              href="/home"
+              className="border-b-2 border-transparent hover:border-b-2 hover:border-accent transition-colors duration-300"
+            >
               Home
             </Link>
-            <Link href="/report" className="hover:underline underline-offset-4">
+            <Link
+              href="/report"
+              className="border-b-2 border-transparent hover:border-b-2 hover:border-accent transition-colors duration-300"
+            >
               Report
             </Link>
             <Link
               href="/leaderboard"
-              className="hover:underline underline-offset-4"
+              className="border-b-2 border-transparent hover:border-b-2 hover:border-accent transition-colors duration-300"
             >
               Leaderboard
             </Link>
             <Link
               href="/profile"
-              className="hover:underline underline-offset-4"
+              className="border-b-2 border-transparent hover:border-b-2 hover:border-accent transition-colors duration-300"
             >
               Profile
             </Link>
