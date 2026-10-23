@@ -65,7 +65,7 @@ export function SiteHeader({
             <Link
               key={l.href + l.label}
               href={l.href}
-              className="hover:underline underline-offset-4"
+              className="border-b-2 border-transparent hover:border-b-2 hover:border-accent transition-colors duration-300"
             >
               {l.label}
             </Link>

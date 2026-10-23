@@ -23,23 +23,29 @@ export function ThemeToggle({ className }: { className?: string }) {
       onPressedChange={(pressed) => setTheme(pressed ? "dark" : "light")}
       aria-label={isDark ? "Ganti ke light mode" : "Ganti ke dark mode"}
       title={isDark ? "Ganti ke light mode" : "Ganti ke dark mode"}
-      className={cn("w-9 min-w-0 shrink-0 px-0 shadow-shadow", className)}
+      className={cn(
+        "w-9 min-w-0 shrink-0 px-0 shadow-shadow",
+        isDark
+          ? "bg-push text-white aria-pressed:text-white data-pressed:text-white"
+          : "bg-pause text-black aria-pressed:text-black data-pressed:text-black",
+        className,
+      )}
     >
       <span className="relative block size-5">
         <Sun
           className={cn(
             "absolute inset-0 size-5 transition-all",
             isDark
-              ? "rotate-90 scale-0 opacity-0"
-              : "rotate-0 scale-100 opacity-100",
+              ? "rotate-0 scale-100 opacity-100"
+              : "rotate-90 scale-0 opacity-0",
           )}
         />
         <Moon
           className={cn(
             "absolute inset-0 size-5 transition-all",
             isDark
-              ? "rotate-0 scale-100 opacity-100"
-              : "-rotate-90 scale-0 opacity-0",
+              ? "-rotate-90 scale-0 opacity-0"
+              : "rotate-0 scale-100 opacity-100",
           )}
         />
       </span>

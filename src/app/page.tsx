@@ -53,25 +53,16 @@ function Hero() {
 
             <p className="max-w-xl text-base leading-relaxed text-foreground/80">
               ProgRestive helps u to track{" "}
-              <span className="border-b-2 border-accent font-bold">Push</span>{" "}
-              activities and{" "}
+              <span className="border-b-2 border-accent font-bold">Push</span> &{" "}
               <span className="border-b-2 border-accent font-bold">Pause</span>{" "}
-              activities without punishment. Get highest{" "}
+              activities w/o punishment. Get highest{" "}
               <span className="border-b-2 border-accent font-bold">
-                Balance Index
+                balance index
               </span>{" "}
               , climb ur leaderboard, and claim ur badge.
             </p>
 
             <div className="flex flex-wrap gap-3">
-              <Button
-                asChild
-                variant="neutral"
-                size="lg"
-                className="text-base font-bold"
-              >
-                <Link href="#about">Learn the concept</Link>
-              </Button>
               <Button
                 asChild
                 size="lg"
@@ -103,7 +94,7 @@ function Hero() {
           <div className="relative mx-auto w-full max-w-105 md:ml-auto">
             {/* stacked cards - neobrutalism */}
             <div className="relative">
-              <Card className="relative z-10 border-push bg-secondary-background p-0 shadow-shadow rotate-[-1.5deg]">
+              <Card className="relative z-10 border-push bg-secondary-background p-0 shadow-shadow rotate-[-2deg] hover:rotate-[-6deg] transition-transform duration-300">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-push">
@@ -134,7 +125,7 @@ function Hero() {
                 </CardContent>
               </Card>
 
-              <Card className="absolute -bottom-6 right-2 z-20 w-[88%] border-pause bg-secondary-background p-0 shadow-shadow rotate-[1.2deg] md:-right-4">
+              <Card className="absolute -bottom-6 right-2 z-20 w-[88%] border-pause bg-secondary-background p-0 shadow-shadow rotate-[1.5deg] hover:translate-y-[30px] transition-transform duration-300 md:-right-4">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-pause">
@@ -166,7 +157,7 @@ function Hero() {
               </Card>
 
               {/* floating accent */}
-              <div className="absolute -top-4 -left-2 z-30 hidden border-2 border-border bg-accent px-3 py-2 font-heading text-xs dark:text-black font-black shadow-shadow md:block">
+              <div className="absolute -top-4 -left-2 z-30 hidden border-2 border-border bg-accent px-3 py-2 font-heading text-xs dark:text-black font-black shadow-shadow md:block hover:translate-y-[-20px] transition-transform duration-300">
                 BALANCE 83 • LEADERBOARD #3
               </div>
             </div>
