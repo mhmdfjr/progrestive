@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,11 +8,8 @@ import {
   ArrowRight,
   Briefcase,
   BedDouble,
-  BarChart3,
   Check,
   Sparkles,
-  Zap,
-  Heart,
 } from "lucide-react";
 import Marquee from "@/components/ui/marquee";
 import { LazyHowItWorks } from "@/components/landing/LazyHowItWorks";
@@ -194,10 +192,14 @@ function About() {
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <Card className="border-border bg-secondary-background">
             <CardHeader>
-              <div className="flex size-10 items-center justify-center border-2 border-border bg-push shadow-shadow">
-                <Zap className="size-5 text-white" strokeWidth={2.5} />
-              </div>
-              <CardTitle className="text-xl">Push</CardTitle>
+              <Image
+                src="/images/Showing-Your-Strength--Streamline-Havana.webp"
+                alt="Push illustration"
+                width={200}
+                height={200}
+                loading="lazy"
+                className="size-20 object-contain"
+              />
               <p className="text-sm text-foreground/70">
                 Productive pressure : score from level × duration, daily cap
                 anti grind.
@@ -219,10 +221,14 @@ function About() {
 
           <Card className="border-border bg-secondary-background">
             <CardHeader>
-              <div className="flex size-10 items-center justify-center border-2 border-border bg-pause shadow-shadow">
-                <Heart className="size-5 text-black" strokeWidth={2.5} />
-              </div>
-              <CardTitle className="text-xl">Pause</CardTitle>
+              <Image
+                src="/images/Refill-Energy--Streamline-Havana.webp"
+                alt="Pause illustration"
+                width={200}
+                height={200}
+                loading="lazy"
+                className="size-20 object-contain"
+              />
               <p className="text-sm text-foreground/70">
                 Easy calculated recovery : sleep, read, walk, journaling, etc.
               </p>
@@ -243,10 +249,14 @@ function About() {
 
           <Card className="border-border bg-accent text-black">
             <CardHeader>
-              <div className="flex size-10 items-center justify-center border-2 border-border bg-(--neo-gray-100) shadow-shadow">
-                <BarChart3 className="size-5" strokeWidth={2.5} />
-              </div>
-              <CardTitle className="text-xl">Balance Index</CardTitle>
+              <Image
+                src="/images/About-Us--Streamline-Havana.webp"
+                alt="Balance illustration"
+                width={200}
+                height={200}
+                loading="lazy"
+                className="size-20 object-contain"
+              />
               <p className="text-sm">
                 0-100 weekly score. Balance indicator: The closer to the center,
                 the better.
