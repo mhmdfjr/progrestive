@@ -125,7 +125,7 @@ function Hero() {
                 </CardContent>
               </Card>
 
-              <Card className="absolute -bottom-6 right-2 z-20 w-[88%] border-pause bg-secondary-background p-0 shadow-shadow rotate-[1.5deg] hover:translate-y-[30px] transition-transform duration-300 md:-right-4">
+              <Card className="absolute -bottom-6 right-2 z-20 w-[88%] border-pause bg-secondary-background p-0 shadow-shadow rotate-[1.5deg] hover:translate-y-[20px] transition-transform duration-300 md:-right-4">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2 text-pause">
@@ -161,7 +161,7 @@ function Hero() {
                 BALANCE 83 • LEADERBOARD #3
               </div>
             </div>
-            <div className="h-10 md:h-8" />
+            <div className="h-16 md:h-12" />
           </div>
         </div>
       </div>
